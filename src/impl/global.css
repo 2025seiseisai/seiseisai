@@ -131,7 +131,8 @@ body {
     flex-direction: column;
     width: 100%;
     min-height: 100dvh;
-    overflow-y: scroll;
+    overflow-y: auto;
+    /*overflow-y: scroll;*/
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

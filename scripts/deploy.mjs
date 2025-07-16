@@ -40,10 +40,10 @@ runCommand("git stash", "Failed to stash changes");
 runCommand(`git pull origin ${branch}`, `Failed to pull latest changes from ${branch}`);
 
 console.log("📦 Installing dependencies...");
-runCommand("npm install", "npm install failed");
+runCommand("bun install", "bun install failed");
 
 console.log("🔨 Building project...");
-runCommand("npm run build", "Build failed");
+runCommand("bun run build", "Build failed");
 
 console.log("🚀 Deploying with PM2...");
 const pm2List = runCommand("pm2 list", "Failed to list PM2 processes", true);
@@ -53,7 +53,7 @@ if (pm2List && pm2List.includes("seiseisai-admin")) {
     runCommand("pm2 restart seiseisai-admin", "Failed to restart the project");
 } else {
     console.log("🚀 Starting new process: seiseisai-admin");
-    runCommand('pm2 start npm --name "seiseisai-admin" -- run start', "Failed to start the project");
+    runCommand('pm2 start bun --name "seiseisai-admin" -- run start', "Failed to start the project");
 }
 
 console.log(`✅ Deployment to branch ${branch} completed successfully!`);
