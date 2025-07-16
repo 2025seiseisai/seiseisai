@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ms-ceintl.vscode-language-pack-ja",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "stylelint.vscode-stylelint",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.code-runner",
+        "prisma.prisma"
+    ]
+}

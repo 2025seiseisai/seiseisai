@@ -1,0 +1,62 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.eol": "\n",
+    "files.associations": {
+        "*.mdx": "markdown",
+        "*.tailwind.css": "tailwindcss",
+        "*.tailwind.scss": "tailwindcss",
+        ".prettierrc": "jsonc",
+        ".stylelintrc": "jsonc",
+        ".gitignore": "ignore",
+        ".prettierignore": "ignore",
+        ".eslintignore": "ignore",
+        "bun.lock": "jsonl"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always",
+        "source.organizeImports": "always"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+    "[css]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.stylelint": "always"
+        }
+    },
+    "[less]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.stylelint": "always"
+        }
+    },
+    "[scss]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.stylelint": "always"
+        }
+    },
+    "stylelint.configFile": "./.stylelintrc",
+    "stylelint.validate": ["css", "less", "scss"],
+    "tailwindCSS.lint.cssConflict": "ignore",
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "terminal.integrated.env.windows": {
+        "PSExecutionPolicyPreference": "RemoteSigned"
+    },
+    "code-runner.executorMap": {
+        "javascript": "bun",
+        "typescript": "bun",
+        "prisma": "echo Reflecting $fileName... && \"./node_modules/.bin/prisma\" db push"
+    },
+    "code-runner.runInTerminal": true,
+    "code-runner.cwd": "${workspaceFolder}",
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    }
+}

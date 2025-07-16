@@ -1,0 +1,38 @@
+import Footer from "@/components/footer/footer";
+import Header from "@/components/header/header";
+import "@/impl/global.css";
+import { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
+
+const notoSansJP = Noto_Sans_JP({
+    subsets: ["latin"],
+    display: "swap",
+});
+
+export const metadata: Metadata = {
+    title: "菁々祭Webサイト管理ページ",
+    robots: {
+        index: false,
+        follow: false,
+        noarchive: true,
+    },
+    formatDetection: {
+        telephone: false,
+        date: false,
+        address: false,
+        email: true,
+        url: true,
+    },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <html lang="ja" className={notoSansJP.className}>
+            <body suppressHydrationWarning>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+            </body>
+        </html>
+    );
+}
