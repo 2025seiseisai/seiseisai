@@ -12,6 +12,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -20,10 +21,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import type { NewsModel } from "@/impl/database";
+import { cn } from "@/lib/utils";
 import { YouTubeEmbed } from "@next/third-parties/google";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Markdown, { Components } from "react-markdown";
@@ -86,7 +93,7 @@ function transformLinks(node: React.ReactNode): React.ReactNode {
     return node;
 }
 
-function NewsPreview({ content }: { content: string }) {
+function NewsPreview({ content, className = "" }: { content: string; className?: string }) {
     const components: Components = {
         h1: ({ children }) => {
             return <h1 className="news_element">{transformLinks(children)}</h1>;
@@ -223,7 +230,7 @@ function NewsPreview({ content }: { content: string }) {
         },
     };
     return (
-        <article className="max-h-[50svh] overflow-y-scroll rounded-md border p-4 text-start">
+        <article className={cn("overflow-y-scroll rounded-md border p-4 text-start", className)}>
             <Markdown components={components} remarkPlugins={[remarkGfm, remarkBreaks]}>
                 {content.replaceAll("\\n", "\n")}
             </Markdown>
@@ -231,16 +238,32 @@ function NewsPreview({ content }: { content: string }) {
     );
 }
 
+function FormatDate(date: Date | string): string {
+    const d = new Date(date);
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+}
+
 function NewsEditor({
     open,
     onOpenChange,
     placeholder,
+    create = false,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     placeholder: NewsModel;
+    create?: boolean;
 }) {
     const { id } = placeholder;
+    const [dateValue, setDateValue] = React.useState<Date | undefined>(
+        placeholder.date ? new Date(placeholder.date) : undefined,
+    );
+    const [contentValue, setContentValue] = React.useState<string>(
+        placeholder.content
+            ? placeholder.content.replaceAll("\\n", "\n")
+            : "# ニュースの例\n\nこれはニュースの例です。\n\n[リンク](https://example.com)\n",
+    );
+    const [datePickerOpen, setDatePickerOpen] = React.useState(false);
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="sm:max-w-[38rem]">
@@ -254,15 +277,78 @@ function NewsEditor({
                         をご覧ください。
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <div className="grid gap-4">
-                    <div className="grid gap-3">
-                        <Label>ID</Label>
-                        <Input name="news_id" defaultValue={id} />
-                    </div>
-                    <div className="grid gap-3">
-                        <Label>日付</Label>
-                    </div>
-                </div>
+                <Tabs defaultValue="metadata" className="mb-2 w-full">
+                    <TabsList>
+                        <TabsTrigger value="metadata">メタデータ</TabsTrigger>
+                        <TabsTrigger value="content">内容</TabsTrigger>
+                        <TabsTrigger value="preview">プレビュー</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="metadata">
+                        <div className="grid min-h-[276px] gap-4">
+                            <div className="grid gap-3">
+                                <Label>ID</Label>
+                                <Input defaultValue={id} disabled={!create} />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label>タイトル</Label>
+                                <Input defaultValue={placeholder.title} placeholder="タイトル" />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label>日付</Label>
+                                <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" className="w-full justify-between font-normal">
+                                            {dateValue ? FormatDate(dateValue) : "日付を選択"}
+                                            <ChevronDownIcon />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={dateValue}
+                                            captionLayout="dropdown"
+                                            onSelect={(date) => {
+                                                setDateValue(date);
+                                                setDatePickerOpen(false);
+                                            }}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                            <div className="grid gap-3">
+                                <Label>重要度</Label>
+                                <RadioGroup
+                                    defaultValue={
+                                        placeholder.importance === true
+                                            ? "news_editor_importance_radio_group_important"
+                                            : "news_editor_importance_radio_group_default"
+                                    }
+                                    className="flex flex-row gap-5"
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="news_editor_importance_radio_group_default" />
+                                        <Label>通常</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="news_editor_importance_radio_group_important" />
+                                        <Label>重要</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="content">
+                        <Textarea
+                            className="h-[276px] resize-none overflow-scroll"
+                            placeholder="内容 (マークダウン)"
+                            value={contentValue}
+                            onChange={(e) => setContentValue(e.target.value)}
+                        />
+                    </TabsContent>
+                    <TabsContent value="preview">
+                        <NewsPreview content={contentValue} className="h-[276px]" />
+                    </TabsContent>
+                </Tabs>
                 <AlertDialogFooter>
                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
                     <AlertDialogAction>保存</AlertDialogAction>
@@ -279,9 +365,7 @@ function NewsContent({ news }: { news: NewsModel }) {
     return (
         <TableRow key={id}>
             <TableCell>
-                <p className="w-32">
-                    {`${new Date(date).getFullYear()}/${String(new Date(date).getMonth() + 1).padStart(2, "0")}/${String(new Date(date).getDate()).padStart(2, "0")}`}
-                </p>
+                <p className="w-32">{FormatDate(date)}</p>
             </TableCell>
             <TableCell>
                 <p className="w-96 overflow-hidden text-ellipsis">{title}</p>
@@ -323,7 +407,7 @@ function NewsContent({ news }: { news: NewsModel }) {
                                         <br />
                                         削除すると、ニュースの内容が完全に失われます。
                                     </AlertDialogDescription>
-                                    <NewsPreview content={content} />
+                                    <NewsPreview content={content} className="max-h-[50svh]" />
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
@@ -340,19 +424,35 @@ function NewsContent({ news }: { news: NewsModel }) {
 
 export default function NewsViewer({ news }: { news: NewsModel[] }) {
     return (
-        <Table className="mx-auto mt-6 w-156">
-            <TableHeader>
-                <TableRow>
-                    <TableHead>日付</TableHead>
-                    <TableHead>タイトル</TableHead>
-                    <TableHead></TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {news.map((item) => {
-                    return <NewsContent key={item.id} news={item} />;
-                })}
-            </TableBody>
-        </Table>
+        <>
+            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
+                <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
+                <div className="mb-1 flex items-center gap-1.5">
+                    <Button variant="ghost" size="sm">
+                        <ListPlus className="" />
+                        追加
+                    </Button>
+                    <Separator orientation="vertical" className="!h-6" />
+                    <Button variant="ghost" size="sm">
+                        <ListRestart className="" />
+                        更新
+                    </Button>
+                </div>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>日付</TableHead>
+                            <TableHead>タイトル</TableHead>
+                            <TableHead></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {news.map((item) => {
+                            return <NewsContent key={item.id} news={item} />;
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        </>
     );
 }

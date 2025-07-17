@@ -11,7 +11,6 @@ export default async function Page() {
     });
     return (
         <>
-            <h1 className="mx-auto mt-2 text-4xl font-bold">ニュース</h1>
             <NewsViewer news={news} />
         </>
     );
