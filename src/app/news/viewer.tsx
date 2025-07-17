@@ -18,13 +18,15 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { NewsModel } from "@/impl/database";
 import { YouTubeEmbed } from "@next/third-parties/google";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
-import Markdown from "react-markdown";
+import React from "react";
+import Markdown, { Components } from "react-markdown";
 import { Tweet } from "react-tweet";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
@@ -85,26 +87,26 @@ function transformLinks(node: React.ReactNode): React.ReactNode {
 }
 
 function NewsPreview({ content }: { content: string }) {
-    const components = {
-        h1: ({ children }: { children: any }) => {
+    const components: Components = {
+        h1: ({ children }) => {
             return <h1 className="news_element">{transformLinks(children)}</h1>;
         },
-        h2: ({ children }: { children: any }) => {
+        h2: ({ children }) => {
             return <h2 className="news_element">{transformLinks(children)}</h2>;
         },
-        h3: ({ children }: { children: any }) => {
+        h3: ({ children }) => {
             return <h3 className="news_element">{transformLinks(children)}</h3>;
         },
-        h4: ({ children }: { children: any }) => {
+        h4: ({ children }) => {
             return <h4 className="news_element">{transformLinks(children)}</h4>;
         },
-        h5: ({ children }: { children: any }) => {
+        h5: ({ children }) => {
             return <h5 className="news_element">{transformLinks(children)}</h5>;
         },
-        h6: ({ children }: { children: any }) => {
+        h6: ({ children }) => {
             return <h6 className="news_element">{transformLinks(children)}</h6>;
         },
-        p: ({ children }: { children: any }) => {
+        p: ({ children }) => {
             if (Array.isArray(children)) {
                 return <div className="news_element">{transformLinks(children)}</div>;
             }
@@ -203,16 +205,16 @@ function NewsPreview({ content }: { content: string }) {
             }
             return <div className="news_element">{transformLinks(children)}</div>;
         },
-        ul: ({ children }: { children: any }) => {
+        ul: ({ children }) => {
             return <ul className="news_element">{children}</ul>;
         },
-        li: ({ children }: { children: any }) => {
+        li: ({ children }) => {
             return <li className="news_element">{children}</li>;
         },
-        ol: ({ children }: { children: any }) => {
+        ol: ({ children }) => {
             return <ol className="news_element">{children}</ol>;
         },
-        strong: ({ children }: { children: any }) => {
+        strong: ({ children }) => {
             return (
                 <span className="news_element" style={{ fontWeight: 600 }}>
                     {children}
@@ -221,14 +223,59 @@ function NewsPreview({ content }: { content: string }) {
         },
     };
     return (
-        <article className="max-h-[50svh] overflow-y-scroll rounded-md border p-4">
-            <Markdown remarkPlugins={[remarkGfm, remarkBreaks]}>{content.replaceAll("\\n", "\n")}</Markdown>
+        <article className="max-h-[50svh] overflow-y-scroll rounded-md border p-4 text-start">
+            <Markdown components={components} remarkPlugins={[remarkGfm, remarkBreaks]}>
+                {content.replaceAll("\\n", "\n")}
+            </Markdown>
         </article>
     );
 }
 
-function NewsContent({ news: { id, date, title, content } }: { news: NewsModel }) {
-    const [openDialog, setOpenDialog] = useState(false);
+function NewsEditor({
+    open,
+    onOpenChange,
+    placeholder,
+}: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    placeholder: NewsModel;
+}) {
+    const { id } = placeholder;
+    return (
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
+            <AlertDialogContent className="sm:max-w-[38rem]">
+                <AlertDialogHeader>
+                    <AlertDialogTitle>ニュースの編集</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        マークダウンの詳しい書き方については
+                        <Link href="/news#help" target="_blank" rel="noopener noreferrer" className="underline">
+                            こちら
+                        </Link>
+                        をご覧ください。
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="grid gap-4">
+                    <div className="grid gap-3">
+                        <Label>ID</Label>
+                        <Input name="news_id" defaultValue={id} />
+                    </div>
+                    <div className="grid gap-3">
+                        <Label>日付</Label>
+                    </div>
+                </div>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                    <AlertDialogAction>保存</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+}
+
+function NewsContent({ news }: { news: NewsModel }) {
+    const { id, date, title, content } = news;
+    const [openEditDialog, setOpenEditDialog] = React.useState(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     return (
         <TableRow key={id}>
             <TableCell>
@@ -247,25 +294,31 @@ function NewsContent({ news: { id, date, title, content } }: { news: NewsModel }
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setOpenEditDialog(true);
+                            }}
+                        >
                             <Pencil />
                             編集
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             variant="destructive"
-                            onSelect={(e) => {
+                            onClick={(e) => {
                                 e.preventDefault();
-                                setOpenDialog(true);
+                                setOpenDeleteDialog(true);
                             }}
                         >
                             <Trash2 />
                             削除
                         </DropdownMenuItem>
-                        <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
-                            <AlertDialogContent>
+                        <NewsEditor open={openEditDialog} onOpenChange={setOpenEditDialog} placeholder={news} />
+                        <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+                            <AlertDialogContent className="sm:max-w-[38rem]">
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
-                                    <AlertDialogDescription>
+                                    <AlertDialogDescription className="mb-2">
                                         この操作は取り消せません。
                                         <br />
                                         削除すると、ニュースの内容が完全に失われます。
@@ -292,6 +345,7 @@ export default function NewsViewer({ news }: { news: NewsModel[] }) {
                 <TableRow>
                     <TableHead>日付</TableHead>
                     <TableHead>タイトル</TableHead>
+                    <TableHead></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
