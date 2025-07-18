@@ -232,7 +232,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
     return (
         <article className={cn("overflow-y-scroll rounded-md border p-4 text-start", className)}>
             <Markdown components={components} remarkPlugins={[remarkGfm, remarkBreaks]}>
-                {content.replaceAll("\\n", "\n")}
+                {content}
             </Markdown>
         </article>
     );
@@ -260,7 +260,7 @@ function NewsEditor({
     );
     const [contentValue, setContentValue] = React.useState<string>(
         placeholder.content
-            ? placeholder.content.replaceAll("\\n", "\n")
+            ? placeholder.content
             : "# ニュースの例\n\nこれはニュースの例です。\n\n[リンク](https://example.com)\n",
     );
     const [datePickerOpen, setDatePickerOpen] = React.useState(false);
@@ -429,12 +429,12 @@ export default function NewsViewer({ news }: { news: NewsModel[] }) {
                 <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
                 <div className="mb-1 flex items-center gap-1.5">
                     <Button variant="ghost" size="sm">
-                        <ListPlus className="" />
+                        <ListPlus />
                         追加
                     </Button>
                     <Separator orientation="vertical" className="!h-6" />
                     <Button variant="ghost" size="sm">
-                        <ListRestart className="" />
+                        <ListRestart />
                         更新
                     </Button>
                 </div>

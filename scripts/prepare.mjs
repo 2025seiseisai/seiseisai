@@ -1,4 +1,5 @@
 import childProcess from "child_process";
+import fs from "fs";
 import extensions from "../.vscode/extensions.json" with { type: "json" };
 function checkEnvFile(name) {
     if (process.env[name] === undefined) {
@@ -26,14 +27,12 @@ childProcess.exec("code --list-extensions", (error, stdout) => {
         });
     }
 });
-/*
 if (process.env.AUTH_SECRET === undefined) {
-    childProcess.exec("npx auth secret --raw", (error, stdout) => {
+    childProcess.exec("bunx --bun auth secret --raw", (error, stdout) => {
         if (error) {
             return;
         }
         const auth_secret = stdout.trim();
-        fs.appendFileSync(".env.development", `\nAUTH_SECRET="${auth_secret}"\n`);
+        fs.appendFileSync(".env.", `\nAUTH_SECRET="${auth_secret}"\n`);
     });
 }
-*/
