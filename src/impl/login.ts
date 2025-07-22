@@ -1,18 +1,14 @@
 "use server";
 import { signIn } from "@/impl/auth";
-import { AuthError } from "next-auth";
 
 export async function login(formData: FormData) {
     try {
         await signIn("credentials", formData);
-        return { success: true, message: "ログインに成功しました。" };
+        return { returncode: 0 };
     } catch (err) {
-        if (err instanceof AuthError) {
-            return {
-                success: false,
-                message: err.message,
-            };
+        if (err instanceof Error) {
+            return { returncode: 1 };
         }
-        return { success: false, message: "ログインに失敗しました。もう一度お試しください。" };
+        return { returncode: 2 };
     }
 }

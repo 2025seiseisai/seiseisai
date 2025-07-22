@@ -1,4 +1,5 @@
 "use client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -6,12 +7,16 @@ import { Input } from "@/components/ui/input";
 import { login } from "@/impl/login";
 import { signInSchema } from "@/impl/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircleIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 
 export default function Page() {
+    const [submitting, setSubmitting] = useState(false);
     const form = useForm({
         resolver: zodResolver(signInSchema),
         defaultValues: {
@@ -19,11 +24,26 @@ export default function Page() {
             password: "",
         },
     });
-    function onSubmit(data: z.infer<typeof signInSchema>) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const error = searchParams.get("error");
+    const message = error
+        ? error === "1"
+            ? "管理者名またはパスワードが間違っています。"
+            : "もう一度お試しください。"
+        : null;
+    async function onSubmit(data: z.infer<typeof signInSchema>) {
+        setSubmitting(true);
         const formData = new FormData();
         formData.append("username", data.username);
         formData.append("password", data.password);
-        login(formData);
+        const { returncode } = await login(formData);
+        if (returncode === 0) {
+            router.push("/");
+        } else {
+            // eslint-disable-next-line react-compiler/react-compiler
+            window.location.href = `/login?error=${returncode}`;
+        }
     }
     return (
         <Form {...form}>
@@ -64,7 +84,14 @@ export default function Page() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex-col gap-2">
-                        <Button type="submit" className="w-full">
+                        {message && (
+                            <Alert variant="destructive">
+                                <AlertCircleIcon />
+                                <AlertTitle>ログインに失敗しました</AlertTitle>
+                                <AlertDescription>{message}</AlertDescription>
+                            </Alert>
+                        )}
+                        <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
                             ログイン
                         </Button>
                     </CardFooter>

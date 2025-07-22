@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { ZodError } from "zod";
 import dbClient from "./database";
 import { signInSchema } from "./zod";
 
@@ -28,14 +27,11 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
                                 .update(password + process.env.HASH_SALT)
                                 .digest("hex")
                     ) {
-                        return null;
+                        throw new Error();
                     }
                     return user;
-                } catch (error) {
-                    if (error instanceof ZodError) {
-                        return null;
-                    }
-                    throw error;
+                } catch {
+                    throw new Error();
                 }
             },
         }),
@@ -44,4 +40,12 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         signIn: "/login",
     },
     secret: process.env.AUTH_SECRET,
+    logger: {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        error(error) {},
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        warn(code) {},
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        debug(message, metadata) {},
+    },
 });
