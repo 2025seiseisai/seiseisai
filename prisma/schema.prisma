@@ -17,7 +17,8 @@ datasource db {
 
 model Admin {
   id                  String  @id @default(cuid())
-  name                String
+  name                String  @unique
+  hashedPassword      String
   authorityAdmins     Boolean @default(false)
   authorityNews       Boolean @default(false)
   authorityGoods      Boolean @default(false)

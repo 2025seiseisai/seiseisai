@@ -4,14 +4,18 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { auth } from "@/impl/auth";
+import { LogIn, User } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
-export default function Header() {
+export default async function Header() {
+    const session = await auth();
     return (
-        <header className="w-full">
-            <NavigationMenu className="ml-3 h-14 w-full">
+        <header className="flex h-14 w-full items-center">
+            <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
+            <NavigationMenu className="h-full w-full">
                 <NavigationMenuList className="gap-0.5">
-                    <NavigationMenuItem className="mr-2.5 text-xl font-semibold">管理ページ</NavigationMenuItem>
                     <NavigationMenuItem>
                         <NavigationMenuLink asChild>
                             <Link href="/" className="font-medium">
@@ -49,6 +53,18 @@ export default function Header() {
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
+            <div className="mr-4 ml-auto">
+                {session ? (
+                    <User />
+                ) : (
+                    <Button variant="outline" className="mr-2" asChild>
+                        <Link href="/login">
+                            <LogIn />
+                            ログイン
+                        </Link>
+                    </Button>
+                )}
+            </div>
         </header>
     );
 }
