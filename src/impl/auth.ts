@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import dbClient from "./database";
+import { getAdminById, getAdminByName } from "./database";
 import { signInSchema } from "./zod";
 
 export const { signIn, signOut, auth, handlers } = NextAuth({
@@ -14,11 +14,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
             async authorize(credentials) {
                 try {
                     const { username, password } = await signInSchema.parseAsync(credentials);
-                    const user = await dbClient.admin.findUnique({
-                        where: {
-                            name: username,
-                        },
-                    });
+                    const user = await getAdminByName(username);
                     if (
                         !user ||
                         user.hashedPassword !==
@@ -49,3 +45,11 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         debug(message, metadata) {},
     },
 });
+
+export async function getAuthSession() {
+    const session = await auth();
+    if (!session || !session.user || typeof session.user.id !== "string") return null;
+    const admin = await getAdminById(session.user.id);
+    if (!admin) return null;
+    return admin;
+}

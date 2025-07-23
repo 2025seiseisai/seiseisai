@@ -28,8 +28,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { NewsModel } from "@/impl/database";
+import { deleteNews, getAllNews } from "@/impl/database-actions";
 import { cn } from "@/lib/utils";
 import { YouTubeEmbed } from "@next/third-parties/google";
+import { atom, useAtomValue, useSetAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
 import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -37,7 +40,29 @@ import Markdown, { Components } from "react-markdown";
 import { Tweet } from "react-tweet";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 import "./news.scss";
+
+const newsAtom = atom<NewsModel[]>([]);
+
+function useInitNewsAtom() {
+    const setNews = useSetAtom(newsAtom);
+    return async (showSuccessToast = true) => {
+        const fetchedNews = await getAllNews();
+        if (fetchedNews) {
+            setNews(fetchedNews);
+            if (showSuccessToast) {
+                toast.success("ニュースを更新しました。", {
+                    duration: 2000,
+                });
+            }
+        } else {
+            toast.error("ニュースの取得に失敗しました。", {
+                duration: 2000,
+            });
+        }
+    };
+}
 
 function transformLinks(node: React.ReactNode): React.ReactNode {
     if (typeof node === "string" || typeof node === "number") {
@@ -238,7 +263,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
     );
 }
 
-function FormatDate(date: Date | string): string {
+function formatDate(date: Date | string): string {
     const d = new Date(date);
     return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
 }
@@ -266,7 +291,7 @@ function NewsEditor({
     const [datePickerOpen, setDatePickerOpen] = React.useState(false);
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="sm:max-w-[38rem]">
+            <AlertDialogContent className="w-full sm:max-w-[38rem]">
                 <AlertDialogHeader>
                     <AlertDialogTitle>ニュースの編集</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -298,7 +323,7 @@ function NewsEditor({
                                 <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                                     <PopoverTrigger asChild>
                                         <Button variant="outline" className="w-full justify-between font-normal">
-                                            {dateValue ? FormatDate(dateValue) : "日付を選択"}
+                                            {dateValue ? formatDate(dateValue) : "日付を選択"}
                                             <ChevronDownIcon />
                                         </Button>
                                     </PopoverTrigger>
@@ -337,11 +362,12 @@ function NewsEditor({
                             </div>
                         </div>
                     </TabsContent>
-                    <TabsContent value="content">
+                    <TabsContent value="content" className="relative">
                         <Textarea
-                            className="h-[276px] resize-none overflow-scroll"
+                            className="field-sizing-fixed h-[276px] resize-none overflow-y-scroll"
                             placeholder="内容 (マークダウン)"
                             value={contentValue}
+                            wrap="off"
                             onChange={(e) => setContentValue(e.target.value)}
                         />
                     </TabsContent>
@@ -362,10 +388,11 @@ function NewsContent({ news }: { news: NewsModel }) {
     const { id, date, title, content } = news;
     const [openEditDialog, setOpenEditDialog] = React.useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const initializer = useInitNewsAtom();
     return (
         <TableRow key={id}>
             <TableCell>
-                <p className="w-32">{FormatDate(date)}</p>
+                <p className="w-32">{formatDate(date)}</p>
             </TableCell>
             <TableCell>
                 <p className="w-96 overflow-hidden text-ellipsis">{title}</p>
@@ -411,7 +438,23 @@ function NewsContent({ news }: { news: NewsModel }) {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
-                                    <AlertDialogAction>削除</AlertDialogAction>
+                                    <AlertDialogAction
+                                        onClick={async () => {
+                                            const result = await deleteNews(id);
+                                            if (result) {
+                                                toast.success("ニュースを削除しました。", {
+                                                    duration: 2000,
+                                                });
+                                                initializer(false);
+                                            } else {
+                                                toast.error("ニュースの削除に失敗しました。", {
+                                                    duration: 2000,
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        削除
+                                    </AlertDialogAction>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>
@@ -422,37 +465,38 @@ function NewsContent({ news }: { news: NewsModel }) {
     );
 }
 
-export default function NewsViewer({ news }: { news: NewsModel[] }) {
+export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }) {
+    useHydrateAtoms([[newsAtom, initialnews]]);
+    const news = useAtomValue(newsAtom);
+    const initializer = useInitNewsAtom();
     return (
-        <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
-                <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
-                <div className="mb-1 flex items-center gap-1.5">
-                    <Button variant="ghost" size="sm">
-                        <ListPlus />
-                        追加
-                    </Button>
-                    <Separator orientation="vertical" className="!h-6" />
-                    <Button variant="ghost" size="sm">
-                        <ListRestart />
-                        更新
-                    </Button>
-                </div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>日付</TableHead>
-                            <TableHead>タイトル</TableHead>
-                            <TableHead></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {news.map((item) => {
-                            return <NewsContent key={item.id} news={item} />;
-                        })}
-                    </TableBody>
-                </Table>
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
+            <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
+            <div className="mb-1 flex items-center gap-1.5">
+                <Button variant="ghost" size="sm">
+                    <ListPlus />
+                    追加
+                </Button>
+                <Separator orientation="vertical" className="!h-6" />
+                <Button variant="ghost" size="sm" onClick={() => initializer()}>
+                    <ListRestart />
+                    更新
+                </Button>
             </div>
-        </>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>日付</TableHead>
+                        <TableHead>タイトル</TableHead>
+                        <TableHead></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {news.map((item) => {
+                        return <NewsContent key={item.id} news={item} />;
+                    })}
+                </TableBody>
+            </Table>
+        </div>
     );
 }

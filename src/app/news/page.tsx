@@ -1,17 +1,15 @@
-import dbClient from "@/impl/database";
+import { getAllNews } from "@/impl/database";
 import NewsViewer from "./viewer";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-    const news = await dbClient.news.findMany({
-        orderBy: {
-            date: "desc",
-        },
-    });
+    //if (!(await getAuthSession())?.authorityNews) notFound();
+
+    const news = await getAllNews();
     return (
         <>
-            <NewsViewer news={news} />
+            <NewsViewer initialnews={news} />
         </>
     );
 }

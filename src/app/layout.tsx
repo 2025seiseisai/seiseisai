@@ -1,5 +1,6 @@
 import Footer from "@/components/footer/footer";
 import Header from "@/components/header/header";
+import { Toaster } from "@/components/ui/sonner";
 import "@/impl/global.css";
 import { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Header />
                     <main>{children}</main>
                     <Footer />
+                    <Toaster richColors theme="light" />
                 </SessionProvider>
             </body>
         </html>
