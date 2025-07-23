@@ -654,7 +654,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                     基本的なマークダウン記法に加えて、YouTubeやX (旧Twitter) の埋め込みにも対応しています。
                 </p>
                 <h3 className="mt-4 text-xl font-semibold">基本的な記法</h3>
-                <p className="mt-2">見出し、太字、打ち消し、リンクなどの基本的なマークダウンが使用できます。</p>
+                <p className="mt-2">見出し、太字、打ち消し、リンクなどの基本的なマークダウン記法が使用できます。</p>
                 <pre className="mt-2 rounded-md border bg-white p-4 text-sm text-slate-950">
                     <code>
                         本文のテキスト{"\n"}
@@ -665,7 +665,9 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         {"\n"}
                         ~~打ち消し~~
                         {"\n"}
-                        {"\n"}[リンクテキスト](https://example.com)
+                        {"\n"}[外部リンク](https://example.com){"\n"}
+                        [内部リンク](/path/to/page){"\n"}
+                        [メールリンク](mailto:example@gmail.com){"\n"}[ダウンロードリンク](https://example.com/file.zip)
                     </code>
                 </pre>
 
@@ -706,6 +708,10 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                     <li>
                         <span className="font-semibold">ダウンロードリンク:</span> 一般的なファイル拡張子 (
                         <code>.pdf</code>, <code>.zip</code> など) で終わるURLは、ダウンロードリンクとして扱われます。
+                    </li>
+                    <li>
+                        <span className="font-semibold">メールリンク:</span> <code>mailto:</code>{" "}
+                        で始まるリンクは、メールアドレスへのリンクとして扱われます。
                     </li>
                 </ul>
             </div>
