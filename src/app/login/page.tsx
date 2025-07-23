@@ -91,7 +91,7 @@ export default function Page() {
                                 <AlertDescription>{message}</AlertDescription>
                             </Alert>
                         )}
-                        <Button type="submit" className="w-full cursor-pointer" disabled={submitting}>
+                        <Button type="submit" className="w-full" disabled={submitting}>
                             ログイン
                         </Button>
                     </CardFooter>
