@@ -3,7 +3,6 @@ import Header from "@/components/header/header";
 import { Toaster } from "@/components/ui/sonner";
 import "@/impl/global.css";
 import { Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import { Noto_Sans_JP } from "next/font/google";
 
 const notoSansJP = Noto_Sans_JP({
@@ -31,12 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="ja" className={notoSansJP.className}>
             <body suppressHydrationWarning>
-                <SessionProvider>
-                    <Header />
-                    <main>{children}</main>
-                    <Footer />
-                    <Toaster richColors theme="light" />
-                </SessionProvider>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+                <Toaster richColors theme="light" />
             </body>
         </html>
     );

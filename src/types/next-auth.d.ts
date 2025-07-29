@@ -1,4 +1,4 @@
-import type { AdminModel } from "./database";
+import type { AdminModel } from "@/impl/database";
 
 declare module "next-auth" {
     interface Session {

@@ -5,46 +5,48 @@ export * from "@/generated/prisma/models";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const dbClient = globalForPrisma.prisma || new PrismaClient();
+if (!globalForPrisma.prisma) {
+    if (process.env.SUPERADMIN_HASHED_PASSWORD === undefined) {
+        console.error("SUPERADMIN_HASHED_PASSWORD is not set in the environment variables.");
+    }
+
+    await dbClient.admin.deleteMany({
+        where: {
+            id: "superadmin",
+        },
+    });
+    const created = await dbClient.admin.create({
+        data: {
+            id: "superadmin",
+            name: "システム管理者",
+        },
+    });
+    const new_value = Object.fromEntries(
+        Object.keys(created).map((key) => {
+            if (key === "id" || key === "name") return [key, created[key]];
+            return [key, true];
+        }),
+    );
+    await dbClient.admin.update({
+        where: {
+            id: "superadmin",
+        },
+        data: new_value,
+    });
+    await dbClient.adminPassword.deleteMany({
+        where: {
+            adminId: "superadmin",
+        },
+    });
+    await dbClient.adminPassword.create({
+        data: {
+            adminId: "superadmin",
+            hashedPassword: process.env.SUPERADMIN_HASHED_PASSWORD || "",
+        },
+    });
+}
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = dbClient;
 export default dbClient;
-
-if (process.env.SUPERADMIN_HASHED_PASSWORD === undefined) {
-    console.error("SUPERADMIN_HASHED_PASSWORD is not set in the environment variables.");
-}
-await dbClient.admin.deleteMany({
-    where: {
-        id: "superadmin",
-    },
-});
-const created = await dbClient.admin.create({
-    data: {
-        id: "superadmin",
-        name: "システム管理者",
-    },
-});
-const new_value = Object.fromEntries(
-    Object.keys(created).map((key) => {
-        if (key === "id" || key === "name") return [key, created[key]];
-        return [key, true];
-    }),
-);
-await dbClient.admin.update({
-    where: {
-        id: "superadmin",
-    },
-    data: new_value,
-});
-await dbClient.adminPassword.deleteMany({
-    where: {
-        adminId: "superadmin",
-    },
-});
-await dbClient.adminPassword.create({
-    data: {
-        adminId: "superadmin",
-        hashedPassword: process.env.SUPERADMIN_HASHED_PASSWORD || "",
-    },
-});
 
 export async function getAdminByName(name: string) {
     return await dbClient.admin.findUnique({

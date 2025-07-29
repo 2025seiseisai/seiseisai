@@ -26,41 +26,51 @@ export default async function Header() {
                 <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
                 <NavigationMenu className="h-full w-full">
                     <NavigationMenuList className="gap-0.5">
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/" className="font-medium">
-                                    ホーム
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/news" className="font-medium">
-                                    ニュース
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/goods" className="font-medium">
-                                    グッズ
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/tickets" className="font-medium">
-                                    整理券
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href="/admins" className="font-medium">
-                                    管理者
-                                </Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
+                        {session?.user && (
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/" className="font-medium">
+                                        ホーム
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        )}
+                        {session?.user.authorityNews && (
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/news" className="font-medium">
+                                        ニュース
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        )}
+                        {session?.user.authorityGoods && (
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/goods" className="font-medium">
+                                        グッズ
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        )}
+                        {session?.user.authorityTickets && (
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/tickets" className="font-medium">
+                                        チケット
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        )}
+                        {session?.user.authorityAdmins && (
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/admins" className="font-medium">
+                                        管理者
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        )}
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="mr-4 ml-auto">
@@ -77,9 +87,7 @@ export default async function Header() {
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>
                                     <p className="text-[16px]">{session.user.name}</p>
-                                    <p className="mt-1 text-xs font-normal text-gray-500">
-                                        ID: oiweofiwhefoij{session.user.id}
-                                    </p>
+                                    <p className="mt-1 text-xs font-normal text-gray-500">ID: {session.user.id}</p>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
