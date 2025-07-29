@@ -1,4 +1,12 @@
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
@@ -8,6 +16,7 @@ import { auth } from "@/impl/auth";
 import { LogIn, User } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { LogoutButton } from "./logout-button";
 
 export default async function Header() {
     const session = await auth();
@@ -56,7 +65,28 @@ export default async function Header() {
                 </NavigationMenu>
                 <div className="mr-4 ml-auto">
                     {session ? (
-                        <User />
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost">
+                                    <User />
+                                    <p className="w-full max-w-40 overflow-hidden text-nowrap text-ellipsis">
+                                        {session.user.name}
+                                    </p>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuLabel>
+                                    <p className="text-[16px]">{session.user.name}</p>
+                                    <p className="mt-1 text-xs font-normal text-gray-500">
+                                        ID: oiweofiwhefoij{session.user.id}
+                                    </p>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <LogoutButton />
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     ) : (
                         <Button variant="outline" className="mr-2" asChild>
                             <Link href="/login">

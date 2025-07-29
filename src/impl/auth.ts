@@ -1,33 +1,38 @@
 import crypto from "crypto";
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getAdminById, getAdminByName } from "./database";
+import { AdminModel, getAdminById, getAdminByName, getAdminPassword } from "./database";
 import { signInSchema } from "./zod";
 
 export const { signIn, signOut, auth, handlers } = NextAuth({
     providers: [
         CredentialsProvider({
             credentials: {
-                username: { label: "Username", type: "text" },
+                name: { label: "Name", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials) {
+            async authorize(credentials): Promise<AdminModel | null> {
                 try {
-                    const { username, password } = await signInSchema.parseAsync(credentials);
-                    const user = await getAdminByName(username);
+                    const { name, password } = await signInSchema.parseAsync(credentials);
+                    const user = await getAdminByName(name);
+                    if (!user) {
+                        return null;
+                    }
+                    const expected = await getAdminPassword(user.id);
                     if (
-                        !user ||
-                        user.hashedPassword !==
+                        !expected ||
+                        expected.hashedPassword !==
                             crypto
                                 .createHash("sha256")
                                 .update(password + process.env.HASH_SALT)
                                 .digest("hex")
                     ) {
-                        throw new Error();
+                        return null;
                     }
                     return user;
                 } catch {
-                    throw new Error();
+                    return null;
                 }
             },
         }),
@@ -36,6 +41,29 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         signIn: "/login",
     },
     secret: process.env.AUTH_SECRET,
+    session: {
+        strategy: "jwt",
+    },
+    callbacks: {
+        async jwt({ token, user }): Promise<JWT> {
+            if (user) {
+                token = {
+                    ...token,
+                    ...user,
+                };
+            }
+            return token;
+        },
+        async session({ session, token }): Promise<Session> {
+            if (token) {
+                session.user = {
+                    ...session.user,
+                    ...token,
+                };
+            }
+            return session;
+        },
+    },
     logger: {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         error(error) {},

@@ -8,7 +8,7 @@ import { login } from "@/impl/auth-actions";
 import { signInSchema } from "@/impl/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,11 +20,10 @@ export default function Page() {
     const form = useForm({
         resolver: zodResolver(signInSchema),
         defaultValues: {
-            username: "",
+            name: "",
             password: "",
         },
     });
-    const router = useRouter();
     const searchParams = useSearchParams();
     const error = searchParams.get("error");
     const message = error
@@ -32,18 +31,9 @@ export default function Page() {
             ? "管理者名またはパスワードが間違っています。"
             : "もう一度お試しください。"
         : null;
-    async function onSubmit(data: z.infer<typeof signInSchema>) {
+    function onSubmit(data: z.infer<typeof signInSchema>) {
         setSubmitting(true);
-        const formData = new FormData();
-        formData.append("username", data.username);
-        formData.append("password", data.password);
-        const { returncode } = await login(formData);
-        if (returncode === 0) {
-            router.push("/");
-        } else {
-            // eslint-disable-next-line react-compiler/react-compiler
-            window.location.href = `/login?error=${returncode}`;
-        }
+        login(data.name, data.password);
     }
     return (
         <Form {...form}>
@@ -57,7 +47,7 @@ export default function Page() {
                         <div className="flex flex-col gap-4">
                             <FormField
                                 control={form.control}
-                                name="username"
+                                name="name"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>管理者名</FormLabel>

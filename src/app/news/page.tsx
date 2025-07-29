@@ -1,10 +1,12 @@
+import { getAuthSession } from "@/impl/auth";
 import { getAllNews } from "@/impl/database";
+import { notFound } from "next/navigation";
 import NewsViewer from "./viewer";
 
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-    //if (!(await getAuthSession())?.authorityNews) notFound();
+    if (!(await getAuthSession())?.authorityNews) notFound();
 
     const news = await getAllNews();
     return (
