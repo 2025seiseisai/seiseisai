@@ -637,7 +637,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
     const news = useAtomValue(newsAtom);
     const initializer = useInitNewsAtom();
     const [openEditor, setOpenEditor] = useState(false);
-    const [newsid, setNewsId] = useState(createId());
+    const [newsid, setNewsId] = useState("");
     const [newsDate, setNewsDate] = useState(currentDate());
     return (
         <>

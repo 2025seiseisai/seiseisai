@@ -80,6 +80,7 @@ export async function getAllAdmins() {
 }
 
 export async function createAdmin(admin: AdminModel, password: string) {
+    if (admin.id === "superadmin" || password.length < 8) return null;
     const count = await dbClient.admin.count({
         where: {
             id: admin.id,

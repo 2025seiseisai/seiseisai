@@ -37,7 +37,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { KeyRound, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -109,7 +109,12 @@ function AdminEditor({
             confirmPassword: "",
         },
     });
+    const isFirstRender = useRef(true);
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         if (open) {
             form.reset({
                 ...placeholder,
@@ -163,7 +168,9 @@ function AdminEditor({
             initializer(false);
         }
     }
-    async function onSubmitUnsafe(data: z.infer<typeof adminSchema>) {
+    async function onSubmitUnsafe(allData: z.infer<typeof adminSchema>) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { newPassword, confirmPassword, ...data } = allData;
         const result = await updateAdminUnsafe(data);
         if (result) {
             toast.success("保存しました。", {
@@ -246,19 +253,25 @@ function AdminEditor({
                             <div>
                                 <Label>権限</Label>
                                 <div className="mt-1 flex w-full flex-wrap gap-0.5">
-                                    {Object.entries(authorityDescriptions).map(([key, description]) => (
-                                        <div
+                                    {Object.keys(authorityDescriptions).map((key) => (
+                                        <FormField
                                             key={key}
-                                            className="flex w-full items-center gap-2 text-[13px] sm:flex-1/3"
-                                        >
-                                            <Checkbox
-                                                defaultChecked={form.getValues(key as keyof AdminModel) as boolean}
-                                                onCheckedChange={(checked) => {
-                                                    form.setValue(key as keyof AdminModel, checked);
-                                                }}
-                                            />
-                                            {description}
-                                        </div>
+                                            control={form.control}
+                                            name={key as keyof z.infer<typeof adminSchema>}
+                                            render={({ field }) => (
+                                                <FormItem className="mt-1 flex w-full items-center gap-2 text-[13px] sm:w-auto sm:flex-1/3">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value as boolean}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="mt-0 font-normal">
+                                                        {authorityDescriptions[key]}
+                                                    </FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
                                     ))}
                                 </div>
                             </div>
@@ -488,7 +501,7 @@ function AdminSettings({ admin }: { admin: AdminModel }) {
                     <Label className="text-[18px]">権限</Label>
                     <div className="mt-1 ml-1 flex flex-col gap-0.5">
                         {Object.entries(authorityDescriptions).map(([key, description]) => (
-                            <div key={key} className="flex items-center gap-2 text-[13px]">
+                            <div key={key} className="flex items-center gap-2 text-[14px]">
                                 <Checkbox
                                     checked={admin[key as keyof AdminModel] as boolean}
                                     className="pointer-events-none"
@@ -506,9 +519,9 @@ function AdminSettings({ admin }: { admin: AdminModel }) {
     );
 }
 
-function getEmptyAdmin(): AdminModel {
+function getEmptyAdmin(id: string): AdminModel {
     const result = {
-        id: createId(),
+        id,
         name: "",
     };
     for (const key of Object.keys(authorityDescriptions)) {
@@ -522,6 +535,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
     useHydrateAtoms([[adminsAtom, initialadmins]]);
     const admins = useAtomValue(adminsAtom);
     const initializer = useInitAdminsAtom();
+    const [adminId, setAdminId] = useState("");
     const [openEditor, setOpenEditor] = useState(false);
     return (
         <>
@@ -532,6 +546,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
                         variant="ghost"
                         size="sm"
                         onClick={() => {
+                            setAdminId(createId());
                             setOpenEditor(true);
                         }}
                     >
@@ -550,7 +565,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
                     ))}
                 </div>
             </div>
-            <AdminEditor placeholder={getEmptyAdmin()} create open={openEditor} setOpen={setOpenEditor} />
+            <AdminEditor placeholder={getEmptyAdmin(adminId)} create open={openEditor} setOpen={setOpenEditor} />
         </>
     );
 }

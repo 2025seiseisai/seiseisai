@@ -7,7 +7,6 @@ function checkEnvFile(name) {
         process.exit(1);
     }
 }
-checkEnvFile("AUTH_URL");
 checkEnvFile("DATABASE_URL");
 checkEnvFile("DIRECT_URL");
 childProcess.exec("code --list-extensions", (error, stdout) => {
