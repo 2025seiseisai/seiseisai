@@ -5,13 +5,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { login } from "@/impl/auth-actions";
-import { signInSchema } from "@/impl/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+const signInSchema = z.object({
+    name: z.string().min(1, "この項目は必須です。").max(256, "ユーザー名が長すぎます。"),
+    password: z.string().min(1, "この項目は必須です。").max(256, "パスワードが長すぎます。"),
+});
 
 export const dynamic = "force-dynamic";
 

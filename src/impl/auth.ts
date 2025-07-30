@@ -2,8 +2,13 @@ import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cache } from "react";
+import { z } from "zod";
 import { getAdminById, getAdminByName, getAdminPassword } from "./database";
-import { signInSchema } from "./zod";
+
+const signInSchema = z.object({
+    name: z.string().min(1).max(256),
+    password: z.string().min(1).max(256),
+});
 
 const {
     signIn,
@@ -85,8 +90,15 @@ export { handlers, signIn, signOut };
 
 export const auth = cache(async () => {
     const session = await authInternal();
-    if (!session || !session.user || typeof session.user.adminId !== "string") return null;
+    if (!session) return null;
+    if (!session.user || typeof session.user.adminId !== "string") {
+        await signOut({ redirect: false });
+        return null;
+    }
     const admin = await getAdminById(session.user.adminId);
-    if (!admin) return null;
+    if (!admin) {
+        await signOut({ redirect: false });
+        return null;
+    }
     return admin;
 });

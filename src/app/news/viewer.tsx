@@ -27,10 +27,9 @@ import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { type NewsModel } from "@/impl/database";
 import { createNews, deleteNews, getAllNews, updateNewsSafe, updateNewsUnsafe } from "@/impl/database-actions";
-import { ChangeNewsSafeResult } from "@/impl/enums";
-import { newsSchema } from "@/impl/zod";
+import type { NewsModel } from "@/impl/models";
+import { UpdateResult } from "@/impl/update-result";
 import { cn } from "@/lib/utils";
 import { YouTubeEmbed } from "@next/third-parties/google";
 import { createId } from "@paralleldrive/cuid2";
@@ -44,7 +43,32 @@ import { Tweet } from "react-tweet";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
+import { z } from "zod";
 import "./news.scss";
+
+const newsSchema = z.object({
+    id: z
+        .string()
+        .min(1, "IDは必須です。")
+        .min(16, "IDは16文字以上でなければなりません。")
+        .max(64, "IDは64文字以下でなければなりません。"),
+    title: z.string().min(1, "タイトルは必須です。").max(256, "タイトルが長すぎます。"),
+    content: z.string().min(1, "内容は必須です。").max(65536, "内容が長すぎます。"),
+    importance: z.boolean(),
+    date: z.date().refine(
+        (date) => {
+            return (
+                date.getHours() === 0 &&
+                date.getMinutes() === 0 &&
+                date.getSeconds() === 0 &&
+                date.getMilliseconds() === 0
+            );
+        },
+        {
+            message: "時刻は指定できません。日付のみを指定してください。",
+        },
+    ),
+});
 
 const newsAtom = atom<NewsModel[]>([]);
 
@@ -287,6 +311,11 @@ function formatDate(date: Date | string): string {
     return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function currentDate(): Date {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+}
+
 function NewsEditor({
     open,
     setOpen,
@@ -432,33 +461,33 @@ function NewsEditor({
                                 if (create) {
                                     const result = await createNews(parsed.data);
                                     if (result === null) {
-                                        toast.error("ニュースの作成に失敗しました。", {
+                                        toast.error("作成に失敗しました。", {
                                             duration: 2000,
                                         });
                                         return;
                                     }
-                                    toast.success("ニュースを追加しました。", {
+                                    toast.success("追加しました。", {
                                         duration: 2000,
                                     });
                                     setOpen(false);
                                     initializer(false);
                                 } else {
                                     const result = await updateNewsSafe(placeholder, parsed.data);
-                                    if (result === null || result === ChangeNewsSafeResult.Invalid) {
-                                        toast.error("ニュースの保存に失敗しました。", {
+                                    if (result === null || result === UpdateResult.Invalid) {
+                                        toast.error("保存に失敗しました。", {
                                             duration: 2000,
                                         });
                                         return;
-                                    } else if (result === ChangeNewsSafeResult.Overwrite) {
+                                    } else if (result === UpdateResult.Overwrite) {
                                         setOverwriteWarning(true);
                                         return;
-                                    } else if (result === ChangeNewsSafeResult.NotFound) {
-                                        toast.error("ニュースが見つかりません。", {
+                                    } else if (result === UpdateResult.NotFound) {
+                                        toast.error("IDが見つかりません。", {
                                             duration: 2000,
                                         });
                                         return;
-                                    } else if (result === ChangeNewsSafeResult.Success) {
-                                        toast.success("ニュースを保存しました。", {
+                                    } else if (result === UpdateResult.Success) {
+                                        toast.success("保存しました。", {
                                             duration: 2000,
                                         });
                                     }
@@ -473,7 +502,7 @@ function NewsEditor({
                 </AlertDialogContent>
             </AlertDialog>
             <AlertDialog open={overwriteWarning} onOpenChange={setOverwriteWarning}>
-                <AlertDialogContent className="">
+                <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>ニュースは変更されています</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -501,13 +530,13 @@ function NewsEditor({
                                 }
                                 const result = await updateNewsUnsafe(parsed.data);
                                 if (result) {
-                                    toast.success("ニュースを保存しました。", {
+                                    toast.success("保存しました。", {
                                         duration: 2000,
                                     });
                                     setOpen(false);
                                     initializer(false);
                                 } else {
-                                    toast.error("ニュースの保存に失敗しました。", {
+                                    toast.error("保存に失敗しました。", {
                                         duration: 2000,
                                     });
                                 }
@@ -580,12 +609,12 @@ function NewsContent({ news }: { news: NewsModel }) {
                                         onClick={async () => {
                                             const result = await deleteNews(id);
                                             if (result) {
-                                                toast.success("ニュースを削除しました。", {
+                                                toast.success("削除しました。", {
                                                     duration: 2000,
                                                 });
                                                 initializer(false);
                                             } else {
-                                                toast.error("ニュースの削除に失敗しました。", {
+                                                toast.error("削除に失敗しました。", {
                                                     duration: 2000,
                                                 });
                                             }
@@ -609,7 +638,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
     const initializer = useInitNewsAtom();
     const [openEditor, setOpenEditor] = useState(false);
     const [newsid, setNewsId] = useState(createId());
-    const [newsDate, setNewsDate] = useState(new Date());
+    const [newsDate, setNewsDate] = useState(currentDate());
     return (
         <>
             <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
@@ -621,7 +650,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         onClick={() => {
                             setOpenEditor(true);
                             setNewsId(createId());
-                            setNewsDate(new Date());
+                            setNewsDate(currentDate());
                         }}
                     >
                         <ListPlus />

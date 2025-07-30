@@ -1,4 +1,4 @@
-export enum ChangeNewsSafeResult {
+export enum UpdateResult {
     Success,
     Invalid,
     NoChange,
