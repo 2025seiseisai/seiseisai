@@ -1,4 +1,14 @@
 import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -13,7 +23,7 @@ import {
     NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { auth } from "@/impl/auth";
-import { LogIn, User } from "lucide-react";
+import { LogIn, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { LogoutButton } from "./logout-button";
@@ -26,7 +36,7 @@ export default async function Header() {
                 <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
                 <NavigationMenu className="h-full w-full">
                     <NavigationMenuList className="gap-0.5">
-                        {session?.user && (
+                        {session && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/" className="font-medium">
@@ -35,7 +45,7 @@ export default async function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         )}
-                        {session?.user.authorityNews && (
+                        {session?.authorityNews && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/news" className="font-medium">
@@ -44,7 +54,7 @@ export default async function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         )}
-                        {session?.user.authorityGoods && (
+                        {session?.authorityGoods && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/goods" className="font-medium">
@@ -53,7 +63,7 @@ export default async function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         )}
-                        {session?.user.authorityTickets && (
+                        {session?.authorityTickets && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/tickets" className="font-medium">
@@ -62,7 +72,7 @@ export default async function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         )}
-                        {session?.user.authorityAdmins && (
+                        {session?.authorityAdmins && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/admins" className="font-medium">
@@ -80,18 +90,37 @@ export default async function Header() {
                                 <Button variant="ghost">
                                     <User />
                                     <p className="w-full max-w-40 overflow-hidden text-nowrap text-ellipsis">
-                                        {session.user.name}
+                                        {session.name}
                                     </p>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuLabel>
-                                    <p className="text-[16px]">{session.user.name}</p>
-                                    <p className="mt-1 text-xs font-normal text-gray-500">ID: {session.user.id}</p>
+                                    <p className="text-[16px]">{session.name}</p>
+                                    <p className="mt-1 text-xs font-normal text-gray-500">ID: {session.id}</p>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                    <LogoutButton />
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="ghost" className="w-full" size="sm">
+                                                <LogOut />
+                                                ログアウト
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>ログアウトしますか？</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    現在のセッションを終了し、ログイン画面に戻ります。
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                                <LogoutButton />
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

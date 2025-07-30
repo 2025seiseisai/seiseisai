@@ -1,20 +1,15 @@
 "use client";
-import { LogOut } from "lucide-react";
+import { AlertDialogAction } from "@/components/ui/alert-dialog";
 import { signOut } from "next-auth/react";
-import { Button } from "../ui/button";
 
 export function LogoutButton() {
     return (
-        <Button
-            variant="ghost"
-            className="w-full"
-            size="sm"
+        <AlertDialogAction
             onClick={() => {
                 signOut({ redirectTo: "/login" });
             }}
         >
-            <LogOut />
             ログアウト
-        </Button>
+        </AlertDialogAction>
     );
 }

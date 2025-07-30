@@ -1,18 +1,23 @@
 import crypto from "crypto";
-import NextAuth, { Session } from "next-auth";
-import type { JWT } from "next-auth/jwt";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { AdminModel, getAdminById, getAdminByName, getAdminPassword } from "./database";
+import { cache } from "react";
+import { getAdminById, getAdminByName, getAdminPassword } from "./database";
 import { signInSchema } from "./zod";
 
-export const { signIn, signOut, auth, handlers } = NextAuth({
+const {
+    signIn,
+    signOut,
+    auth: authInternal,
+    handlers,
+} = NextAuth({
     providers: [
         CredentialsProvider({
             credentials: {
                 name: { label: "Name", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials): Promise<AdminModel | null> {
+            async authorize(credentials) {
                 try {
                     const { name, password } = await signInSchema.parseAsync(credentials);
                     const user = await getAdminByName(name);
@@ -30,7 +35,9 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
                     ) {
                         return null;
                     }
-                    return user;
+                    return {
+                        adminId: user.id,
+                    };
                 } catch {
                     return null;
                 }
@@ -45,20 +52,20 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         strategy: "jwt",
     },
     callbacks: {
-        async jwt({ token, user }): Promise<JWT> {
+        async jwt({ token, user }) {
             if (user) {
                 token = {
                     ...token,
-                    ...user,
+                    adminId: user.adminId,
                 };
             }
             return token;
         },
-        async session({ session, token }): Promise<Session> {
+        async session({ session, token }) {
             if (token) {
                 session.user = {
                     ...session.user,
-                    ...token,
+                    adminId: token.adminId,
                 };
             }
             return session;
@@ -74,10 +81,12 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
     },
 });
 
-export async function getAuthSession() {
-    const session = await auth();
-    if (!session || !session.user || typeof session.user.id !== "string") return null;
-    const admin = await getAdminById(session.user.id);
+export { handlers, signIn, signOut };
+
+export const auth = cache(async () => {
+    const session = await authInternal();
+    if (!session || !session.user || typeof session.user.adminId !== "string") return null;
+    const admin = await getAdminById(session.user.adminId);
     if (!admin) return null;
     return admin;
-}
+});

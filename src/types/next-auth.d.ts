@@ -1,15 +1,19 @@
-import type { AdminModel } from "@/impl/database";
+import "next-auth";
+import "next-auth/jwt";
 
 declare module "next-auth" {
     interface Session {
-        user: AdminModel;
+        user: {
+            adminId: string;
+        };
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    interface User extends AdminModel {}
+    interface User {
+        adminId: string;
+    }
 }
 
 declare module "next-auth/jwt" {
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    interface JWT extends AdminModel {}
+    interface JWT {
+        adminId: string;
+    }
 }

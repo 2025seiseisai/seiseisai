@@ -69,7 +69,25 @@ function AdminSettings({ admin }: { admin: AdminModel }) {
                             }}
                         >
                             <Pencil />
-                            編集
+                            名前の編集
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={(e) => {
+                                e.preventDefault();
+                                //setOpenEditDialog(true);
+                            }}
+                        >
+                            <Pencil />
+                            パスワードの編集
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={(e) => {
+                                e.preventDefault();
+                                //setOpenEditDialog(true);
+                            }}
+                        >
+                            <Pencil />
+                            権限の編集
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             variant="destructive"
