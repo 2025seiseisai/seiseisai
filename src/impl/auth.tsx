@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cache } from "react";
 import { z } from "zod";
+import { AuthProvider } from "./auth-client";
 import { getAdminById, getAdminByName, getAdminPassword } from "./database";
 
 const signInSchema = z.object({
@@ -102,3 +103,8 @@ export const auth = cache(async () => {
     }
     return admin;
 });
+
+export async function SessionProvider({ children }: { children: React.ReactNode }) {
+    const session = await auth();
+    return <AuthProvider session={session}>{children}</AuthProvider>;
+}

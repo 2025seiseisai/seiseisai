@@ -154,6 +154,11 @@ function AdminEditor({
             } else if (result === UpdateResult.Overwrite) {
                 setOverwriteWarning(true);
                 return;
+            } else if (result === UpdateResult.NameExists) {
+                toast.error("名前が重複しています。", {
+                    duration: 2000,
+                });
+                return;
             } else if (result === UpdateResult.NotFound) {
                 toast.error("IDが見つかりません。", {
                     duration: 2000,
@@ -536,7 +541,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
     const admins = useAtomValue(adminsAtom);
     const initializer = useInitAdminsAtom();
     const [adminId, setAdminId] = useState("");
-    const [openEditor, setOpenEditor] = useState(false);
+    const [editorOpen, setEditorOpen] = useState(false);
     return (
         <>
             <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
@@ -547,7 +552,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
                         size="sm"
                         onClick={() => {
                             setAdminId(createId());
-                            setOpenEditor(true);
+                            setEditorOpen(true);
                         }}
                     >
                         <ListPlus />
@@ -565,7 +570,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
                     ))}
                 </div>
             </div>
-            <AdminEditor placeholder={getEmptyAdmin(adminId)} create open={openEditor} setOpen={setOpenEditor} />
+            <AdminEditor placeholder={getEmptyAdmin(adminId)} create open={editorOpen} setOpen={setEditorOpen} />
         </>
     );
 }

@@ -1,5 +1,5 @@
 "use server";
-import type { AdminModel, NewsModel } from "@/impl/models";
+import type { AdminModel, GoodsModel, NewsModel } from "@/impl/models";
 import { auth } from "./auth";
 import * as Operations from "./database";
 
@@ -61,4 +61,32 @@ export async function updateNewsUnsafe(new_data: NewsModel) {
 export async function createNews(data: NewsModel) {
     if (!(await auth())?.authorityNews) return null;
     return await Operations.createNews(data);
+}
+
+export async function getAllGoods() {
+    const session = await auth();
+    if (!session || (!session.authorityGoods && !session.authorityGoodsStock)) return null;
+    return await Operations.getAllGoods();
+}
+
+export async function createGoods(goods: GoodsModel) {
+    if (!(await auth())?.authorityGoods) return null;
+    return await Operations.createGoods(goods);
+}
+
+export async function deleteGoods(id: string) {
+    if (!(await auth())?.authorityGoods) return null;
+    return await Operations.deleteGoods(id);
+}
+
+export async function updateGoodsSafe(prev_data: GoodsModel, new_data: GoodsModel) {
+    const session = await auth();
+    if (!session || (!session.authorityGoods && !session.authorityGoodsStock)) return null;
+    return await Operations.updateGoodsSafe(prev_data, new_data, session.authorityGoods);
+}
+
+export async function updateGoodsUnsafe(new_data: GoodsModel) {
+    const session = await auth();
+    if (!session || (!session.authorityGoods && !session.authorityGoodsStock)) return null;
+    return await Operations.updateGoodsUnsafe(new_data, session.authorityGoods);
 }

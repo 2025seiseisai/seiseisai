@@ -1,5 +1,5 @@
 import { PrismaClient } from "@/generated/prisma/client";
-import { AdminModel, NewsModel } from "@/generated/prisma/models";
+import { AdminModel, GoodsModel, NewsModel } from "@/impl/models";
 import { UpdateResult } from "@/impl/update-result";
 import crypto from "crypto";
 
@@ -81,12 +81,18 @@ export async function getAllAdmins() {
 
 export async function createAdmin(admin: AdminModel, password: string) {
     if (admin.id === "superadmin" || password.length < 8) return null;
-    const count = await dbClient.admin.count({
+    const count1 = await dbClient.admin.count({
         where: {
             id: admin.id,
         },
     });
-    if (count > 0) return null;
+    if (count1 > 0) return null;
+    const count2 = await dbClient.admin.count({
+        where: {
+            name: admin.name,
+        },
+    });
+    if (count2 > 0) return null;
     const hashedPassword = crypto
         .createHash("sha256")
         .update(password + process.env.HASH_SALT)
@@ -138,6 +144,15 @@ export async function updateAdminSafe(prev_data: AdminModel, new_data: AdminMode
         },
     });
     if (!current) return UpdateResult.NotFound;
+    const nameExists = await dbClient.admin.count({
+        where: {
+            name: new_data.name,
+            id: {
+                not: id,
+            },
+        },
+    });
+    if (nameExists > 0) return UpdateResult.NameExists;
     const assign: Partial<AdminModel> = {};
     if (prev_data.name !== new_data.name) {
         if (current.name !== prev_data.name) return UpdateResult.Overwrite;
@@ -248,4 +263,114 @@ export async function createNews(news: NewsModel) {
     return await dbClient.news.create({
         data: news,
     });
+}
+
+export async function getAllGoods() {
+    return await dbClient.goods.findMany({
+        orderBy: {
+            name: "asc",
+        },
+    });
+}
+
+export async function getGoodsByName(name: string) {
+    return await dbClient.goods.findUnique({
+        where: {
+            name,
+        },
+    });
+}
+
+export async function createGoods(goods: GoodsModel) {
+    const count1 = await dbClient.goods.count({
+        where: {
+            id: goods.id,
+        },
+    });
+    if (count1 > 0) return null;
+    const count2 = await dbClient.goods.count({
+        where: {
+            name: goods.name,
+        },
+    });
+    if (count2 > 0) return null;
+    return await dbClient.goods.create({
+        data: goods,
+    });
+}
+
+export async function deleteGoods(id: string) {
+    return await dbClient.goods.delete({
+        where: {
+            id,
+        },
+    });
+}
+
+export async function updateGoodsSafe(prev_data: GoodsModel, new_data: GoodsModel, allow_name_change = false) {
+    if (prev_data.id !== new_data.id) return UpdateResult.Invalid;
+    if (!allow_name_change && prev_data.name !== new_data.name) return UpdateResult.Invalid;
+    const id = prev_data.id;
+    const current = await dbClient.goods.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!current) return UpdateResult.NotFound;
+    if (!allow_name_change && current.name !== prev_data.name) return UpdateResult.Invalid;
+    const nameExists = await dbClient.goods.count({
+        where: {
+            name: new_data.name,
+            id: {
+                not: id,
+            },
+        },
+    });
+    if (nameExists > 0) return UpdateResult.NameExists;
+    const assign: Partial<GoodsModel> = {};
+    if (prev_data.name !== new_data.name) {
+        if (current.name !== prev_data.name) return UpdateResult.Overwrite;
+        else assign.name = new_data.name;
+    }
+    if (prev_data.stock !== new_data.stock) {
+        if (current.stock !== prev_data.stock) return UpdateResult.Overwrite;
+        else assign.stock = new_data.stock;
+    }
+    if (Object.keys(assign).length === 0) return UpdateResult.NoChange;
+    await dbClient.goods.update({
+        where: {
+            id,
+        },
+        data: assign,
+    });
+    return UpdateResult.Success;
+}
+
+export async function updateGoodsUnsafe(new_data: GoodsModel, allow_name_change = false) {
+    if (allow_name_change) {
+        const result = await dbClient.goods.updateMany({
+            where: {
+                id: new_data.id,
+            },
+            data: new_data,
+        });
+        return result.count > 0 ? true : null;
+    } else {
+        const current = await dbClient.goods.findUnique({
+            where: {
+                id: new_data.id,
+            },
+        });
+        if (!current) return null;
+        if (current.name !== new_data.name) return null;
+        const result = await dbClient.goods.updateMany({
+            where: {
+                id: new_data.id,
+            },
+            data: {
+                stock: new_data.stock,
+            },
+        });
+        return result.count > 0 ? true : null;
+    }
 }

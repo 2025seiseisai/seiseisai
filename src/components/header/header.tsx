@@ -54,7 +54,7 @@ export default async function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         )}
-                        {session?.authorityGoods && (
+                        {(session?.authorityGoods || session?.authorityGoodsStock) && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Link href="/goods" className="font-medium">
