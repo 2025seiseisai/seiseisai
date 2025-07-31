@@ -1,4 +1,5 @@
 import Footer from "@/components/footer/footer";
+import FullscreenButton from "@/components/fullscreen/fullscreen";
 import Header from "@/components/header/header";
 import { Toaster } from "@/components/ui/sonner";
 import "@/impl/global.css";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Header />
                 <main>{children}</main>
                 <Footer />
+                <FullscreenButton />
                 <Toaster richColors theme="light" />
             </body>
         </html>
