@@ -22,6 +22,10 @@ export const dynamic = "force-dynamic";
 
 export default function LogInForm() {
     "use no memo";
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    if (!siteKey) {
+        throw new Error("NEXT_PUBLIC_TURNSTILE_SITE_KEY is not set");
+    }
     const [submitting, setSubmitting] = useState(false);
     const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
     const form = useForm({
@@ -87,7 +91,7 @@ export default function LogInForm() {
                             />
                         </div>
                         <TurnstileWidget
-                            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                            siteKey={siteKey}
                             onVerify={(token) => setTurnstileToken(token)}
                             theme="light"
                             className="mt-4 mb-0"
