@@ -648,9 +648,9 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                            setOpenEditor(true);
                             setNewsId(createId());
                             setNewsDate(currentDate());
+                            setOpenEditor(true);
                         }}
                     >
                         <ListPlus />
