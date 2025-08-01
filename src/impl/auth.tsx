@@ -56,6 +56,7 @@ const {
     secret: process.env.AUTH_SECRET,
     session: {
         strategy: "jwt",
+        maxAge: 12 * 60 * 60,
     },
     callbacks: {
         async jwt({ token, user }) {
