@@ -9,6 +9,7 @@ import { getAdminById, getAdminByName, getAdminPassword } from "./database";
 const signInSchema = z.object({
     name: z.string().min(1).max(256),
     password: z.string().min(1).max(256),
+    turnstileToken: z.string().min(1).max(4096),
 });
 
 export function getHashedPassword(password: string) {
@@ -29,10 +30,31 @@ const {
             credentials: {
                 name: { label: "Name", type: "text" },
                 password: { label: "Password", type: "password" },
+                turnstileToken: { label: "Turnstile Token", type: "hidden" },
             },
             async authorize(credentials) {
                 try {
-                    const { name, password } = await signInSchema.parseAsync(credentials);
+                    const parsed = await signInSchema.safeParseAsync(credentials);
+                    if (!parsed.success) {
+                        return null;
+                    }
+
+                    const { name, password, turnstileToken } = parsed.data;
+
+                    const secretKey = process.env.TURNSTILE_SECRET_KEY!;
+                    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: new URLSearchParams({
+                            secret: secretKey,
+                            response: turnstileToken,
+                        }),
+                    });
+                    const verifyData = await verifyRes.json();
+                    if (!verifyData || !verifyData.success) {
+                        return null;
+                    }
+
                     const user = await getAdminByName(name);
                     if (!user) {
                         return null;

@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { login } from "@/impl/auth-actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -36,23 +36,22 @@ export default function LogInForm() {
         },
     });
     const searchParams = useSearchParams();
-    const error = searchParams.get("error");
-    const message = error
-        ? error === "1"
-            ? "管理者名またはパスワードが間違っています。"
-            : error === "3"
-              ? "検証に失敗しました。"
-              : "もう一度お試しください。"
-        : null;
+    const failed = searchParams.get("error") !== null;
     async function onSubmit(data: z.infer<typeof signInSchema>) {
         if (!turnstileToken) {
             // eslint-disable-next-line react-compiler/react-compiler
-            window.location.href = "/login?error=3";
+            window.location.href = "/login?error";
             return;
         }
         setSubmitting(true);
-        const redirectURL = await login(data.name, data.password, turnstileToken);
-        window.location.href = redirectURL;
+        const result = await signIn("credentials", {
+            name: data.name,
+            password: data.password,
+            turnstileToken: turnstileToken,
+            redirect: false,
+        });
+        const error = result.error;
+        window.location.href = error ? `/login?error` : "/";
     }
     return (
         <Form {...form}>
@@ -99,11 +98,11 @@ export default function LogInForm() {
                         />
                     </CardContent>
                     <CardFooter className="flex-col gap-2">
-                        {message && (
+                        {failed && (
                             <Alert variant="destructive">
                                 <AlertCircleIcon />
                                 <AlertTitle>ログインに失敗しました</AlertTitle>
-                                <AlertDescription>{message}</AlertDescription>
+                                <AlertDescription>管理者名またはパスワードを確認してください。</AlertDescription>
                             </Alert>
                         )}
                         <Button type="submit" className="w-full" disabled={submitting}>
