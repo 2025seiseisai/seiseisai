@@ -1,4 +1,11 @@
-export default function HelpPage() {
+import { auth } from "@/impl/auth";
+import { notFound } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+
+export default async function HelpPage() {
+    if (!(await auth())?.authorityNews) notFound();
+
     return (
         <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[39rem]">
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
