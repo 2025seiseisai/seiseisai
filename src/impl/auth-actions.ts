@@ -1,6 +1,5 @@
 "use server";
 import { signIn } from "@/impl/auth";
-import { redirect } from "next/navigation";
 
 export async function login(name: string, password: string, turnstileToken: string) {
     const secretKey = process.env.TURNSTILE_SECRET_KEY!;
@@ -14,7 +13,7 @@ export async function login(name: string, password: string, turnstileToken: stri
     });
     const verifyData = await verifyRes.json();
     if (!verifyData.success) {
-        redirect(`/login?error=3`);
+        return "/login?error=3";
     }
     try {
         await signIn("credentials", {
@@ -24,9 +23,9 @@ export async function login(name: string, password: string, turnstileToken: stri
         });
     } catch (err) {
         if (err instanceof Error) {
-            redirect(`/login?error=1`);
+            return "/login?error=1";
         }
-        redirect(`/login?error=2`);
+        return `/login?error=2`;
     }
-    redirect("/");
+    return "/";
 }

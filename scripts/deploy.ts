@@ -1,13 +1,6 @@
 import { execSync } from "child_process";
 
-/**
- * シェルコマンドを実行します。
- * @param {string} cmd - 実行するコマンド。
- * @param {string} errorMsg - エラー時に表示するメッセージ。
- * @param {boolean} [captureOutput=false] - 出力をキャプチャして返すかどうか。
- * @returns {string|undefined} captureOutputがtrueの場合は標準出力、それ以外はundefined。
- */
-function runCommand(cmd, errorMsg, captureOutput = false) {
+function runCommand(cmd: string, errorMsg: string, captureOutput = false) {
     try {
         console.log(`▶️ Running: ${cmd}`);
         if (captureOutput) {
@@ -18,10 +11,8 @@ function runCommand(cmd, errorMsg, captureOutput = false) {
             execSync(cmd, { stdio: "inherit" });
             return undefined;
         }
-    } catch (error) {
+    } catch {
         console.error(`❌ ${errorMsg}`);
-        // エラーオブジェクトには stderr も含まれることが多い
-        console.error(error.stderr || error.message);
         process.exit(1);
     }
 }
@@ -41,6 +32,12 @@ runCommand(`git pull origin ${branch}`, `Failed to pull latest changes from ${br
 
 console.log("📦 Installing dependencies...");
 runCommand("bun install", "bun install failed");
+
+console.log("🔄 Running Prisma db push...");
+runCommand("bun prisma db push", "Prisma db push failed");
+
+console.log("👤 Inserting superadmin...");
+runCommand("bun ./scripts/insert-superadmin.ts", "Failed to insert superadmin");
 
 console.log("🔨 Building project...");
 runCommand("bun run build", "Build failed");

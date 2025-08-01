@@ -51,8 +51,8 @@ export default function LogInForm() {
             return;
         }
         setSubmitting(true);
-        await login(data.name, data.password, turnstileToken);
-        window.location.reload();
+        const redirectURL = await login(data.name, data.password, turnstileToken);
+        window.location.href = redirectURL;
     }
     return (
         <Form {...form}>

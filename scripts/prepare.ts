@@ -1,7 +1,7 @@
 import childProcess from "child_process";
 import fs from "fs";
 import extensions from "../.vscode/extensions.json" with { type: "json" };
-function checkEnvFile(name) {
+function checkEnvFile(name: string) {
     if (process.env[name] === undefined) {
         console.error(`Error: ${name} is not set. Please set it in .env.`);
         process.exit(1);

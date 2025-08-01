@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "deploy": "bun ./scripts/deploy.mjs",
-        "dev": "bun --env-file=.env ./scripts/prepare.mjs && bun install && prisma generate && opener http://localhost:3001 && next dev --turbopack --port 3001",
-        "build": "prisma generate && prisma db push && next build",
+        "deploy": "bun ./scripts/deploy.ts",
+        "dev": "bun --env-file=.env ./scripts/prepare.ts && bun install && prisma generate && opener http://localhost:3001 && bun ./scripts/insert-superadmin.ts && next dev --turbopack --port 3001",
+        "build": "next build",
         "start": "next start --port 3001",
         "lint": "next lint && stylelint \"src/**/*.(scss|less|css)\" && prettier --check .",
         "format": "next lint --fix && stylelint \"src/**/*.(scss|less|css)\" --fix && prettier --write .",
