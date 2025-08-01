@@ -1,13 +1,13 @@
 import { PrismaClient } from "@/generated/prisma/client";
+import { getHashedPassword } from "@/impl/auth";
 import { AdminModel, GoodsModel, NewsModel } from "@/impl/models";
 import { UpdateResult } from "@/impl/update-result";
-import crypto from "crypto";
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const dbClient = globalForPrisma.prisma || new PrismaClient();
 if (!globalForPrisma.prisma) {
     if (process.env.SUPERADMIN_HASHED_PASSWORD === undefined) {
-        console.error("SUPERADMIN_HASHED_PASSWORD is not set in the environment variables.");
+        throw new Error("SUPERADMIN_HASHED_PASSWORD is not set.");
     }
 
     await dbClient.admin.deleteMany({
@@ -93,17 +93,13 @@ export async function createAdmin(admin: AdminModel, password: string) {
         },
     });
     if (count2 > 0) return null;
-    const hashedPassword = crypto
-        .createHash("sha256")
-        .update(password + process.env.HASH_SALT)
-        .digest("hex");
     await dbClient.admin.create({
         data: admin,
     });
     await dbClient.adminPassword.create({
         data: {
             adminId: admin.id,
-            hashedPassword,
+            hashedPassword: getHashedPassword(password),
         },
     });
 }
@@ -119,16 +115,12 @@ export async function deleteAdmin(id: string) {
 
 export async function updateAdminPassword(id: string, new_password: string) {
     if (id === "superadmin" || new_password.length < 8) return null;
-    const hashedPassword = crypto
-        .createHash("sha256")
-        .update(new_password + process.env.HASH_SALT)
-        .digest("hex");
     const result = await dbClient.adminPassword.updateMany({
         where: {
             adminId: id,
         },
         data: {
-            hashedPassword,
+            hashedPassword: getHashedPassword(new_password),
         },
     });
     return result.count > 0 ? true : null;

@@ -11,6 +11,13 @@ const signInSchema = z.object({
     password: z.string().min(1).max(256),
 });
 
+export function getHashedPassword(password: string) {
+    return crypto
+        .createHash("sha256")
+        .update(password + process.env.HASH_SALT)
+        .digest("hex");
+}
+
 const {
     signIn,
     signOut,
@@ -31,14 +38,7 @@ const {
                         return null;
                     }
                     const expected = await getAdminPassword(user.id);
-                    if (
-                        !expected ||
-                        expected.hashedPassword !==
-                            crypto
-                                .createHash("sha256")
-                                .update(password + process.env.HASH_SALT)
-                                .digest("hex")
-                    ) {
+                    if (!expected || expected.hashedPassword !== getHashedPassword(password)) {
                         return null;
                     }
                     return {

@@ -44,14 +44,15 @@ export default function LogInForm() {
               ? "検証に失敗しました。"
               : "もう一度お試しください。"
         : null;
-    function onSubmit(data: z.infer<typeof signInSchema>) {
+    async function onSubmit(data: z.infer<typeof signInSchema>) {
         if (!turnstileToken) {
             // eslint-disable-next-line react-compiler/react-compiler
             window.location.href = "/login?error=3";
             return;
         }
         setSubmitting(true);
-        login(data.name, data.password, turnstileToken);
+        await login(data.name, data.password, turnstileToken);
+        window.location.reload();
     }
     return (
         <Form {...form}>
