@@ -37,7 +37,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Markdown, { Components } from "react-markdown";
 import { Tweet } from "react-tweet";
 import remarkBreaks from "remark-breaks";
@@ -332,6 +332,13 @@ function NewsEditor({
     const [dateValue, setDateValue] = useState(placeholder.date);
     const [contentValue, setContentValue] = useState(placeholder.content);
     const [importanceValue, setImportanceValue] = useState(placeholder.importance);
+    useEffect(() => {
+        setIdValue(placeholder.id);
+        setTitleValue(placeholder.title);
+        setDateValue(placeholder.date);
+        setContentValue(placeholder.content);
+        setImportanceValue(placeholder.importance);
+    }, [placeholder, create]);
     const [datePickerOpen, setDatePickerOpen] = useState(false);
     const [overwriteWarning, setOverwriteWarning] = useState(false);
     const initializer = useInitNewsAtom();
@@ -636,7 +643,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
     useHydrateAtoms([[newsAtom, initialnews]]);
     const news = useAtomValue(newsAtom);
     const initializer = useInitNewsAtom();
-    const [openEditor, setOpenEditor] = useState(false);
+    const [editorOpen, setEditorOpen] = useState(false);
     const [newsid, setNewsId] = useState("");
     const [newsDate, setNewsDate] = useState(currentDate());
     return (
@@ -650,7 +657,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         onClick={() => {
                             setNewsId(createId());
                             setNewsDate(currentDate());
-                            setOpenEditor(true);
+                            setEditorOpen(true);
                         }}
                     >
                         <ListPlus />
@@ -678,8 +685,8 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                 </Table>
             </div>
             <NewsEditor
-                open={openEditor}
-                setOpen={setOpenEditor}
+                open={editorOpen}
+                setOpen={setEditorOpen}
                 placeholder={{
                     id: newsid,
                     title: "",
