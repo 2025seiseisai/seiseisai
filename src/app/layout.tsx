@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ja" className={notoSansJP.className}>
             <body suppressHydrationWarning>

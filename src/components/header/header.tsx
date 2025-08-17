@@ -66,7 +66,7 @@ export default async function Header() {
                         {process.env.NODE_ENV === "development" && session?.authorityTickets && (
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/tickets" className="font-medium">
+                                    <Link href="/ticket" className="font-medium">
                                         チケット
                                     </Link>
                                 </NavigationMenuLink>
