@@ -51,8 +51,7 @@
     },
     "code-runner.executorMap": {
         "javascript": "bun",
-        "typescript": "bun",
-        "prisma": "echo Reflecting $fileName... && \"./node_modules/.bin/prisma\" db push"
+        "typescript": "bun"
     },
     "code-runner.runInTerminal": true,
     "code-runner.cwd": "${workspaceFolder}",
