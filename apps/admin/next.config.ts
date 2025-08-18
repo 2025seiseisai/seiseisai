@@ -4,7 +4,9 @@ const nextConfig: NextConfig = {
     /* config options here */
     experimental: {
         reactCompiler: true,
+        externalDir: true,
     },
+    transpilePackages: ["@seiseisai/database", "@seiseisai/ui"],
     turbopack: {
         rules: {
             "*.svg": {
