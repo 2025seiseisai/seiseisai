@@ -32,7 +32,7 @@ export default function FullscreenButton() {
             variant="secondary"
             size="icon"
             id="fullscreen-button"
-            className="fixed right-6 bottom-6 h-8 w-8 p-0"
+            className="fixed right-6 bottom-6 size-8 p-0"
             onClick={() => {
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen();

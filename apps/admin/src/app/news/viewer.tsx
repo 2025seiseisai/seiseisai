@@ -574,7 +574,7 @@ function NewsContent({ news }: { news: NewsModel }) {
             <TableCell>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="size-8 p-0">
                             <MoreHorizontal />
                         </Button>
                     </DropdownMenuTrigger>
@@ -663,7 +663,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         <ListPlus />
                         追加
                     </Button>
-                    <Separator orientation="vertical" className="!h-6" />
+                    <Separator orientation="vertical" className="h-6!" />
                     <Button variant="ghost" size="sm" onClick={() => initializer()}>
                         <ListRestart />
                         更新

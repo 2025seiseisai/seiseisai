@@ -93,7 +93,7 @@ function NavigationMenuContent({ className, ...props }: React.ComponentProps<typ
                 group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5
                 group-data-[viewport=false]/navigation-menu:overflow-hidden
                 group-data-[viewport=false]/navigation-menu:rounded-md
-                group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow
+                group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:shadow-sm
                 group-data-[viewport=false]/navigation-menu:duration-200
                 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none`,
                 className,
@@ -114,8 +114,8 @@ function NavigationMenuViewport({
                 className={cn(
                     `origin-top-center bg-popover text-popover-foreground data-[state=open]:animate-in
                     data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90
-                    relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md
-                    border shadow md:w-[var(--radix-navigation-menu-viewport-width)]`,
+                    relative mt-1.5 h-(--radix-navigation-menu-viewport-height) w-full overflow-hidden rounded-md
+                    border shadow-sm md:w-(--radix-navigation-menu-viewport-width)`,
                     className,
                 )}
                 {...props}
@@ -156,7 +156,7 @@ function NavigationMenuIndicator({
             )}
             {...props}
         >
-            <div className="bg-border relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm shadow-md" />
+            <div className="bg-border relative top-[60%] size-2  rotate-45 rounded-tl-sm shadow-md" />
         </NavigationMenuPrimitive.Indicator>
     );
 }

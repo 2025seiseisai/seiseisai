@@ -34,7 +34,7 @@ export default async function Header() {
         <>
             <header className="fixed z-10 flex h-14 w-full items-center bg-white">
                 <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
-                <NavigationMenu className="h-full w-full">
+                <NavigationMenu className="size-full">
                     <NavigationMenuList className="gap-0.5">
                         {session && (
                             <NavigationMenuItem>

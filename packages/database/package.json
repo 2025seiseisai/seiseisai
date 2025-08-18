@@ -14,8 +14,8 @@
         }
     },
     "scripts": {
-        "lint": "eslint . --ext .ts,.tsx",
-        "check-types": "prisma generate && tsc --noEmit",
-        "format": "prettier --write ."
+        "lint": "eslint . && prettier --check .",
+        "format": "eslint . --fix && prettier --write .",
+        "check-types": "prisma generate && tsc --noEmit"
     }
 }

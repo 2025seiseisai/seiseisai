@@ -2,5 +2,7 @@
     "tabWidth": 4,
     "printWidth": 120,
     "endOfLine": "lf",
-    "plugins": ["prettier-plugin-classnames"]
+    "tailwindStylesheet": "./packages/ui/src/styles/globals.css",
+    "tailwindFunctions": ["clsx", "twMerge", "cn"],
+    "plugins": ["prettier-plugin-tailwindcss"]
 }

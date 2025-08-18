@@ -13,8 +13,8 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
     ...compat.extends("next/core-web-vitals", "next/typescript"),
+    reactCompiler.configs.recommended,
     {
-        files: ["**/*.{jsx,tsx}"],
         languageOptions: {
             parserOptions: {
                 ecmaFeatures: {
@@ -26,28 +26,28 @@ const eslintConfig = [
             "better-tailwindcss": eslintPluginBetterTailwindcss,
         },
         rules: {
-            ...eslintPluginBetterTailwindcss.configs["recommended-warn"].rules,
-            ...eslintPluginBetterTailwindcss.configs["recommended-error"].rules,
-            "better-tailwindcss/no-unnecessary-whitespace": "off",
-            "better-tailwindcss/multiline": "off",
             "better-tailwindcss/enforce-consistent-line-wrapping": "off",
+            "better-tailwindcss/enforce-consistent-class-order": "off",
+            "better-tailwindcss/enforce-consistent-variable-syntax": "error",
+            "better-tailwindcss/enforce-consistent-important-position": "error",
+            "better-tailwindcss/enforce-shorthand-classes": "error",
+            "better-tailwindcss/no-duplicate-classes": "error",
+            "better-tailwindcss/no-deprecated-classes": "error",
+            "better-tailwindcss/no-unnecessary-whitespace": "off",
+            "better-tailwindcss/no-unregistered-classes": "error",
+            "better-tailwindcss/no-conflicting-classes": "error",
         },
         settings: {
             "better-tailwindcss": {
-                printWidth: 120,
-                indent: 4,
-                entryPoint: "./packages/ui/entryPoint.css",
+                entryPoint: "../../packages/ui/src/styles/globals.css",
             },
         },
     },
-    reactCompiler.configs.recommended,
     {
-        ignores: ["./packages/ui/src/*"],
-    },
-    {
-        files: ["./packages/ui/src/**/*.{js,ts,jsx,tsx}"],
-        rules: {
-            "import/order": "off",
+        settings: {
+            next: {
+                rootDir: ["../../apps/admin"],
+            },
         },
     },
 ];

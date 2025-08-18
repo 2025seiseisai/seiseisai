@@ -14,7 +14,8 @@
         }
     },
     "scripts": {
-        "lint": "",
+        "lint": "eslint . && prettier --check .",
+        "format": "eslint . --fix && prettier --write .",
         "check-types": "tsc --noEmit"
     }
 }

@@ -264,10 +264,7 @@ function AdminEditor({
                                             control={form.control}
                                             name={key as keyof z.infer<typeof adminSchema>}
                                             render={({ field }) => (
-                                                <FormItem
-                                                    className="mt-1 flex w-full items-center gap-2 text-[13px] sm:w-auto
-                                                        sm:flex-1/3"
-                                                >
+                                                <FormItem className="mt-1 flex w-full items-center gap-2 text-[13px] sm:w-auto sm:flex-1/3">
                                                     <FormControl>
                                                         <Checkbox
                                                             checked={field.value as boolean}
@@ -468,7 +465,7 @@ function AdminSettings({ admin }: { admin: AdminModel }) {
                     <DropdownMenu>
                         {admin.id !== "superadmin" && (
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="mr-6 h-8 w-8 p-0">
+                                <Button variant="ghost" className="mr-6 size-8 p-0">
                                     <MoreHorizontal />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -561,7 +558,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
                         <ListPlus />
                         追加
                     </Button>
-                    <Separator orientation="vertical" className="!h-6" />
+                    <Separator orientation="vertical" className="h-6!" />
                     <Button variant="ghost" size="sm" onClick={() => initializer()}>
                         <ListRestart />
                         更新

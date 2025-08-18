@@ -345,7 +345,7 @@ function GoodsCard({ goods }: { goods: GoodsModel }) {
                     {session.authorityGoods ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="mr-6 h-8 w-8 p-0">
+                                <Button variant="ghost" className="mr-6 size-8 p-0">
                                     <MoreHorizontal />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -375,7 +375,7 @@ function GoodsCard({ goods }: { goods: GoodsModel }) {
                         <Button
                             variant="secondary"
                             size="icon"
-                            className="mr-5 ml-1 h-8 w-8 self-center p-0"
+                            className="mr-5 ml-1 size-8 self-center p-0"
                             onClick={(e) => {
                                 e.preventDefault();
                                 setEditorOpen(true);
@@ -428,7 +428,7 @@ export default function GoodsViewer({ initgoods }: { initgoods: GoodsModel[] }) 
                                 <ListPlus />
                                 追加
                             </Button>
-                            <Separator orientation="vertical" className="!h-6" />
+                            <Separator orientation="vertical" className="h-6!" />
                         </>
                     )}
                     <Button variant="ghost" size="sm" onClick={() => initializer()}>
