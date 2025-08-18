@@ -1,11 +1,11 @@
 "use client";
 import TurnstileWidget from "@/components/TurnstileWidget";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription, AlertTitle } from "@seiseisai/ui/components/alert";
+import { Button } from "@seiseisai/ui/components/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@seiseisai/ui/components/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@seiseisai/ui/components/form";
+import { Input } from "@seiseisai/ui/components/input";
 import { AlertCircleIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";

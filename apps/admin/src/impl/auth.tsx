@@ -1,10 +1,10 @@
+import { getAdminById, getAdminByName, getAdminPassword } from "@seiseisai/database";
 import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cache } from "react";
 import { z } from "zod";
 import { AuthProvider } from "./auth-client";
-import { getAdminById, getAdminByName, getAdminPassword } from "./database";
 
 const signInSchema = z.object({
     name: z.string().min(1).max(256),

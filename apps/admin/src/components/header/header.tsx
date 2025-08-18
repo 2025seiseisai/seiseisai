@@ -1,3 +1,4 @@
+import { auth } from "@/impl/auth";
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -7,7 +8,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@seiseisai/ui/components/alert-dialog";
+import { Button } from "@seiseisai/ui/components/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,17 +17,15 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@seiseisai/ui/components/dropdown-menu";
 import {
     NavigationMenu,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-} from "@/components/ui/navigation-menu";
-import { auth } from "@/impl/auth";
+} from "@seiseisai/ui/components/navigation-menu";
 import { LogIn, LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { LogoutButton } from "./logout-button";
 
 export default async function Header() {

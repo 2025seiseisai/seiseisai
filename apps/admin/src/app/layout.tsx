@@ -1,8 +1,9 @@
 import Footer from "@/components/footer/footer";
 import FullscreenButton from "@/components/fullscreen/fullscreen";
 import Header from "@/components/header/header";
-import { Toaster } from "@/components/ui/sonner";
 import "@/impl/global.css";
+import { Toaster } from "@seiseisai/ui/components/sonner";
+import "@seiseisai/ui/entryPoint.css";
 import { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 

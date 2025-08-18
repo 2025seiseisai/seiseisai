@@ -1,7 +1,7 @@
 "use server";
-import type { AdminModel, GoodsModel, NewsModel } from "@/impl/models";
+import * as Operations from "@seiseisai/database";
+import type { AdminModel, GoodsModel, NewsModel } from "@seiseisai/database/models";
 import { auth, getHashedPassword } from "./auth";
-import * as Operations from "./database";
 
 export async function getAdminById(id: string) {
     if (!(await auth())?.authorityAdmins) return null;

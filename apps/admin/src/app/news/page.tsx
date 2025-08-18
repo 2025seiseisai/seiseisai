@@ -1,5 +1,5 @@
 import { auth } from "@/impl/auth";
-import { getAllNews } from "@/impl/database";
+import { getAllNews } from "@seiseisai/database";
 import { notFound } from "next/navigation";
 import NewsViewer from "./viewer";
 

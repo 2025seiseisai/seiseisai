@@ -1,5 +1,5 @@
 import { auth } from "@/impl/auth";
-import { getAllAdmins } from "@/impl/database";
+import { getAllAdmins } from "@seiseisai/database";
 import { notFound } from "next/navigation";
 import AdminsViewer from "./viewer";
 

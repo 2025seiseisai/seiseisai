@@ -1,6 +1,6 @@
 "use client";
+import type { AdminModel } from "@seiseisai/database/models";
 import { createContext, useContext } from "react";
-import { AdminModel } from "./models";
 
 const AuthContext = createContext<AdminModel | null>(null);
 

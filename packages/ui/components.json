@@ -5,16 +5,16 @@
     "tsx": true,
     "tailwind": {
         "config": "",
-        "css": "../../packages/ui/src/styles/globals.css",
+        "css": "./entryPoint.css",
         "baseColor": "neutral",
         "cssVariables": true,
         "prefix": ""
     },
     "aliases": {
-        "components": "@/components",
-        "hooks": "@/hooks",
-        "lib": "@/lib",
+        "components": "@seiseisai/ui/components",
         "utils": "@seiseisai/ui/lib/utils",
+        "hooks": "@seiseisai/ui/hooks",
+        "lib": "@seiseisai/ui/lib",
         "ui": "@seiseisai/ui/components"
     },
     "iconLibrary": "lucide"

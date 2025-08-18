@@ -1,6 +1,11 @@
 "use client";
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 /* eslint better-tailwindcss/no-unregistered-classes: 0 */
+import { createNews, deleteNews, getAllNews, updateNewsSafe, updateNewsUnsafe } from "@/impl/database-actions";
+import { YouTubeEmbed } from "@next/third-parties/google";
+import { createId } from "@paralleldrive/cuid2";
+import { UpdateResult } from "@seiseisai/database/enums";
+import type { NewsModel } from "@seiseisai/database/models";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -10,29 +15,24 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+} from "@seiseisai/ui/components/alert-dialog";
+import { Button } from "@seiseisai/ui/components/button";
+import { Calendar } from "@seiseisai/ui/components/calendar";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { createNews, deleteNews, getAllNews, updateNewsSafe, updateNewsUnsafe } from "@/impl/database-actions";
-import type { NewsModel } from "@/impl/models";
-import { UpdateResult } from "@/impl/update-result";
-import { cn } from "@/lib/utils";
-import { YouTubeEmbed } from "@next/third-parties/google";
-import { createId } from "@paralleldrive/cuid2";
+} from "@seiseisai/ui/components/dropdown-menu";
+import { Input } from "@seiseisai/ui/components/input";
+import { Label } from "@seiseisai/ui/components/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@seiseisai/ui/components/popover";
+import { RadioGroup, RadioGroupItem } from "@seiseisai/ui/components/radio-group";
+import { Separator } from "@seiseisai/ui/components/separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@seiseisai/ui/components/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@seiseisai/ui/components/tabs";
+import { Textarea } from "@seiseisai/ui/components/textarea";
+import { cn } from "@seiseisai/ui/lib/utils";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";

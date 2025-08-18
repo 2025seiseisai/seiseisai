@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@seiseisai/ui/components/button";
 import { Maximize } from "lucide-react";
 import { useEffect } from "react";
 

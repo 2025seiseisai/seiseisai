@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { auth } from "@/impl/auth";
+import { Button } from "@seiseisai/ui/components/button";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
 export const dynamic = "force-dynamic";

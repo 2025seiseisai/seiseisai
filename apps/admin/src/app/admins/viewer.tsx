@@ -1,5 +1,17 @@
 "use client";
 import {
+    createAdmin,
+    deleteAdmin,
+    getAllAdmins,
+    updateAdminPassword,
+    updateAdminSafe,
+    updateAdminUnsafe,
+} from "@/impl/database-actions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
+import { UpdateResult } from "@seiseisai/database/enums";
+import type { AdminModel } from "@seiseisai/database/models";
+import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
@@ -8,32 +20,20 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "@seiseisai/ui/components/alert-dialog";
+import { Button } from "@seiseisai/ui/components/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@seiseisai/ui/components/card";
+import { Checkbox } from "@seiseisai/ui/components/checkbox";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import {
-    createAdmin,
-    deleteAdmin,
-    getAllAdmins,
-    updateAdminPassword,
-    updateAdminSafe,
-    updateAdminUnsafe,
-} from "@/impl/database-actions";
-import type { AdminModel } from "@/impl/models";
-import { UpdateResult } from "@/impl/update-result";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createId } from "@paralleldrive/cuid2";
+} from "@seiseisai/ui/components/dropdown-menu";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@seiseisai/ui/components/form";
+import { Input } from "@seiseisai/ui/components/input";
+import { Label } from "@seiseisai/ui/components/label";
+import { Separator } from "@seiseisai/ui/components/separator";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { KeyRound, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";

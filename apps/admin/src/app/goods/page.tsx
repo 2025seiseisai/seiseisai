@@ -1,5 +1,5 @@
 import { auth, SessionProvider } from "@/impl/auth";
-import { getAllGoods } from "@/impl/database";
+import { getAllGoods } from "@seiseisai/database";
 import { notFound } from "next/navigation";
 import GoodsViewer from "./viewer";
 

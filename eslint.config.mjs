@@ -36,13 +36,19 @@ const eslintConfig = [
             "better-tailwindcss": {
                 printWidth: 120,
                 indent: 4,
-                entryPoint: "src/impl/global.css",
+                entryPoint: "./packages/ui/entryPoint.css",
             },
         },
     },
     reactCompiler.configs.recommended,
     {
-        ignores: ["./"],
+        ignores: ["./packages/ui/src/*"],
+    },
+    {
+        files: ["./packages/ui/src/**/*.{js,ts,jsx,tsx}"],
+        rules: {
+            "import/order": "off",
+        },
     },
 ];
 
