@@ -11,6 +11,9 @@
         },
         "./hooks/*": {
             "import": "./src/hooks/*.ts"
+        },
+        "./styles/*": {
+            "import": "./src/styles/*"
         }
     },
     "scripts": {

@@ -3,7 +3,7 @@ import FullscreenButton from "@/components/fullscreen/fullscreen";
 import Header from "@/components/header/header";
 import "@/impl/global.css";
 import { Toaster } from "@seiseisai/ui/components/sonner";
-import "@seiseisai/ui/entryPoint.css";
+import "@seiseisai/ui/styles/globals.css";
 import { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 

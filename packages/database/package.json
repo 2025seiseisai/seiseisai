@@ -16,6 +16,7 @@
     "scripts": {
         "lint": "eslint . && prettier --check .",
         "format": "eslint . --fix && prettier --write .",
-        "check-types": "prisma generate && tsc --noEmit"
+        "check-types": "prisma generate && tsc --noEmit",
+        "dev": "bun --env-file=../../.env ./scripts/insert-superadmin.ts"
     }
 }

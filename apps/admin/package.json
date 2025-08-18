@@ -4,13 +4,11 @@
     "private": true,
     "packageManager": "bun@1.2.20",
     "scripts": {
-        "deploy": "bun ./scripts/deploy.ts",
-        "dev": "bun --env-file=.env ./scripts/prepare.ts && bun install && prisma generate && bun ../scripts/insert-superadmin.ts && next dev --turbopack --port 3001",
+        "dev": "bun --env-file=../../.env ./scripts/prepare.ts && opener http://localhost:3001/ && bun --env-file=../../.env next dev --turbopack --port 3001",
         "build": "next build",
         "start": "next start --port 3001",
         "lint": "next lint && stylelint \"src/**/*.(scss|less|css)\" && prettier --check .",
         "format": "next lint --fix && stylelint \"src/**/*.(scss|less|css)\" --fix && prettier --write .",
-        "clean": "modclean --run",
         "check-types": "tsc --noEmit"
     },
     "dependencies": {

@@ -1,9 +1,10 @@
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
 
 const dbClient = new PrismaClient();
 
 if (process.env.SUPERADMIN_HASHED_PASSWORD === undefined) {
-    throw new Error("SUPERADMIN_HASHED_PASSWORD is not set.");
+    console.log("SUPERADMIN_HASHED_PASSWORD is not set.");
+    process.exit(1);
 }
 
 await dbClient.admin.deleteMany({
