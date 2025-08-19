@@ -1,0 +1,42 @@
+name: Code Quality Checks
+
+on:
+    workflow_dispatch:
+
+    pull_request:
+        branches: [main]
+
+    push:
+        branches: [main]
+
+jobs:
+    check:
+        runs-on: [ubuntu-latest, windows-latest, macos-latest]
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set up Bun
+              uses: oven-sh/setup-bun@v2
+
+            - name: Cache Dependency
+              uses: actions/cache@v3
+              id: cache_dependency
+              env:
+                  cache-name: cache-dependency
+              with:
+                  path: "**/node_modules"
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('bun.lock') }}
+
+            - name: Install Dependencies
+              run: bun install --frozen-lockfile
+
+            - name: Cache for Turbo
+              uses: rharkor/caching-for-turbo@v2.2.1
+
+            - name: Run Lint
+              run: bun run lint
+
+            - name: Run Type Check
+              run: bun run check-types
