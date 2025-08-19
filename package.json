@@ -53,7 +53,7 @@
         "sass": "^1.90.0",
         "sharp": "^0.34.3",
         "sonner": "^2.0.7",
-        "tailwindcss": "^4.1.12",
+        "tailwind-merge": "^3.3.1",
         "zod": "^4.0.17"
     },
     "devDependencies": {
