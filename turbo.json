@@ -6,6 +6,11 @@
             "outputs": [".next/**", "!.next/cache/**"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"]
         },
+        "start": {
+            "dependsOn": ["build"],
+            "persistent": true,
+            "cache": false
+        },
         "check-types": {
             "dependsOn": ["^check-types"]
         },

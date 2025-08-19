@@ -5,7 +5,7 @@
     "packageManager": "bun@1.2.20",
     "scripts": {
         "dev": "bun --env-file=../../.env ./scripts/prepare.ts && opener http://localhost:3001/ && bun --env-file=../../.env next dev --turbopack --port 3001",
-        "build": "next build",
+        "build": "bun --env-file=../../.env next build",
         "start": "next start --port 3001",
         "lint": "next lint && stylelint \"src/**/*.(scss|less|css)\" && prettier --check .",
         "format": "next lint --fix && stylelint \"src/**/*.(scss|less|css)\" --fix && prettier --write .",
