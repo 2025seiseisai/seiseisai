@@ -1,1 +1,4 @@
-next-env.d.ts
+/packages/ui/src/components
+/packages/ui/src/lib
+/packages/ui/src/hooks
+/packages/database/src/generated/prisma

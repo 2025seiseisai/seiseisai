@@ -17,8 +17,8 @@
         }
     },
     "scripts": {
-        "lint": "eslint . && prettier --check .",
-        "format": "eslint . --fix && prettier --write .",
+        "lint": "eslint . && cd ../../ && prettier --cache --check ./packages/ui",
+        "format": "eslint . --fix && cd ../../ && prettier --cache --write ./packages/ui",
         "check-types": "tsc --noEmit"
     }
 }
