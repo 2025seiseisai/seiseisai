@@ -82,14 +82,6 @@
         "@seiseisai/ui": "workspace:*",
       },
     },
-    "apps/tickets": {
-      "name": "@seiseisai/tickets",
-      "version": "0.1.0",
-      "dependencies": {
-        "@seiseisai/database": "workspace:*",
-        "@seiseisai/ui": "workspace:*",
-      },
-    },
     "packages/database": {
       "name": "@seiseisai/database",
       "version": "0.1.0",
@@ -697,8 +689,6 @@
     "@seiseisai/admin": ["@seiseisai/admin@workspace:apps/admin"],
 
     "@seiseisai/database": ["@seiseisai/database@workspace:packages/database"],
-
-    "@seiseisai/tickets": ["@seiseisai/tickets@workspace:apps/tickets"],
 
     "@seiseisai/ui": ["@seiseisai/ui@workspace:packages/ui"],
 
