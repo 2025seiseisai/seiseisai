@@ -1,4 +1,4 @@
-export default {
+const config = {
     plugins: [
         "@tailwindcss/postcss",
         "postcss-flexbugs-fixes",
@@ -16,3 +16,4 @@ export default {
         ],
     ],
 };
+export default config;

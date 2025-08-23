@@ -1,7 +1,7 @@
 import Footer from "@/components/footer/footer";
 import FullscreenButton from "@/components/fullscreen/fullscreen";
 import Header from "@/components/header/header";
-import "@/impl/global.css";
+import "@/impl/globals.css";
 import { Toaster } from "@seiseisai/ui/components/sonner";
 import "@seiseisai/ui/styles/globals.css";
 import { Metadata } from "next";

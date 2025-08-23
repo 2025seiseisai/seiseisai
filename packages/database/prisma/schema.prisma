@@ -52,3 +52,41 @@ model Goods {
   name  String     @unique
   stock GoodsStock @default(在庫あり)
 }
+
+model TicketEvent {
+  id                 String   @id
+  name               String   @unique
+  link               String // イベントのリンク (なければ空文字列)
+  description        String   @db.Text // イベントの説明 (なければ空文字列)
+  applicationStart   DateTime // 抽選の開始時刻
+  applicationEnd     DateTime // 抽選の終了時刻
+  exhangeStart       DateTime // 紙の整理券の引き換え開始時刻
+  exchangeEnd        DateTime // 紙の整理券の引き換え終了時刻
+  capacity           Int // 定員 (紙の整理券の枚数)
+  maxPeoplePerTicket Int // 1枚のWeb整理券で入場できる人数
+  drawed             Boolean // 既に抽選が行われたかどうか
+  Ticket             Ticket[]
+}
+
+model TicketUser {
+  id     String   @id
+  banned Boolean
+  Ticket Ticket[]
+}
+
+enum TicketStatus {
+  抽選待ち
+  当選
+  落選
+  使用済み
+}
+
+model Ticket {
+  id             String       @id
+  numberOfPeople Int
+  userId         String
+  eventId        String
+  status         TicketStatus
+  user           TicketUser   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event          TicketEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}

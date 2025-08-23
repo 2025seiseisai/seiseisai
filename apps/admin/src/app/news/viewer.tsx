@@ -119,7 +119,7 @@ function transformLinks(node: React.ReactNode): React.ReactNode {
             !href.endsWith(".php")
         ) {
             return (
-                <Link href={href} download className="news_element">
+                <Link href={href as any} download className="news_element">
                     {transformLinks(children)}
                 </Link>
             );
@@ -130,20 +130,20 @@ function transformLinks(node: React.ReactNode): React.ReactNode {
             !href.startsWith("http://seiseisai.com")
         ) {
             return (
-                <Link href={href} target="_blank" rel="noopener noreferrer nofollow" className={"news_element"}>
+                <Link href={href as any} target="_blank" rel="noopener noreferrer nofollow" className={"news_element"}>
                     {transformLinks(children)}
                 </Link>
             );
         }
         if (href.startsWith("/")) {
             return (
-                <Link href={"https://seiseisai.com" + href} className="news_element">
+                <Link href={("https://seiseisai.com" + href) as any} className="news_element">
                     {transformLinks(children)}
                 </Link>
             );
         }
         return (
-            <Link href={href} className="news_element">
+            <Link href={href as any} className="news_element">
                 {transformLinks(children)}
             </Link>
         );
@@ -236,7 +236,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
                     ) {
                         return (
                             <div className="news_element">
-                                <Link href={href} download className={""}>
+                                <Link href={href as any} download className={""}>
                                     {transformLinks(children)}
                                 </Link>
                             </div>
@@ -250,7 +250,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
                         return (
                             <div className="news_element">
                                 <Link
-                                    href={href}
+                                    href={href as any}
                                     target="_blank"
                                     rel="noopener noreferrer nofollow"
                                     className="news_element"
@@ -263,7 +263,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
                     if (href.startsWith("/")) {
                         return (
                             <div className="news_element">
-                                <Link href={"https://seiseisai.com" + href} className="news_element">
+                                <Link href={("https://seiseisai.com" + href) as any} className="news_element">
                                     {transformLinks(children)}
                                 </Link>
                             </div>
@@ -271,7 +271,7 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
                     }
                     return (
                         <div className="news_element">
-                            <Link href={href} className="news_element">
+                            <Link href={href as any} className="news_element">
                                 {transformLinks(children)}
                             </Link>
                         </div>

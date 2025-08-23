@@ -1,10 +1,6 @@
+import { dbClient } from "./db-client";
 import { UpdateResult } from "./enums";
-import { PrismaClient } from "./generated/prisma/client";
 import { AdminModel, GoodsModel, NewsModel } from "./models";
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-const dbClient = globalForPrisma.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = dbClient;
 
 export async function getAdminByName(name: string) {
     return await dbClient.admin.findUnique({

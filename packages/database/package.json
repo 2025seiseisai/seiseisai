@@ -14,9 +14,9 @@
         }
     },
     "scripts": {
-        "lint": "eslint . && cd ../../ && prettier --cache --check ./packages/database",
-        "format": "eslint . --fix && cd ../../ && prettier --cache --write ./packages/database",
-        "check-types": "prisma generate && tsc --noEmit",
+        "lint": "cd ../../ && eslint ./packages/database --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./packages/database",
+        "format": "cd ../../ && eslint ./packages/database --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/database",
+        "check-types": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma && cd ./packages/database && tsc --noEmit",
         "dev": "bun --env-file=../../.env ./scripts/insert-superadmin.ts",
         "build": "bun --env-file=../../.env ./scripts/insert-superadmin.ts"
     }

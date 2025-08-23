@@ -2,11 +2,7 @@
     "extends": "../../settings/tsconfig.base.json",
     "compilerOptions": {
         "baseUrl": ".",
-        "noEmit": true,
-        "paths": {
-            "@/*": ["./src/*"]
-        }
+        "noEmit": true
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    "include": ["src/**/*"]
 }

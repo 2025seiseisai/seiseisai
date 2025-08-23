@@ -4,12 +4,12 @@
     "private": true,
     "packageManager": "bun@1.2.20",
     "scripts": {
-        "dev": "bun --env-file=../../.env ./scripts/prepare.ts && opener http://localhost:3001/ && bun --env-file=../../.env next dev --turbopack --port 3001",
-        "build": "bun --env-file=../../.env next build",
+        "dev": "opener http://localhost:3001/ && bun --env-file=../../.env next dev --turbopack --port 3001",
+        "build": "bun --env-file=../../.env next build --turbopack",
         "start": "next start --port 3001",
-        "lint": "next lint && stylelint \"src/**/*.(scss|less|css)\" && cd ../../ && prettier --cache --check ./apps/admin",
-        "format": "next lint --fix && stylelint \"src/**/*.(scss|less|css)\" --fix && cd ../../ && prettier --cache --write ./apps/admin",
-        "check-types": "tsc --noEmit"
+        "lint": "cd ../../ && eslint ./apps/admin --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/admin/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache && prettier --cache --check ./apps/admin",
+        "format": "cd ../../ && eslint ./apps/admin --fix --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/admin/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache --fix && prettier --cache --write ./apps/admin",
+        "check-types": "next typegen && tsc --noEmit"
     },
     "dependencies": {
         "@seiseisai/database": "workspace:*",

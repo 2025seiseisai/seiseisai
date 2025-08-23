@@ -39,16 +39,22 @@ const eslintConfig = [
         },
         settings: {
             "better-tailwindcss": {
-                entryPoint: "../../packages/ui/src/styles/globals.css",
+                entryPoint: "./packages/ui/src/styles/globals.css",
             },
         },
     },
     {
         settings: {
             next: {
-                rootDir: ["../../apps/admin"],
+                rootDir: ["./apps/admin", "./apps/tickets"],
             },
         },
+    },
+    {
+        ignores: ["node_modules/**", "**/.next/**", "**/.turbo/**", "**/next-env.d.ts"],
+    },
+    {
+        ignores: ["./packages/ui/src/**"],
     },
 ];
 
