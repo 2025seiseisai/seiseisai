@@ -18,6 +18,7 @@ coverage
 out/
 
 # production
+dist
 build
 
 # misc

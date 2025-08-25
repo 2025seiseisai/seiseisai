@@ -51,7 +51,7 @@ const eslintConfig = [
         },
     },
     {
-        ignores: ["node_modules/**", "**/.next/**", "**/.turbo/**", "**/next-env.d.ts"],
+        ignores: ["node_modules/**", "**/.next/**", "**/.turbo/**", "**/next-env.d.ts", "**/dist/**", "**/build/**"],
     },
     {
         ignores: ["./packages/ui/src/**"],

@@ -30,6 +30,7 @@
         "next": "^15.5.0",
         "next-auth": "^5.0.0-beta.29",
         "next-themes": "^0.4.6",
+        "node-cron": "^4.2.1",
         "qrcode.react": "^4.2.0",
         "react": "^19.1.1",
         "react-day-picker": "^9.9.0",
@@ -80,6 +81,13 @@
       "dependencies": {
         "@seiseisai/database": "workspace:*",
         "@seiseisai/ui": "workspace:*",
+      },
+    },
+    "apps/ticket-worker": {
+      "name": "@seiseisai/ticket-worker",
+      "version": "0.0.0",
+      "dependencies": {
+        "@seiseisai/database": "workspace:*",
       },
     },
     "packages/database": {
@@ -689,6 +697,8 @@
     "@seiseisai/admin": ["@seiseisai/admin@workspace:apps/admin"],
 
     "@seiseisai/database": ["@seiseisai/database@workspace:packages/database"],
+
+    "@seiseisai/ticket-worker": ["@seiseisai/ticket-worker@workspace:apps/ticket-worker"],
 
     "@seiseisai/ui": ["@seiseisai/ui@workspace:packages/ui"],
 
@@ -1696,6 +1706,8 @@
 
     "node-addon-api": ["node-addon-api@7.1.1", "", {}, "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ=="],
 
+    "node-cron": ["node-cron@4.2.1", "", {}, "sha512-lgimEHPE/QDgFlywTd8yTR61ptugX3Qer29efeyWw2rv259HtGBNn1vZVmp8lB9uo9wC0t/AT4iGqXxia+CJFg=="],
+
     "node-domexception": ["node-domexception@1.0.0", "", {}, "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ=="],
 
     "node-fetch": ["node-fetch@3.3.2", "", { "dependencies": { "data-uri-to-buffer": "^4.0.0", "fetch-blob": "^3.1.4", "formdata-polyfill": "^4.0.10" } }, "sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA=="],
@@ -2363,6 +2375,8 @@
     "eslint-plugin-react-compiler/zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
 
     "fast-glob/glob-parent": ["glob-parent@5.1.2", "", { "dependencies": { "is-glob": "^4.0.1" } }, "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="],
+
+    "fdir/picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
 
     "global-prefix/which": ["which@1.3.1", "", { "dependencies": { "isexe": "^2.0.0" }, "bin": { "which": "./bin/which" } }, "sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ=="],
 

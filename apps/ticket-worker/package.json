@@ -1,0 +1,16 @@
+{
+    "name": "@seiseisai/ticket-worker",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "cd ../../ && bun --no-clear-screen --hot ./apps/ticket-worker/src/main.ts",
+        "build": "bun build src/main.ts --outdir dist --target node --minify",
+        "start": "bun --env-file=../../.env dist/main.js",
+        "lint": "cd ../../ && eslint ./apps/ticket-worker --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./apps/ticket-worker",
+        "format": "cd ../../ && eslint ./apps/ticket-worker --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./apps/ticket-worker",
+        "check-types": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@seiseisai/database": "workspace:*"
+    }
+}

@@ -7,6 +7,7 @@
 TurborepoでMonorepo化しています。
 
 - [/apps/admin](./apps/admin): 管理ページ。データベースを操作したりできます。
+- [/apps/ticket-worker](./apps/ticket-worker): 定期的にデータベースのチェックを行い、Web整理券の抽選などを行うコードが入っています。
 - [/packages/database](./packages/database): データベースを操作する関数や型など。ここではPrismaを使っていますが、書き換えればCloudflare D1とかにも対応できるはず。
 - [/packages/ui](./packages/ui): shadcn/uiのコンポーネント。
 
