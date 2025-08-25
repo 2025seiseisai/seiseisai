@@ -3,6 +3,7 @@ import { useSession } from "@/impl/auth-client";
 import {
     createEventTicketInfo,
     deleteEventTicketInfo,
+    getAllDrawResults,
     getAllEventTicketInfos,
     updateEventTicketInfoSafe,
     updateEventTicketInfoUnsafe,
@@ -37,6 +38,7 @@ import { Separator } from "@seiseisai/ui/components/separator";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Route } from "next";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -51,20 +53,44 @@ const ticketInfoSchema = z
             .min(16, "IDは16文字以上でなければなりません。")
             .max(64, "IDは64文字以下でなければなりません。"),
         name: z.string().min(1, "イベント名は必須です。").max(256, "イベント名が長すぎます。"),
-        link: z.string().max(2048, "リンクが長すぎます。"),
+        link: z
+            .string()
+            .max(2048, "リンクが長すぎます。")
+            .startsWith("https://", "リンクは https:// から始まる必要があります。")
+            .or(z.literal("")),
         applicationStart: z.date(),
         applicationEnd: z.date(),
         exchangeEnd: z.date(),
-        capacity: z.number().int().min(1, "定員は1以上です。").max(1_000_000, "定員が大きすぎます。"),
+        capacity: z.number().int().min(1, "定員は1以上です。").max(10000, "定員が大きすぎます。"),
         paperTicketsPerUser: z
             .number()
             .int()
-            .min(1, "紙整理券枚数は1以上です。")
-            .max(1000, "紙整理券枚数が大きすぎます。"),
-        drawed: z.boolean(),
+            .min(1, "最大応募枚数は1以上です。")
+            .max(10, "最大応募枚数が大きすぎます。"),
         type: z.enum(EventTicketType),
     })
     .superRefine((data, ctx) => {
+        if (data.applicationStart.getSeconds() !== 0 || data.applicationStart.getMilliseconds() !== 0) {
+            ctx.addIssue({
+                path: ["applicationStart"],
+                code: "custom",
+                message: "応募開始の秒以下は0にしてください。",
+            });
+        }
+        if (data.applicationEnd.getSeconds() !== 0 || data.applicationEnd.getMilliseconds() !== 0) {
+            ctx.addIssue({
+                path: ["applicationEnd"],
+                code: "custom",
+                message: "応募終了の秒以下は0にしてください。",
+            });
+        }
+        if (data.exchangeEnd.getSeconds() !== 0 || data.exchangeEnd.getMilliseconds() !== 0) {
+            ctx.addIssue({
+                path: ["exchangeEnd"],
+                code: "custom",
+                message: "引き換え終了の秒以下は0にしてください。",
+            });
+        }
         if (data.applicationStart >= data.applicationEnd) {
             ctx.addIssue({
                 path: ["applicationEnd"],
@@ -84,9 +110,11 @@ const ticketInfoSchema = z
 type TicketInfoForm = z.infer<typeof ticketInfoSchema>;
 
 const ticketsAtom = atom<EventTicketInfoModel[]>([]);
+const drawResultsAtom = atom<{ [eventId: string]: number }>({});
 
 function useInitTicketsAtom() {
     const setTickets = useSetAtom(ticketsAtom);
+    const setDrawResults = useSetAtom(drawResultsAtom);
     return async (showSuccessToast = true) => {
         const fetched = await getAllEventTicketInfos();
         if (fetched) {
@@ -96,6 +124,14 @@ function useInitTicketsAtom() {
             }
         } else {
             toast.error("取得に失敗しました。", { duration: 2000 });
+        }
+        const dr = await getAllDrawResults();
+        if (dr) {
+            const map: { [eventId: string]: number } = {};
+            for (const r of dr) {
+                map[r.eventId] = r.winners;
+            }
+            setDrawResults(map);
         }
     };
 }
@@ -119,9 +155,9 @@ function addHours(base: Date, h: number) {
 function getEmptyTicket(id: string): EventTicketInfoModel {
     const now = new Date();
     now.setSeconds(0, 0);
-    const start = addHours(now, 1); // +1h
-    const end = addHours(start, 2); // +2h
-    const exchange = addHours(end, 2); // +2h
+    const start = addHours(now, 1);
+    const end = addHours(start, 1);
+    const exchange = addHours(end, 1);
     return {
         id,
         name: "",
@@ -131,7 +167,6 @@ function getEmptyTicket(id: string): EventTicketInfoModel {
         exchangeEnd: exchange,
         capacity: 1,
         paperTicketsPerUser: 1,
-        drawed: false,
         type: EventTicketType.個人制,
     };
 }
@@ -167,7 +202,7 @@ function TicketEditor({
 
     async function onSubmitSafe(data: TicketInfoForm) {
         if (create) {
-            const result = await createEventTicketInfo(data as EventTicketInfoModel);
+            const result = await createEventTicketInfo(data);
             if (!result) {
                 toast.error("作成に失敗しました。", { duration: 2000 });
                 return;
@@ -176,7 +211,8 @@ function TicketEditor({
             setOpen(false);
             initializer(false);
         } else {
-            const result = await updateEventTicketInfoSafe(placeholder, data as EventTicketInfoModel);
+            console.log(placeholder, data);
+            const result = await updateEventTicketInfoSafe(placeholder, data);
             if (result === null || result === UpdateResult.Invalid) {
                 toast.error("保存に失敗しました。", { duration: 2000 });
                 return;
@@ -198,7 +234,7 @@ function TicketEditor({
     }
 
     async function onSubmitUnsafe(data: TicketInfoForm) {
-        const result = await updateEventTicketInfoUnsafe(data as EventTicketInfoModel);
+        const result = await updateEventTicketInfoUnsafe(data);
         if (result) {
             toast.success("保存しました。", { duration: 2000 });
             setOpen(false);
@@ -238,14 +274,25 @@ function TicketEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent className="w-full sm:max-w-[42rem]">
+                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-[min(42rem,calc(100vw-2rem))]">
                     <Form {...form}>
                         <AlertDialogHeader>
                             <AlertDialogTitle>整理券イベントの{create ? "追加" : "編集"}</AlertDialogTitle>
-                            <AlertDialogDescription></AlertDialogDescription>
+                            <AlertDialogDescription>
+                                各設定の詳細については
+                                <Link
+                                    href="/tickets/help"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline"
+                                >
+                                    こちら
+                                </Link>
+                                をご覧ください。
+                            </AlertDialogDescription>
                         </AlertDialogHeader>
                         <div className="grid gap-4">
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid items-start gap-4 sm:grid-cols-2">
                                 <FormField
                                     control={form.control}
                                     name="id"
@@ -286,12 +333,12 @@ function TicketEditor({
                                     </FormItem>
                                 )}
                             />
-                            <div className="grid gap-4 sm:grid-cols-3">
+                            <div className="grid items-start gap-4 sm:grid-cols-3">
                                 {datetimeField("applicationStart", "応募開始")}
                                 {datetimeField("applicationEnd", "応募終了")}
                                 {datetimeField("exchangeEnd", "引き換え終了")}
                             </div>
-                            <div className="grid gap-4 sm:grid-cols-3">
+                            <div className="grid items-start gap-4 sm:grid-cols-3">
                                 <FormField
                                     control={form.control}
                                     name="capacity"
@@ -314,10 +361,11 @@ function TicketEditor({
                                     name="paperTicketsPerUser"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>1人あたり紙整理券枚数</FormLabel>
+                                            <FormLabel>1人あたりの最大応募枚数</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="number"
+                                                    min={1}
                                                     value={field.value}
                                                     onChange={(e) => field.onChange(Number(e.target.value))}
                                                 />
@@ -328,24 +376,22 @@ function TicketEditor({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="drawed"
+                                    name="type"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>抽選実施済み</FormLabel>
+                                            <FormLabel>整理券種類</FormLabel>
                                             <FormControl>
                                                 <RadioGroup
-                                                    className="flex flex-row gap-5"
-                                                    value={field.value ? "true" : "false"}
-                                                    onValueChange={(v) => field.onChange(v === "true")}
+                                                    className="gap-1 not-sm:flex not-sm:justify-around"
+                                                    value={field.value}
+                                                    onValueChange={field.onChange}
                                                 >
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="false" />
-                                                        <Label>未</Label>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <RadioGroupItem value="true" />
-                                                        <Label>済</Label>
-                                                    </div>
+                                                    {Object.values(EventTicketType).map((t) => (
+                                                        <div key={t} className="flex items-center space-x-2">
+                                                            <RadioGroupItem value={t} />
+                                                            <Label className="text-[12px]">{t}</Label>
+                                                        </div>
+                                                    ))}
                                                 </RadioGroup>
                                             </FormControl>
                                             <FormMessage />
@@ -353,30 +399,6 @@ function TicketEditor({
                                     )}
                                 />
                             </div>
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>整理券種類</FormLabel>
-                                        <FormControl>
-                                            <RadioGroup
-                                                className="grid gap-2 sm:grid-cols-3"
-                                                value={field.value}
-                                                onValueChange={field.onChange}
-                                            >
-                                                {Object.values(EventTicketType).map((t) => (
-                                                    <div key={t} className="flex items-center space-x-2">
-                                                        <RadioGroupItem value={t} />
-                                                        <Label className="text-[12px]">{t}</Label>
-                                                    </div>
-                                                ))}
-                                            </RadioGroup>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel>キャンセル</AlertDialogCancel>
@@ -462,7 +484,11 @@ function DeleteDialog({
     );
 }
 
-function TicketCard({ ticket }: { ticket: EventTicketInfoModel }) {
+function dateToString(d: Date) {
+    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
+}
+
+function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; drawResult?: number }) {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [editorOpen, setEditorOpen] = useState(false);
     const session = useSession();
@@ -475,9 +501,9 @@ function TicketCard({ ticket }: { ticket: EventTicketInfoModel }) {
                         <CardDescription className="text-xs/relaxed">
                             ID: {ticket.id}
                             <br />
-                            応募: {ticket.applicationStart.toLocaleString()} ~ {ticket.applicationEnd.toLocaleString()}
+                            応募: {dateToString(ticket.applicationStart)} ~ {dateToString(ticket.applicationEnd)}
                             <br />
-                            引換終了: {ticket.exchangeEnd.toLocaleString()}
+                            引換終了: {dateToString(ticket.exchangeEnd)}
                         </CardDescription>
                     </CardHeader>
                     {session.authorityTickets && (
@@ -525,14 +551,13 @@ function TicketCard({ ticket }: { ticket: EventTicketInfoModel }) {
                         {ticket.paperTicketsPerUser}枚
                     </div>
                     <div className="flex-1/3">
-                        <Label className="text-[13px]">抽選</Label>
-                        {ticket.drawed ? "済" : "未"}
+                        <Label className="text-[13px]">当選者数</Label>
+                        {drawResult !== undefined ? `${drawResult}人` : "抽選前"}
                     </div>
                     {ticket.link && (
                         <div className="flex-1/2 truncate">
                             <Label className="text-[13px]">リンク</Label>
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            <Link href={ticket.link as any} target="_blank" rel="noopener noreferrer">
+                            <Link href={ticket.link as Route} target="_blank" rel="noopener noreferrer">
                                 {ticket.link}
                             </Link>
                         </div>
@@ -545,9 +570,17 @@ function TicketCard({ ticket }: { ticket: EventTicketInfoModel }) {
     );
 }
 
-export default function TicketsViewer({ initialTickets }: { initialTickets: EventTicketInfoModel[] }) {
+export default function TicketsViewer({
+    initialTickets,
+    initialDrawResults,
+}: {
+    initialTickets: EventTicketInfoModel[];
+    initialDrawResults: { [eventId: string]: number };
+}) {
     useHydrateAtoms([[ticketsAtom, initialTickets]]);
+    useHydrateAtoms([[drawResultsAtom, initialDrawResults]]);
     const tickets = useAtomValue(ticketsAtom);
+    const drawResults = useAtomValue(drawResultsAtom);
     const initializer = useInitTicketsAtom();
     const [ticketId, setTicketId] = useState("");
     const [editorOpen, setEditorOpen] = useState(false);
@@ -581,7 +614,7 @@ export default function TicketsViewer({ initialTickets }: { initialTickets: Even
                 </div>
                 <div className="flex w-full flex-wrap gap-4">
                     {tickets.map((t) => (
-                        <TicketCard key={t.id} ticket={t} />
+                        <TicketCard key={t.id} ticket={t} drawResult={drawResults[t.id]} />
                     ))}
                 </div>
             </div>

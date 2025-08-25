@@ -7,7 +7,7 @@ export default async function HelpPage() {
     if (!(await auth())?.authorityNews) notFound();
 
     return (
-        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[39rem]">
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[52rem]">
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
             <h2 className="scroll-mt-16 text-2xl font-semibold">マークダウンの書き方</h2>
             <p className="mt-2">

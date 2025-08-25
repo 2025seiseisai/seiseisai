@@ -544,7 +544,7 @@ export default function AdminsViewer({ initialadmins }: { initialadmins: AdminMo
     const [editorOpen, setEditorOpen] = useState(false);
     return (
         <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
+            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
                 <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">管理者</h1>
                 <div className="mb-2 flex items-center gap-1.5">
                     <Button

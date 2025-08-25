@@ -91,10 +91,6 @@ export async function updateGoodsUnsafe(new_data: GoodsModel) {
     return await Operations.updateGoodsUnsafe(new_data, session.authorityGoods);
 }
 
-/* =========================
- * EventTicketInfo (Web整理券) wrappers
- * ========================= */
-
 export async function getAllEventTicketInfos() {
     if (!(await auth())?.authorityTickets) return null;
     return await Operations.getAllEventTicketInfos();
@@ -118,4 +114,9 @@ export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel,
 export async function updateEventTicketInfoUnsafe(new_data: EventTicketInfoModel) {
     if (!(await auth())?.authorityTickets) return null;
     return await Operations.updateEventTicketInfoUnsafe(new_data);
+}
+
+export async function getAllDrawResults() {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.getAllDrawResults();
 }

@@ -2,6 +2,10 @@ import { dbClient } from "./db-client";
 import { UpdateResult } from "./enums";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
 
+/* =========================
+ * Admin
+ * ========================= */
+
 export async function getAdminByName(name: string) {
     return await dbClient.admin.findUnique({
         where: {
@@ -142,6 +146,10 @@ export async function updateAdminUnsafe(new_data: AdminModel) {
     return result.count > 0 ? true : null;
 }
 
+/* =========================
+ * News
+ * ========================= */
+
 export async function getAllNews() {
     return await dbClient.news.findMany({
         orderBy: {
@@ -215,6 +223,10 @@ export async function createNews(news: NewsModel) {
         data: news,
     });
 }
+
+/* =========================
+ * Goods
+ * ========================= */
 
 export async function getAllGoods() {
     return await dbClient.goods.findMany({
@@ -327,7 +339,7 @@ export async function updateGoodsUnsafe(new_data: GoodsModel, allow_name_change 
 }
 
 /* =========================
- * EventTicketInfo (Web整理券)
+ * EventTicketInfo
  * ========================= */
 
 export async function getAllEventTicketInfos() {
@@ -378,8 +390,8 @@ export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel,
     }
     const assign: Partial<EventTicketInfoModel> = {};
     function check<K extends keyof EventTicketInfoModel>(k: K) {
-        if (prev_data[k] !== new_data[k]) {
-            if (current[k] !== prev_data[k]) return UpdateResult.Overwrite;
+        if (JSON.stringify(prev_data[k]) !== JSON.stringify(new_data[k])) {
+            if (JSON.stringify(current[k]) !== JSON.stringify(prev_data[k])) return UpdateResult.Overwrite;
             assign[k] = new_data[k];
         }
         return null;
@@ -392,7 +404,6 @@ export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel,
         "exchangeEnd",
         "capacity",
         "paperTicketsPerUser",
-        "drawed",
         "type",
     ] as (keyof EventTicketInfoModel)[]) {
         const r = check(key);
@@ -414,4 +425,12 @@ export async function updateEventTicketInfoUnsafe(new_data: EventTicketInfoModel
         data: new_data,
     });
     return result.count > 0 ? true : null;
+}
+
+/* =========================
+ * EventDrawResults
+ * ========================= */
+
+export async function getAllDrawResults() {
+    return await dbClient.eventDrawResults.findMany();
 }

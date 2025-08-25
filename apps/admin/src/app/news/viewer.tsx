@@ -648,7 +648,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
     const [newsDate, setNewsDate] = useState(currentDate());
     return (
         <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[39rem]">
+            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
                 <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
                 <div className="mb-1 flex items-center gap-1.5">
                     <Button

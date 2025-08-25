@@ -54,23 +54,29 @@ model Goods {
 }
 
 enum EventTicketType {
-  個人制 // 1枚の整理券で1人が参加可能 (同伴者も整理券が必要)
-  参加者制 // 1枚の整理券で参加者1人が参加可能 (同伴者は整理券不要)
-  グループ制 // 1枚の整理券で1グループ(最大5人)までが参加可能
+  個人制 // 1枚の紙の整理券で1人が参加可能 (同伴者も整理券が必要)
+  参加者制 // 1枚の紙の整理券で参加者1人が参加可能 (同伴者は整理券不要)
+  グループ制 // 1枚の紙の整理券で1グループ(最大5人まで)が参加可能
 }
 
 model EventTicketInfo {
-  id                  String          @id
-  name                String          @unique
+  id                  String            @id
+  name                String            @unique
   link                String // イベントのリンク (なければ空文字列)
   applicationStart    DateTime // 応募の開始時刻
   applicationEnd      DateTime // 応募の終了時刻 (応募開始時刻より後)
   exchangeEnd         DateTime // 紙の整理券の引き換え終了時刻 (応募終了時刻より後)
   capacity            Int // 定員 (1以上)
   paperTicketsPerUser Int // 1人あたりの紙の整理券の応募可能枚数 (1以上)
-  drawed              Boolean // 既に抽選が行われたかどうか
   type                EventTicketType // 整理券の種類
   tickets             Ticket[]
+  drawResults         EventDrawResults?
+}
+
+model EventDrawResults {
+  eventId String          @id
+  winners Int // 当選者数 (0以上、定員以下)
+  event   EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model TicketUser {
