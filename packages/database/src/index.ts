@@ -1,6 +1,6 @@
 import { dbClient } from "./db-client";
 import { UpdateResult } from "./enums";
-import { AdminModel, GoodsModel, NewsModel } from "./models";
+import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
 
 export async function getAdminByName(name: string) {
     return await dbClient.admin.findUnique({
@@ -324,4 +324,94 @@ export async function updateGoodsUnsafe(new_data: GoodsModel, allow_name_change 
         });
         return result.count > 0 ? true : null;
     }
+}
+
+/* =========================
+ * EventTicketInfo (Web整理券)
+ * ========================= */
+
+export async function getAllEventTicketInfos() {
+    return await dbClient.eventTicketInfo.findMany({
+        orderBy: {
+            applicationStart: "asc",
+        },
+    });
+}
+
+export async function createEventTicketInfo(data: EventTicketInfoModel) {
+    // uniqueness check (id & name)
+    const countId = await dbClient.eventTicketInfo.count({ where: { id: data.id } });
+    if (countId > 0) return null;
+    const countName = await dbClient.eventTicketInfo.count({ where: { name: data.name } });
+    if (countName > 0) return null;
+    await dbClient.eventTicketInfo.create({ data });
+    return true;
+}
+
+export async function deleteEventTicketInfo(id: string) {
+    return await dbClient.eventTicketInfo.delete({
+        where: {
+            id,
+        },
+    });
+}
+
+export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel, new_data: EventTicketInfoModel) {
+    if (prev_data.id !== new_data.id) return UpdateResult.Invalid;
+    const id = prev_data.id;
+    const currentRaw = await dbClient.eventTicketInfo.findUnique({
+        where: { id },
+    });
+    if (!currentRaw) return UpdateResult.NotFound;
+    const current = currentRaw;
+    // name uniqueness
+    if (prev_data.name !== new_data.name) {
+        const nameExists = await dbClient.eventTicketInfo.count({
+            where: {
+                name: new_data.name,
+                id: {
+                    not: id,
+                },
+            },
+        });
+        if (nameExists > 0) return UpdateResult.NameExists;
+    }
+    const assign: Partial<EventTicketInfoModel> = {};
+    function check<K extends keyof EventTicketInfoModel>(k: K) {
+        if (prev_data[k] !== new_data[k]) {
+            if (current[k] !== prev_data[k]) return UpdateResult.Overwrite;
+            assign[k] = new_data[k];
+        }
+        return null;
+    }
+    for (const key of [
+        "name",
+        "link",
+        "applicationStart",
+        "applicationEnd",
+        "exchangeEnd",
+        "capacity",
+        "paperTicketsPerUser",
+        "drawed",
+        "type",
+    ] as (keyof EventTicketInfoModel)[]) {
+        const r = check(key);
+        if (r) return r;
+    }
+    if (Object.keys(assign).length === 0) return UpdateResult.NoChange;
+    await dbClient.eventTicketInfo.update({
+        where: { id },
+        data: assign,
+    });
+    return UpdateResult.Success;
+}
+
+export async function updateEventTicketInfoUnsafe(new_data: EventTicketInfoModel) {
+    const result = await dbClient.eventTicketInfo.updateMany({
+        where: {
+            id: new_data.id,
+        },
+        data: new_data,
+    });
+    return result.count > 0 ? true : null;
 }

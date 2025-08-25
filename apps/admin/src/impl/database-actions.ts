@@ -1,6 +1,6 @@
 "use server";
 import * as Operations from "@seiseisai/database";
-import type { AdminModel, GoodsModel, NewsModel } from "@seiseisai/database/models";
+import type { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "@seiseisai/database/models";
 import { auth, getHashedPassword } from "./auth";
 
 export async function getAdminById(id: string) {
@@ -89,4 +89,33 @@ export async function updateGoodsUnsafe(new_data: GoodsModel) {
     const session = await auth();
     if (!session || (!session.authorityGoods && !session.authorityGoodsStock)) return null;
     return await Operations.updateGoodsUnsafe(new_data, session.authorityGoods);
+}
+
+/* =========================
+ * EventTicketInfo (Web整理券) wrappers
+ * ========================= */
+
+export async function getAllEventTicketInfos() {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.getAllEventTicketInfos();
+}
+
+export async function createEventTicketInfo(data: EventTicketInfoModel) {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.createEventTicketInfo(data);
+}
+
+export async function deleteEventTicketInfo(id: string) {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.deleteEventTicketInfo(id);
+}
+
+export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel, new_data: EventTicketInfoModel) {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.updateEventTicketInfoSafe(prev_data, new_data);
+}
+
+export async function updateEventTicketInfoUnsafe(new_data: EventTicketInfoModel) {
+    if (!(await auth())?.authorityTickets) return null;
+    return await Operations.updateEventTicketInfoUnsafe(new_data);
 }
