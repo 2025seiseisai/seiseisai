@@ -53,40 +53,46 @@ model Goods {
   stock GoodsStock @default(在庫あり)
 }
 
-model TicketEvent {
-  id                 String   @id
-  name               String   @unique
-  link               String // イベントのリンク (なければ空文字列)
-  description        String   @db.Text // イベントの説明 (なければ空文字列)
-  applicationStart   DateTime // 抽選の開始時刻
-  applicationEnd     DateTime // 抽選の終了時刻
-  exhangeStart       DateTime // 紙の整理券の引き換え開始時刻
-  exchangeEnd        DateTime // 紙の整理券の引き換え終了時刻
-  capacity           Int // 定員 (紙の整理券の枚数)
-  maxPeoplePerTicket Int // 1枚のWeb整理券で入場できる人数
-  drawed             Boolean // 既に抽選が行われたかどうか
-  Ticket             Ticket[]
+enum EventTicketType {
+  個人制 // 1枚の整理券で1人が参加可能 (同伴者も整理券が必要)
+  参加者制 // 1枚の整理券で参加者1人が参加可能 (同伴者は整理券不要)
+  グループ制 // 1枚の整理券で1グループ(最大5人)までが参加可能
+}
+
+model EventTicketInfo {
+  id                  String          @id
+  name                String          @unique
+  link                String // イベントのリンク (なければ空文字列)
+  applicationStart    DateTime // 応募の開始時刻
+  applicationEnd      DateTime // 応募の終了時刻 (応募開始時刻より後)
+  exchangeEnd         DateTime // 紙の整理券の引き換え終了時刻 (応募終了時刻より後)
+  capacity            Int // 定員 (1以上)
+  paperTicketsPerUser Int // 1人あたりの紙の整理券の応募可能枚数 (1以上)
+  drawed              Boolean // 既に抽選が行われたかどうか
+  type                EventTicketType // 整理券の種類
+  tickets             Ticket[]
 }
 
 model TicketUser {
-  id     String   @id
-  banned Boolean
-  Ticket Ticket[]
+  id                    String   @id
+  banned                Boolean // 抽選・応募資格停止
+  expiresAt             DateTime // 有効期限 (通常、菁々祭当日の23:59:59)
+  remainingApplications Int // 残り応募可能回数 (0以上)
+  tickets               Ticket[]
 }
 
 enum TicketStatus {
   抽選待ち
   当選
   落選
-  使用済み
 }
 
 model Ticket {
-  id             String       @id
-  numberOfPeople Int
-  userId         String
-  eventId        String
-  status         TicketStatus
-  user           TicketUser   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event          TicketEvent  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id           String          @id
+  paperTickets Int // 引き換えする紙の整理券の枚数
+  userId       String
+  eventId      String
+  status       TicketStatus
+  user         TicketUser      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event        EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }

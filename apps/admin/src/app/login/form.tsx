@@ -55,7 +55,10 @@ export default function LogInForm() {
     }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-1 items-center justify-center">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center"
+            >
                 <Card className="w-full max-w-sm gap-3">
                     <CardHeader className="mb-3">
                         <CardTitle>ログイン</CardTitle>
@@ -94,7 +97,7 @@ export default function LogInForm() {
                             siteKey={siteKey}
                             onVerify={(token) => setTurnstileToken(token)}
                             theme="light"
-                            className="mt-4 mb-0"
+                            className="mt-4 mb-0 overflow-x-auto"
                         />
                     </CardContent>
                     <CardFooter className="flex-col gap-2">

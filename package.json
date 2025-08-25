@@ -86,6 +86,12 @@
         "typescript": "^5"
     },
     "packageManager": "bun@1.2.20",
+    "engines": {
+        "bun": "latest",
+        "npm": "Don't use npm, use bun instead",
+        "yarn": "Don't use yarn, use bun instead",
+        "pnpm": "Don't use pnpm, use bun instead"
+    },
     "workspaces": [
         "apps/*",
         "packages/*"
