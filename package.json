@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
+        "deploy": "bun ./scripts/deploy.ts",
         "build": "turbo run build",
         "start": "turbo run start",
         "dev": "bun install && turbo run dev",

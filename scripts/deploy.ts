@@ -34,10 +34,7 @@ console.log("📦 Installing dependencies...");
 runCommand("bun install", "bun install failed");
 
 console.log("🔄 Running Prisma db push...");
-runCommand("bun prisma db push", "Prisma db push failed");
-
-console.log("👤 Inserting superadmin...");
-runCommand("bun ./scripts/insert-superadmin.ts", "Failed to insert superadmin");
+runCommand("bun run prisma:db-push", "Prisma db push failed");
 
 console.log("🔨 Building project...");
 runCommand("bun --bun run build", "Build failed");
