@@ -18,6 +18,6 @@
         "format": "cd ../../ && eslint ./packages/database --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/database",
         "check-types": "tsc --noEmit",
         "prisma:generate": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma",
-        "prepare": "cd ../../ && bun ./packages/database/scripts/insert-superadmin.ts"
+        "insert-superadmin": "cd ../../ && bun ./packages/database/scripts/insert-superadmin.ts"
     }
 }
