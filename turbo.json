@@ -2,9 +2,9 @@
     "$schema": "https://turborepo.com/schema.json",
     "tasks": {
         "build": {
-            "dependsOn": ["^build"],
-            "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
-            "inputs": ["$TURBO_DEFAULT$", ".env*"]
+            "dependsOn": ["prepare", "^build"],
+            "outputs": ["./.next/**", "!./.next/cache/**", "./dist/**", "./build/**"],
+            "inputs": ["$TURBO_DEFAULT$", "../../.env*"]
         },
         "start": {
             "dependsOn": ["build"],
@@ -12,7 +12,7 @@
             "cache": false
         },
         "check-types": {
-            "dependsOn": ["^check-types"]
+            "dependsOn": ["prisma:generate", "^check-types"]
         },
         "lint": {
             "dependsOn": ["^lint"]
@@ -23,6 +23,13 @@
         "dev": {
             "persistent": true,
             "cache": false
+        },
+        "prisma:generate": {
+            "dependsOn": ["^prisma:generate"],
+            "outputs": ["./src/generated/prisma/**"]
+        },
+        "prepare": {
+            "dependsOn": ["prisma:generate", "^prepare"]
         }
     }
 }
