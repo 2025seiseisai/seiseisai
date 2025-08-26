@@ -434,3 +434,13 @@ export async function updateEventTicketInfoUnsafe(new_data: EventTicketInfoModel
 export async function getAllDrawResults() {
     return await dbClient.eventDrawResults.findMany();
 }
+
+export async function deleteExpiredTicketUsers() {
+    return await dbClient.ticketUser.deleteMany({
+        where: {
+            expiresAt: {
+                lt: new Date(),
+            },
+        },
+    });
+}

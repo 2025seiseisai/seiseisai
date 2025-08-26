@@ -1,13 +1,7 @@
-import { dbClient } from "@seiseisai/database/db-client";
+import { deleteExpiredTicketUsers } from "@seiseisai/database";
 import cron from "node-cron";
 
-cron.schedule("30 * * * * *", () => {
+cron.schedule("30 * * * * *", async () => {
     // 有効期限切れのユーザーを削除
-    dbClient.ticketUser.deleteMany({
-        where: {
-            expiresAt: {
-                lt: new Date(),
-            },
-        },
-    });
+    await deleteExpiredTicketUsers();
 });

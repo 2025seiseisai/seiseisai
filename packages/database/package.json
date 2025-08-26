@@ -11,9 +11,6 @@
         },
         "./enums": {
             "import": "./src/enums.ts"
-        },
-        "./db-client": {
-            "import": "./src/db-client.ts"
         }
     },
     "scripts": {
