@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import styles from "./spinner.module.scss";
 
 export default function AuthenticationQR({ className, hmacKey }: { className?: string; hmacKey: string }) {
-    const [url, setUrl] = useState<string>("");
+    const [url, setUrl] = useState<string | null>(null);
     useEffect(() => {
         const origin =
             process.env.NODE_ENV === "production" ? "https://tickets.seiseisai.com" : "http://localhost:3002";
         const hmac = crypto.createHmac("sha256", hmacKey);
-        let id = "";
+        let id: string | null = null;
         let counter = 0;
         const generator = () => {
             ++counter;
@@ -21,6 +21,7 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
                         ? crypto.randomUUID()
                         : crypto.randomBytes(16).toString("hex");
             }
+            if (!id) return;
             const now = new Date();
             const signature = hmac.update(id + "_" + now.getTime().toString()).digest("hex");
             const url = `${origin}/ticket/authorize?id=${id}&ts=${now.getTime()}&sig=${signature}`;
