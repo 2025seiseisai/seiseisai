@@ -15,20 +15,19 @@ jobs:
               uses: oven-sh/setup-bun@v2
 
             - name: Cache Dependency
-              uses: actions/cache@v3
+              uses: actions/cache/save@v3
               id: cache_dependency
               env:
                   cache-name: cache-dependency
               with:
                   path: "**/node_modules"
                   key: ${{ runner.os }}-node_modules-v1
-                  restore-keys: ""
 
             - name: Install Dependencies
               run: bun install --frozen-lockfile
 
             - name: Cache for Turbo
-              uses: rharkor/caching-for-turbo@v2.2.1
+              uses: rharkor/caching-for-turbo@v2.3.1
 
             - name: Run Type Check
               run: bun run check-types --force

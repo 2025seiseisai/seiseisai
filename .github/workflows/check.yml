@@ -33,7 +33,7 @@ jobs:
               run: bun install --frozen-lockfile
 
             - name: Cache for Turbo
-              uses: rharkor/caching-for-turbo@v2.2.1
+              uses: rharkor/caching-for-turbo@v2.3.1
 
             - name: Run Type Check
               run: bun run check-types
