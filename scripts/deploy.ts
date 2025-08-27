@@ -42,12 +42,12 @@ runCommand("bun --bun run build", "Build failed");
 console.log("🚀 Deploying with PM2...");
 const pm2List = runCommand("pm2 list", "Failed to list PM2 processes", true);
 
-if (pm2List && pm2List.includes("seiseisai-admin")) {
-    console.log("🔁 Restarting existing process: seiseisai-admin");
-    runCommand("pm2 restart seiseisai-admin", "Failed to restart the project");
+if (pm2List && pm2List.includes("seiseisai")) {
+    console.log("🔁 Restarting existing process: seiseisai");
+    runCommand("pm2 restart seiseisai", "Failed to restart the project");
 } else {
-    console.log("🚀 Starting new process: seiseisai-admin");
-    runCommand('pm2 start bun --name "seiseisai-admin" -- --bun run start', "Failed to start the project");
+    console.log("🚀 Starting new process: seiseisai");
+    runCommand('pm2 start bun --name "seiseisai" -- --bun run start', "Failed to start the project");
 }
 
 console.log(`✅ Deployment to branch ${branch} completed successfully!`);

@@ -4,6 +4,7 @@ import Header from "@/components/header/header";
 import "@/impl/globals.css";
 import { Toaster } from "@seiseisai/ui/components/sonner";
 import "@seiseisai/ui/styles/globals.css";
+import HolyLoader from "holy-loader";
 import { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     return (
         <html lang="ja" className={notoSansJP.className}>
             <body suppressHydrationWarning>
+                <HolyLoader color="var(--secondary-foreground)" speed={300} height="1px" />
                 <Header />
                 <main>{children}</main>
                 <Footer />

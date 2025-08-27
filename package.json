@@ -15,7 +15,8 @@
         "prisma:studio": "prisma studio --schema=./packages/database/prisma/schema.prisma",
         "prisma:db-push": "prisma db push --schema=./packages/database/prisma/schema.prisma",
         "prisma:db-pull": "prisma db pull --schema=./packages/database/prisma/schema.prisma",
-        "update-deps": "bunx --bun npm-check-updates -u && bun install"
+        "update-deps": "bunx --bun npm-check-updates -u && bun install",
+        "shadcn": "cd ./packages/ui && bun shadcn"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.1",
@@ -38,6 +39,7 @@
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
         "gray-matter": "^4.0.3",
+        "holy-loader": "^2.3.13",
         "jotai": "^2.13.1",
         "lottie-react": "^2.4.1",
         "lucide-react": "^0.541.0",

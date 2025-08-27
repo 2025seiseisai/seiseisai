@@ -1,3 +1,7 @@
+html {
+    scrollbar-gutter: stable;
+}
+
 html,
 body {
     max-width: 100svw;
@@ -23,4 +27,9 @@ main {
 *::selection {
     color: #fff;
     background-color: #1921b4;
+}
+
+#holy-progress {
+    position: sticky;
+    z-index: 100000000;
 }

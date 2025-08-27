@@ -2,7 +2,10 @@
     "extends": "../../settings/tsconfig.base.json",
     "compilerOptions": {
         "baseUrl": ".",
-        "noEmit": true
+        "noEmit": true,
+        "paths": {
+            "@seiseisai/ui/*": ["./src/*"]
+        }
     },
     "include": ["src/**/*"]
 }
