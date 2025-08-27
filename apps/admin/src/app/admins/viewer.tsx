@@ -192,7 +192,7 @@ function AdminEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="max-h-[92svh] overflow-y-auto">
                     <Form {...form}>
                         <AlertDialogHeader>
                             <AlertDialogTitle>管理者の編集</AlertDialogTitle>
@@ -336,7 +336,7 @@ function PasswordEditor({
     const [confirmPassword, setConfirmPassword] = useState("");
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-h-[92svh] overflow-y-auto">
                 <AlertDialogHeader>
                     <AlertDialogTitle>パスワードの変更</AlertDialogTitle>
                     <AlertDialogDescription>

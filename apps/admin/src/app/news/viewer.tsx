@@ -18,6 +18,7 @@ import {
 } from "@seiseisai/ui/components/alert-dialog";
 import { Button } from "@seiseisai/ui/components/button";
 import { Calendar } from "@seiseisai/ui/components/calendar";
+import { Card, CardContent } from "@seiseisai/ui/components/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -345,7 +346,7 @@ function NewsEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent className="w-full sm:max-w-[38rem]">
+                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-[38rem]">
                     <AlertDialogHeader>
                         <AlertDialogTitle>ニュースの編集</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -669,20 +670,24 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
                         更新
                     </Button>
                 </div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>日付</TableHead>
-                            <TableHead>タイトル</TableHead>
-                            <TableHead></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {news.map((item) => {
-                            return <NewsContent key={item.id} news={item} />;
-                        })}
-                    </TableBody>
-                </Table>
+                <Card className="mt-2 py-1">
+                    <CardContent className="overflow-hidden rounded-xl px-1">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>日付</TableHead>
+                                    <TableHead>タイトル</TableHead>
+                                    <TableHead></TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {news.map((item) => {
+                                    return <NewsContent key={item.id} news={item} />;
+                                })}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
             <NewsEditor
                 open={editorOpen}

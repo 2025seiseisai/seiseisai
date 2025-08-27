@@ -217,7 +217,7 @@ function GoodsEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="max-h-[92svh] overflow-y-auto">
                     <Form {...form}>
                         <AlertDialogHeader>
                             <AlertDialogTitle>グッズの編集</AlertDialogTitle>

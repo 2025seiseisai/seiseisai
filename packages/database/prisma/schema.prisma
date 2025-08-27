@@ -74,9 +74,10 @@ model EventTicketInfo {
 }
 
 model EventDrawResults {
-  eventId String          @id
-  winners Int // 当選者数 (0以上、定員以下)
-  event   EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId           String          @id
+  totalApplications Int // 総応募数 (0以上)
+  winners           Int // 当選者数 (0以上、定員以下)
+  event             EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model TicketUser {
