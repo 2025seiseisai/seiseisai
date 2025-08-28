@@ -1,7 +1,6 @@
 import { auth } from "@/impl/auth";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
 export default async function Page() {
     if (!(await auth())?.authorityTickets) notFound();
     return (

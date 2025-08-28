@@ -2,11 +2,9 @@ import { auth } from "@/impl/auth";
 import { notFound } from "next/navigation";
 import AuthenticationQR from "./qr";
 
-export const dynamic = "force-dynamic";
-
 export default async function Page() {
     const session = await auth();
-    if (!session?.authorityTickets) notFound();
+    if (!session?.authorityUserAuthentication) notFound();
 
     const hmacKey = process.env.TICKET_HMAC_KEY;
     if (!hmacKey) throw new Error("TICKET_HMAC_KEY is not set");

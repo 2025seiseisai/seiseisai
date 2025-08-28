@@ -1,8 +1,6 @@
 import { auth } from "@/impl/auth";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
 export default async function HelpPage() {
     if (!(await auth())?.authorityNews) notFound();
 

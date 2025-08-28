@@ -587,36 +587,33 @@ export default function TicketsViewer({
     const session = useSession();
     return (
         <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
-                <h1 className="mt-2 mb-6 w-full text-center text-4xl font-bold">整理券</h1>
-                <h2 className="mb-2 ml-1 w-full text-xl font-semibold md:text-2xl">整理券が必要なイベント</h2>
-                <div className="mb-2 flex items-center gap-1.5">
-                    {session.authorityTickets && (
-                        <>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                    setTicketId(createId());
-                                    setEditorOpen(true);
-                                }}
-                            >
-                                <ListPlus />
-                                追加
-                            </Button>
-                            <Separator orientation="vertical" className="h-6!" />
-                        </>
-                    )}
-                    <Button variant="ghost" size="sm" onClick={() => initializer()}>
-                        <ListRestart />
-                        更新
-                    </Button>
-                </div>
-                <div className="flex w-full flex-wrap gap-4">
-                    {tickets.map((t) => (
-                        <TicketCard key={t.id} ticket={t} drawResult={drawResults[t.id]} />
-                    ))}
-                </div>
+            <h2 className="mb-2 ml-1 w-full text-xl font-semibold md:text-2xl">整理券が必要なイベント</h2>
+            <div className="mb-2 flex items-center gap-1.5">
+                {session.authorityTickets && (
+                    <>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                setTicketId(createId());
+                                setEditorOpen(true);
+                            }}
+                        >
+                            <ListPlus />
+                            追加
+                        </Button>
+                        <Separator orientation="vertical" className="h-6!" />
+                    </>
+                )}
+                <Button variant="ghost" size="sm" onClick={() => initializer()}>
+                    <ListRestart />
+                    更新
+                </Button>
+            </div>
+            <div className="flex w-full flex-wrap gap-4">
+                {tickets.map((t) => (
+                    <TicketCard key={t.id} ticket={t} drawResult={drawResults[t.id]} />
+                ))}
             </div>
             <TicketEditor placeholder={getEmptyTicket(ticketId)} create open={editorOpen} setOpen={setEditorOpen} />
         </>

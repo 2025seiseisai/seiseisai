@@ -46,7 +46,9 @@ const authorityDescriptions: Record<string, string> = {
     authorityNews: "ニュースの閲覧・編集",
     authorityGoods: "グッズの閲覧・編集",
     authorityGoodsStock: "グッズの在庫の編集",
-    authorityTickets: "Web整理券の閲覧・編集",
+    authorityTickets: "整理券の閲覧・編集",
+    authorityUserAuthentication: "来場者の認証",
+    authorityTicketVerification: "整理券の検証",
     authorityAdmins: "管理者の閲覧・編集",
 };
 
@@ -64,6 +66,8 @@ const adminSchema = z.object({
     authorityGoods: z.boolean(),
     authorityGoodsStock: z.boolean(),
     authorityTickets: z.boolean(),
+    authorityUserAuthentication: z.boolean(),
+    authorityTicketVerification: z.boolean(),
     authorityAdmins: z.boolean(),
 });
 

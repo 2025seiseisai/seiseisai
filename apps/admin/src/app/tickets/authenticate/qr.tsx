@@ -24,7 +24,7 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
             if (!id) return;
             const now = new Date();
             const signature = hmac.update(id + "_" + now.getTime().toString()).digest("hex");
-            const url = `${origin}/authorize?id=${id}&ts=${now.getTime()}&sig=${signature}`;
+            const url = `${origin}/authenticate?id=${id}&ts=${now.getTime()}&sig=${signature}`;
             setUrl(url);
         };
         generator();

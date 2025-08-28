@@ -38,7 +38,8 @@ export default async function Header() {
         if (session.authorityNews) navItems.push({ href: "/news" as Route, label: "ニュース" });
         if (session.authorityGoods || session.authorityGoodsStock)
             navItems.push({ href: "/goods" as Route, label: "グッズ" });
-        if (session.authorityTickets) navItems.push({ href: "/tickets" as Route, label: "整理券" });
+        if (session.authorityTickets || session.authorityUserAuthentication || session.authorityTicketVerification)
+            navItems.push({ href: "/tickets" as Route, label: "整理券" });
         if (session.authorityAdmins) navItems.push({ href: "/admins" as Route, label: "管理者" });
     }
     return (
