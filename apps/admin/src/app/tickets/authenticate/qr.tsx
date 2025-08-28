@@ -40,5 +40,5 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
                 </div>
             </div>
         );
-    return <QRCodeSVG value={url} size={256} bgColor="#ffffff" fgColor="#000000" level="H" className={className} />;
+    return <QRCodeSVG value={url} size={256} bgColor="#ffffff" fgColor="#000000" level="M" className={className} />;
 }
