@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function FullscreenButton() {
     useEffect(() => {
-        document.addEventListener("fullscreenchange", () => {
+        const onFullscreenChange = () => {
             const isFullscreen = document.fullscreenElement !== null;
             if (isFullscreen) {
                 const fullscreenStyle = document.createElement("style");
@@ -25,8 +25,10 @@ export default function FullscreenButton() {
                     fullscreenStyle.remove();
                 }
             }
-        });
-    });
+        };
+        document.addEventListener("fullscreenchange", onFullscreenChange);
+        return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+    }, []);
     return (
         <Button
             variant="secondary"
