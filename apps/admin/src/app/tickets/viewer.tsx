@@ -11,7 +11,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { EventTicketType, UpdateResult } from "@seiseisai/database/enums";
-import type { EventTicketInfoModel } from "@seiseisai/database/models";
+import type { EventDrawResultModel, EventTicketInfoModel } from "@seiseisai/database/models";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -110,7 +110,7 @@ const ticketInfoSchema = z
 type TicketInfoForm = z.infer<typeof ticketInfoSchema>;
 
 const ticketsAtom = atom<EventTicketInfoModel[]>([]);
-const drawResultsAtom = atom<{ [eventId: string]: number }>({});
+const drawResultsAtom = atom<{ [eventId: string]: EventDrawResultModel }>({});
 
 function useInitTicketsAtom() {
     const setTickets = useSetAtom(ticketsAtom);
@@ -127,9 +127,9 @@ function useInitTicketsAtom() {
         }
         const dr = await getAllDrawResults();
         if (dr) {
-            const map: { [eventId: string]: number } = {};
+            const map: { [eventId: string]: EventDrawResultModel } = {};
             for (const r of dr) {
-                map[r.eventId] = r.winners;
+                map[r.eventId] = r;
             }
             setDrawResults(map);
         }
@@ -488,7 +488,7 @@ function dateToString(d: Date) {
     return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
 }
 
-function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; drawResult?: number }) {
+function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; drawResult?: EventDrawResultModel }) {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [editorOpen, setEditorOpen] = useState(false);
     const session = useSession();
@@ -497,8 +497,8 @@ function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; draw
             <Card className="w-full sm:w-auto sm:flex-1/3">
                 <div className="flex justify-between">
                     <CardHeader className="w-full gap-0 pr-0">
-                        <CardTitle className="text-lg">{ticket.name}</CardTitle>
-                        <CardDescription className="text-xs/relaxed">
+                        <CardTitle className="w-full truncate text-lg">{ticket.name}</CardTitle>
+                        <CardDescription className="overflow-hidden text-xs/relaxed">
                             ID: {ticket.id}
                             <br />
                             応募: {dateToString(ticket.applicationStart)} ~ {dateToString(ticket.applicationEnd)}
@@ -551,13 +551,30 @@ function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; draw
                         {ticket.paperTicketsPerUser}枚
                     </div>
                     <div className="flex-1/3">
-                        <Label className="text-[13px]">当選者数</Label>
-                        {drawResult !== undefined ? `${drawResult}人` : "抽選前"}
+                        <Label className="text-[13px]">抽選</Label>
+                        {drawResult ? "済" : "未"}
                     </div>
+                    {drawResult && (
+                        <div className="flex-1/3">
+                            <Label className="text-[13px]">応募者数</Label>
+                            {drawResult.totalApplications}人
+                        </div>
+                    )}
+                    {drawResult && (
+                        <div className="flex-1/3">
+                            <Label className="text-[13px]">当選者数</Label>
+                            {drawResult.winners}人
+                        </div>
+                    )}
                     {ticket.link && (
-                        <div className="flex-1/2 truncate">
+                        <div className="w-full flex-1/2 truncate">
                             <Label className="text-[13px]">リンク</Label>
-                            <Link href={ticket.link as Route} target="_blank" rel="noopener noreferrer">
+                            <Link
+                                href={ticket.link as Route}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full"
+                            >
                                 {ticket.link}
                             </Link>
                         </div>
@@ -575,7 +592,7 @@ export default function TicketsViewer({
     initialDrawResults,
 }: {
     initialTickets: EventTicketInfoModel[];
-    initialDrawResults: { [eventId: string]: number };
+    initialDrawResults: { [eventId: string]: EventDrawResultModel };
 }) {
     useHydrateAtoms([[ticketsAtom, initialTickets]]);
     useHydrateAtoms([[drawResultsAtom, initialDrawResults]]);

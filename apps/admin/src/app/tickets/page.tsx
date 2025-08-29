@@ -1,5 +1,6 @@
 import { auth, SessionProvider } from "@/impl/auth";
 import { getAllDrawResults, getAllEventTicketInfos } from "@seiseisai/database";
+import { EventDrawResultModel } from "@seiseisai/database/models";
 import { notFound, redirect } from "next/navigation";
 import TicketsPageBase from "./base";
 import TicketsViewer from "./viewer";
@@ -10,9 +11,9 @@ export default async function Page() {
     if (session.authorityTickets) {
         const ticketInfos = await getAllEventTicketInfos();
         const drawResults = await getAllDrawResults();
-        const drawResultsMap: { [eventId: string]: number } = {};
+        const drawResultsMap: { [eventId: string]: EventDrawResultModel } = {};
         for (const r of drawResults) {
-            drawResultsMap[r.eventId] = r.winners;
+            drawResultsMap[r.eventId] = r;
         }
         return (
             <SessionProvider>

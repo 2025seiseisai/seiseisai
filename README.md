@@ -18,6 +18,8 @@ TurborepoでMonorepo化しています。
 - VSCode: 編集に必要
 - VSCode Extensions: [extensions.json](./.vscode/extensions.json)に書かれている拡張機能が必要です
 - Bun: Javascriptランタイムとして[Bun](https://bun.com/)が必要です
+- Node.js: Next.jsを動かすためのJavascriptランタイムとして[Node.js](https://nodejs.org/ja/)が必要です
+    - `bun --bun run dev`みたいにすればBunだけでも動かせますが、一部の機能にNode.jsと互換性がなかったりメモリ消費量が激しかったりします
 
 ## Development
 
@@ -33,15 +35,15 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY="1x00000000000000000000AA" (Cloudflare Turnstile�
 TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA" (Cloudflare Turnstileの秘密鍵)
 ```
 
-VSCodeでF5キー(or Fn+F5)でデバッグセッションを立ち上げるか、ターミナルで`bun --bun run dev`を打ち込むと実行できます。
+VSCodeでF5キー(or Fn+F5)でデバッグセッションを立ち上げるか、ターミナルで`bun run dev`を打ち込むと実行できます。
 
 ## Build & Start
 
 同様に`.env`を保存して、
 
 ```shell
-bun --bun run build
-bun --bun run start
+bun run build
+bun run start
 ```
 
 でビルドと実行ができます。

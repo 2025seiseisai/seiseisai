@@ -5,7 +5,7 @@
             "name": "Bun: debug",
             "type": "node-terminal",
             "request": "launch",
-            "command": "bun --bun run dev",
+            "command": "bun run dev",
             "cwd": "${workspaceFolder}"
         }
     ]

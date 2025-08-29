@@ -62,8 +62,8 @@ enum EventTicketType {
 }
 
 model EventTicketInfo {
-  id                  String            @id
-  name                String            @unique
+  id                  String           @id
+  name                String           @unique
   link                String
   applicationStart    DateTime
   applicationEnd      DateTime
@@ -72,10 +72,10 @@ model EventTicketInfo {
   paperTicketsPerUser Int
   type                EventTicketType
   tickets             Ticket[]
-  drawResults         EventDrawResults?
+  drawResult          EventDrawResult?
 }
 
-model EventDrawResults {
+model EventDrawResult {
   eventId           String          @id
   totalApplications Int
   winners           Int
