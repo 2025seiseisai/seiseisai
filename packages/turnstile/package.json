@@ -1,0 +1,18 @@
+{
+    "name": "@seiseisai/turnstile",
+    "version": "0.1.0",
+    "private": true,
+    "exports": {
+        "./client": {
+            "import": "./src/client.tsx"
+        },
+        "./server": {
+            "import": "./src/server.ts"
+        }
+    },
+    "scripts": {
+        "lint": "cd ../../ && eslint ./packages/turnstile --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./packages/turnstile",
+        "format": "cd ../../ && eslint ./packages/turnstile --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/turnstile",
+        "check-types": "tsc --noEmit"
+    }
+}

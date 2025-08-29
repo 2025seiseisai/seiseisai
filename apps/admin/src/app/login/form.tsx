@@ -1,6 +1,6 @@
 "use client";
-import TurnstileWidget from "@/components/TurnstileWidget";
 import { zodResolver } from "@hookform/resolvers/zod";
+import TurnstileWidget from "@seiseisai/turnstile/client";
 import { Alert, AlertDescription, AlertTitle } from "@seiseisai/ui/components/alert";
 import { Button } from "@seiseisai/ui/components/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@seiseisai/ui/components/card";

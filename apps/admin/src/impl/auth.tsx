@@ -1,4 +1,5 @@
 import { getAdminById, getAdminByName, getAdminPassword } from "@seiseisai/database";
+import verifyTurnstileToken from "@seiseisai/turnstile/server";
 import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -42,16 +43,8 @@ const {
                     const { name, password, turnstileToken } = parsed.data;
 
                     const secretKey = process.env.TURNSTILE_SECRET_KEY!;
-                    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: new URLSearchParams({
-                            secret: secretKey,
-                            response: turnstileToken,
-                        }),
-                    });
-                    const verifyData = await verifyRes.json();
-                    if (!verifyData || !verifyData.success) {
+                    const verifyRes = await verifyTurnstileToken(turnstileToken, secretKey);
+                    if (!verifyRes) {
                         return null;
                     }
 

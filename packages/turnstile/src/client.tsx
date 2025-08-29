@@ -18,7 +18,13 @@ export default function TurnstileWidget({
     const [scriptLoaded, setScriptLoaded] = useState(false);
 
     useEffect(() => {
-        if (!scriptLoaded || rendered || !window.turnstile || !ref.current) return;
+        if (!scriptLoaded || rendered || !ref.current) return;
+        // @ts-expect-error turnstile is loaded by the script
+        if (!window.turnstile) {
+            console.error("Turnstile script not loaded");
+            return;
+        }
+        // @ts-expect-error turnstile is loaded by the script
         window.turnstile.render(ref.current, {
             sitekey: siteKey,
             callback: onVerify,

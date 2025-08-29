@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import getNextConfig from "../../settings/next.config";
 
 const nextConfig: NextConfig = getNextConfig({
-    devUrl: "http://localhost:3001/",
-    prodUrl: "https://admin.seiseisai.com/",
+    devUrl: "http://localhost:3002/",
+    prodUrl: "https://tickets.seiseisai.com/",
 });
 export default nextConfig;
