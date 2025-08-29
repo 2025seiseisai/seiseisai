@@ -19,13 +19,13 @@ export default function TurnstileWidget({
 
     useEffect(() => {
         if (!scriptLoaded || rendered || !ref.current) return;
-        // @ts-expect-error turnstile is loaded by the script
-        if (!window.turnstile) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (!(window as any).turnstile) {
             console.error("Turnstile script not loaded");
             return;
         }
-        // @ts-expect-error turnstile is loaded by the script
-        window.turnstile.render(ref.current, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).turnstile.render(ref.current, {
             sitekey: siteKey,
             callback: onVerify,
             theme: theme,
