@@ -67,7 +67,8 @@ model EventTicketInfo {
   link                String
   applicationStart    DateTime
   applicationEnd      DateTime
-  exchangeEnd         DateTime
+  eventStart          DateTime
+  eventEnd            DateTime
   capacity            Int
   paperTicketsPerUser Int
   type                EventTicketType

@@ -60,7 +60,8 @@ const ticketInfoSchema = z
             .or(z.literal("")),
         applicationStart: z.date(),
         applicationEnd: z.date(),
-        exchangeEnd: z.date(),
+        eventStart: z.date(),
+        eventEnd: z.date(),
         capacity: z.number().int().min(1, "定員は1以上です。").max(10000, "定員が大きすぎます。"),
         paperTicketsPerUser: z
             .number()
@@ -70,41 +71,31 @@ const ticketInfoSchema = z
         type: z.enum(EventTicketType),
     })
     .superRefine((data, ctx) => {
-        if (data.applicationStart.getSeconds() !== 0 || data.applicationStart.getMilliseconds() !== 0) {
-            ctx.addIssue({
-                path: ["applicationStart"],
-                code: "custom",
-                message: "応募開始の秒以下は0にしてください。",
-            });
-        }
-        if (data.applicationEnd.getSeconds() !== 0 || data.applicationEnd.getMilliseconds() !== 0) {
-            ctx.addIssue({
-                path: ["applicationEnd"],
-                code: "custom",
-                message: "応募終了の秒以下は0にしてください。",
-            });
-        }
-        if (data.exchangeEnd.getSeconds() !== 0 || data.exchangeEnd.getMilliseconds() !== 0) {
-            ctx.addIssue({
-                path: ["exchangeEnd"],
-                code: "custom",
-                message: "引き換え終了の秒以下は0にしてください。",
-            });
-        }
-        if (data.applicationStart >= data.applicationEnd) {
-            ctx.addIssue({
-                path: ["applicationEnd"],
-                code: "custom",
-                message: "応募終了は応募開始より後でなければなりません。",
-            });
-        }
-        if (data.applicationEnd >= data.exchangeEnd) {
-            ctx.addIssue({
-                path: ["exchangeEnd"],
-                code: "custom",
-                message: "引き換え終了は応募終了より後でなければなりません。",
-            });
-        }
+        const checkDate = (d: Date, path: string, name: string) => {
+            if (d.getSeconds() !== 0 || d.getMilliseconds() !== 0) {
+                ctx.addIssue({
+                    path: [path],
+                    code: "custom",
+                    message: `${name}日時の秒以下は0にしてください。`,
+                });
+            }
+        };
+        const checkDateOrder = (d1: Date, d2: Date, path: string, name1: string, name2: string) => {
+            if (d1 >= d2) {
+                ctx.addIssue({
+                    path: [path],
+                    code: "custom",
+                    message: `${name2}日時は${name1}日時より後でなければなりません。`,
+                });
+            }
+        };
+        checkDate(data.applicationStart, "applicationStart", "応募開始");
+        checkDate(data.applicationEnd, "applicationEnd", "応募終了");
+        checkDate(data.eventStart, "eventStart", "イベント開始");
+        checkDate(data.eventEnd, "eventEnd", "イベント終了");
+        checkDateOrder(data.applicationStart, data.applicationEnd, "applicationEnd", "応募開始", "応募終了");
+        checkDateOrder(data.applicationEnd, data.eventStart, "eventStart", "応募終了", "イベント開始");
+        checkDateOrder(data.eventStart, data.eventEnd, "eventEnd", "イベント開始", "イベント終了");
     });
 
 type TicketInfoForm = z.infer<typeof ticketInfoSchema>;
@@ -155,16 +146,18 @@ function addHours(base: Date, h: number) {
 function getEmptyTicket(id: string): EventTicketInfoModel {
     const now = new Date();
     now.setSeconds(0, 0);
-    const start = addHours(now, 1);
-    const end = addHours(start, 1);
-    const exchange = addHours(end, 1);
+    const applicationStart = addHours(now, 1);
+    const applicationEnd = addHours(applicationStart, 1);
+    const eventStart = addHours(applicationEnd, 1);
+    const eventEnd = addHours(eventStart, 1);
     return {
         id,
         name: "",
         link: "",
-        applicationStart: start,
-        applicationEnd: end,
-        exchangeEnd: exchange,
+        applicationStart,
+        applicationEnd,
+        eventStart,
+        eventEnd,
         capacity: 1,
         paperTicketsPerUser: 1,
         type: EventTicketType.個人制,
@@ -274,7 +267,7 @@ function TicketEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-[min(42rem,calc(100vw-2rem))]">
+                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-[min(56rem,calc(100%-2rem))]">
                     <Form {...form}>
                         <AlertDialogHeader>
                             <AlertDialogTitle>整理券イベントの{create ? "追加" : "編集"}</AlertDialogTitle>
@@ -333,47 +326,50 @@ function TicketEditor({
                                     </FormItem>
                                 )}
                             />
-                            <div className="grid items-start gap-4 sm:grid-cols-3">
+                            <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
                                 {datetimeField("applicationStart", "応募開始")}
                                 {datetimeField("applicationEnd", "応募終了")}
-                                {datetimeField("exchangeEnd", "引き換え終了")}
+                                {datetimeField("eventStart", "イベント開始")}
+                                {datetimeField("eventEnd", "イベント終了")}
                             </div>
-                            <div className="grid items-start gap-4 sm:grid-cols-3">
-                                <FormField
-                                    control={form.control}
-                                    name="capacity"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>定員</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    value={field.value}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="paperTicketsPerUser"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>1人あたりの最大応募枚数</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    min={1}
-                                                    value={field.value}
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                            <div className="grid items-start gap-4 sm:grid-cols-2">
+                                <div className="grid items-start gap-4 sm:grid-cols-2">
+                                    <FormField
+                                        control={form.control}
+                                        name="capacity"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>定員</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        value={field.value}
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="paperTicketsPerUser"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>最大応募枚数</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        min={1}
+                                                        value={field.value}
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                                 <FormField
                                     control={form.control}
                                     name="type"
@@ -382,7 +378,7 @@ function TicketEditor({
                                             <FormLabel>整理券種類</FormLabel>
                                             <FormControl>
                                                 <RadioGroup
-                                                    className="gap-1 not-sm:flex not-sm:justify-around"
+                                                    className="flex h-9 justify-around gap-1"
                                                     value={field.value}
                                                     onValueChange={field.onChange}
                                                 >
@@ -501,9 +497,9 @@ function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; draw
                         <CardDescription className="overflow-hidden text-xs/relaxed">
                             ID: {ticket.id}
                             <br />
-                            応募: {dateToString(ticket.applicationStart)} ~ {dateToString(ticket.applicationEnd)}
+                            応募日時: {dateToString(ticket.applicationStart)} ~ {dateToString(ticket.applicationEnd)}
                             <br />
-                            引換終了: {dateToString(ticket.exchangeEnd)}
+                            開催日時: {dateToString(ticket.eventStart)} ~ {dateToString(ticket.eventEnd)}
                         </CardDescription>
                     </CardHeader>
                     {session.authorityTickets && (
