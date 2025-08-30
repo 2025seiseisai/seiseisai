@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import "@/impl/globals.css";
 import { Toaster } from "@seiseisai/ui/components/sonner";
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <HolyLoader color="var(--secondary-foreground)" speed={300} height="1px" />
                 <Header />
                 <main>{children}</main>
+                <Footer />
                 <Toaster richColors theme="light" />
             </body>
         </html>

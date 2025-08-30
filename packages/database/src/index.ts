@@ -342,7 +342,7 @@ export async function updateGoodsUnsafe(new_data: GoodsModel, allow_name_change 
  * EventTicketInfo
  * ========================= */
 
-export async function getAllEventTicketInfos() {
+export async function getAllEventTicketInfo() {
     return await dbClient.eventTicketInfo.findMany({
         orderBy: {
             applicationStart: "asc",

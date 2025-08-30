@@ -93,7 +93,7 @@ export async function updateGoodsUnsafe(new_data: GoodsModel) {
 
 export async function getAllEventTicketInfos() {
     if (!(await auth())?.authorityTickets) return null;
-    return await Operations.getAllEventTicketInfos();
+    return await Operations.getAllEventTicketInfo();
 }
 
 export async function createEventTicketInfo(data: EventTicketInfoModel) {
