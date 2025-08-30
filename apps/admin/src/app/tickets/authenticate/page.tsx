@@ -6,8 +6,8 @@ export default async function Page() {
     const session = await auth();
     if (!session?.authorityUserAuthentication) notFound();
 
-    const hmacKey = process.env.TICKET_HMAC_KEY;
-    if (!hmacKey) throw new Error("TICKET_HMAC_KEY is not set");
+    const hmacKey = process.env.TICKET_HMAC_KEY_AUTH;
+    if (!hmacKey) throw new Error("TICKET_HMAC_KEY_AUTH is not set");
     return (
         <>
             <div className="mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-1 flex-col sm:w-[52rem]">

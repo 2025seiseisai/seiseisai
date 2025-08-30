@@ -22,9 +22,9 @@ export const dynamic = "force-dynamic";
 
 export default function LogInForm() {
     "use no memo";
-    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY_ADMIN;
     if (!siteKey) {
-        throw new Error("NEXT_PUBLIC_TURNSTILE_SITE_KEY is not set");
+        throw new Error("NEXT_PUBLIC_TURNSTILE_SITE_KEY_ADMIN is not set");
     }
     const [submitting, setSubmitting] = useState(false);
     const [turnstileToken, setTurnstileToken] = useState<string | null>(null);

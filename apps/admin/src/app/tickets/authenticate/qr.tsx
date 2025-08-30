@@ -10,7 +10,6 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
     useEffect(() => {
         const origin =
             process.env.NODE_ENV === "production" ? "https://tickets.seiseisai.com" : "http://localhost:3002";
-        const hmac = crypto.createHmac("sha256", hmacKey);
         let id: string | null = null;
         let counter = 0;
         const generator = () => {
@@ -23,6 +22,7 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
             }
             if (!id) return;
             const now = new Date();
+            const hmac = crypto.createHmac("sha256", hmacKey);
             const signature = hmac.update(id + "_" + now.getTime().toString()).digest("hex");
             const url = `${origin}/authenticate?id=${id}&ts=${now.getTime()}&sig=${signature}`;
             setUrl(url);

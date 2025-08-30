@@ -42,7 +42,7 @@ const {
 
                     const { name, password, turnstileToken } = parsed.data;
 
-                    const secretKey = process.env.TURNSTILE_SECRET_KEY!;
+                    const secretKey = process.env.TURNSTILE_SECRET_KEY_ADMIN!;
                     const verifyRes = await verifyTurnstileToken(turnstileToken, secretKey);
                     if (!verifyRes) {
                         return null;

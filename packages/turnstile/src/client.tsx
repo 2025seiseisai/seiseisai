@@ -5,11 +5,13 @@ import { useEffect, useRef, useState } from "react";
 export default function TurnstileWidget({
     siteKey,
     onVerify,
+    onError = () => {},
     theme = "light",
     className = "",
 }: {
     siteKey: string;
     onVerify: (token: string) => void;
+    onError?: () => void;
     theme?: "light" | "dark" | "auto";
     className?: string;
 }) {
@@ -28,10 +30,11 @@ export default function TurnstileWidget({
         (window as any).turnstile.render(ref.current, {
             sitekey: siteKey,
             callback: onVerify,
+            "error-callback": onError,
             theme: theme,
         });
         setRendered(true);
-    }, [scriptLoaded, rendered, siteKey, onVerify, theme]);
+    }, [scriptLoaded, rendered, siteKey, onVerify, onError, theme]);
 
     return (
         <>
