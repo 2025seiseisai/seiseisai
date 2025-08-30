@@ -1,0 +1,15 @@
+{
+    "name": "@seiseisai/date",
+    "version": "0.1.0",
+    "private": true,
+    "exports": {
+        ".": {
+            "import": "./src/index.ts"
+        }
+    },
+    "scripts": {
+        "lint": "cd ../../ && eslint ./packages/date --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./packages/date",
+        "format": "cd ../../ && eslint ./packages/date --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/date",
+        "check-types": "tsc --noEmit"
+    }
+}

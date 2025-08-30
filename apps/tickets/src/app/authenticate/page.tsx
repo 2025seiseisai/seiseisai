@@ -1,3 +1,4 @@
+import dayjs from "@seiseisai/date";
 import crypto from "crypto";
 import AuthenticationForm from "./form";
 
@@ -6,17 +7,13 @@ export default async function Page({
 }: {
     searchParams: Promise<{ id?: string; ts?: string; sig?: string }>;
 }) {
-    const now = Date.now();
+    const now = dayjs();
     const { id, ts, sig } = await searchParams;
     if (!id || !ts || !sig || typeof id !== "string" || typeof ts !== "string" || typeof sig !== "string") {
         throw new Error("Invalid parameters");
     }
-    const tsNum = Number(ts);
-    if (isNaN(tsNum) || !Number.isInteger(tsNum) || tsNum <= 0 || tsNum > now) {
-        throw new Error("Invalid timestamp");
-    }
-    /*
-    if (now - tsNum > 4 * 1000) {
+    const tsDate = dayjs(ts);
+    if (now.isAfter(tsDate.add(4, "second"))) {
         return (
             <div className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center">
                 <div className="text-center">
@@ -30,7 +27,6 @@ export default async function Page({
             </div>
         );
     }
-    */
     const hmacKey1 = process.env.TICKET_HMAC_KEY_AUTH;
     if (!hmacKey1) {
         throw new Error("TICKET_HMAC_KEY_AUTH is not set");

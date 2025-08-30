@@ -38,6 +38,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
+        "dayjs": "^1.11.18",
         "gray-matter": "^4.0.3",
         "holy-loader": "^2.3.13",
         "jotai": "^2.13.1",

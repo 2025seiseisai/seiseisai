@@ -11,7 +11,7 @@ export default function getNextConfig(options: { devUrl: string; prodUrl: string
         images: {
             qualities: [75, 50, 100],
         },
-        transpilePackages: ["@seiseisai/database", "@seiseisai/ui", "@seiseisai/turnstile"],
+        transpilePackages: ["@seiseisai/database", "@seiseisai/ui", "@seiseisai/turnstile", "@seiseisai/date"],
         turbopack: {
             rules: {
                 "*.svg": {

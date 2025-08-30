@@ -1,4 +1,5 @@
 "use client";
+import dayjs from "@seiseisai/date";
 import { cn } from "@seiseisai/ui/lib/utils";
 import crypto from "crypto";
 import { QRCodeSVG } from "qrcode.react";
@@ -21,10 +22,10 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
                         : crypto.randomBytes(16).toString("hex");
             }
             if (!id) return;
-            const now = new Date();
+            const now = dayjs();
             const hmac = crypto.createHmac("sha256", hmacKey);
-            const signature = hmac.update(id + "_" + now.getTime().toString()).digest("hex");
-            const url = `${origin}/authenticate?id=${id}&ts=${now.getTime()}&sig=${signature}`;
+            const signature = hmac.update(id + "_" + now).digest("hex");
+            const url = `${origin}/authenticate?id=${id}&ts=${now}&sig=${signature}`;
             setUrl(url);
         };
         generator();

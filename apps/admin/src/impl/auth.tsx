@@ -68,7 +68,7 @@ const {
     pages: {
         signIn: "/login",
     },
-    secret: process.env.AUTH_SECRET,
+    secret: process.env.AUTH_SECRET_ADMIN,
     session: {
         strategy: "jwt",
         maxAge: 12 * 60 * 60,
