@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { EventTicketType, UpdateResult } from "@seiseisai/database/enums";
 import type { EventDrawResultModel, EventTicketInfoModel } from "@seiseisai/database/models";
+import dayjs from "@seiseisai/date";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -128,28 +129,22 @@ function useInitTicketsAtom() {
 }
 
 function formatDateTimeLocal(d: Date) {
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return dayjs(d).format("YYYY-MM-DDTHH:mm");
 }
 
 function parseDateTimeLocal(value: string): Date | null {
     if (!value) return null;
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return null;
-    return date;
-}
-
-function addHours(base: Date, h: number) {
-    return new Date(base.getTime() + h * 3600 * 1000);
+    const d = dayjs(value);
+    if (!d.isValid()) return null;
+    return d.second(0).millisecond(0).toDate();
 }
 
 function getEmptyTicket(id: string): EventTicketInfoModel {
-    const now = new Date();
-    now.setSeconds(0, 0);
-    const applicationStart = addHours(now, 1);
-    const applicationEnd = addHours(applicationStart, 1);
-    const eventStart = addHours(applicationEnd, 1);
-    const eventEnd = addHours(eventStart, 1);
+    const now = dayjs().second(0).millisecond(0);
+    const applicationStart = now.add(1, "hour").toDate();
+    const applicationEnd = dayjs(applicationStart).add(1, "hour").toDate();
+    const eventStart = dayjs(applicationEnd).add(1, "hour").toDate();
+    const eventEnd = dayjs(eventStart).add(1, "hour").toDate();
     return {
         id,
         name: "",
@@ -481,7 +476,7 @@ function DeleteDialog({
 }
 
 function dateToString(d: Date) {
-    return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}`;
+    return dayjs(d).format("YYYY/M/D H:mm");
 }
 
 function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; drawResult?: EventDrawResultModel }) {

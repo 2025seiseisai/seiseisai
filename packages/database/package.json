@@ -19,5 +19,8 @@
         "check-types": "tsc --noEmit",
         "prisma:generate": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma",
         "insert-superadmin": "cd ../../ && bun ./packages/database/scripts/insert-superadmin.ts"
+    },
+    "dependencies": {
+        "@seiseisai/date": "workspace:*"
     }
 }

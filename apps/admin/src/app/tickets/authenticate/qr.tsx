@@ -24,8 +24,8 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
             if (!id) return;
             const now = dayjs();
             const hmac = crypto.createHmac("sha256", hmacKey);
-            const signature = hmac.update(id + "_" + now).digest("hex");
-            const url = `${origin}/authenticate?id=${id}&ts=${now}&sig=${signature}`;
+            const signature = hmac.update(id + "_" + now.valueOf()).digest("hex");
+            const url = `${origin}/authenticate?id=${id}&ts=${now.valueOf()}&sig=${signature}`;
             setUrl(url);
         };
         generator();

@@ -37,7 +37,7 @@ model AdminPassword {
 model News {
   id         String   @id @default(cuid())
   title      String
-  date       DateTime @default(now())
+  date       DateTime
   importance Boolean  @default(false)
   content    String   @db.Text
 }

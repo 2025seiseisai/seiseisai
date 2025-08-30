@@ -108,7 +108,8 @@ const {
                 };
             }
             if (token.exp) {
-                session.expires = new Date(token.exp * 1000);
+                // JWT exp は秒単位 (Unix time)。JST デフォルト dayjs で Date 化
+                session.expires = dayjs.unix(token.exp).toDate();
             }
             return session;
         },

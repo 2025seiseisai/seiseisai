@@ -1,3 +1,4 @@
+import dayjs from "@seiseisai/date";
 import { dbClient } from "./db-client";
 import { UpdateResult } from "./enums";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
@@ -396,7 +397,7 @@ export async function deleteExpiredTicketUsers() {
     return await dbClient.ticketUser.deleteMany({
         where: {
             expiresAt: {
-                lt: new Date(),
+                lt: dayjs().toDate(),
             },
         },
     });

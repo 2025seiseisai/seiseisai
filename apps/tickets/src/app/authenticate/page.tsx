@@ -12,7 +12,11 @@ export default async function Page({
     if (!id || !ts || !sig || typeof id !== "string" || typeof ts !== "string" || typeof sig !== "string") {
         throw new Error("Invalid parameters");
     }
-    const tsDate = dayjs(ts);
+    const tsNum = Number(ts);
+    if (Number.isNaN(tsNum) || !Number.isSafeInteger(tsNum) || tsNum <= 0) {
+        throw new Error("Invalid timestamp");
+    }
+    const tsDate = dayjs(tsNum);
     if (now.isAfter(tsDate.add(4, "second"))) {
         return (
             <div className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center">

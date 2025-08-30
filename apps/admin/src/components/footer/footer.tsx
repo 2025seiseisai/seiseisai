@@ -1,5 +1,6 @@
+import dayjs from "@seiseisai/date";
 export default function Footer() {
-    const currentYear = new Date().getFullYear();
+    const currentYear = dayjs().tz().year();
     return (
         <footer className="w-full py-4 text-gray-400">
             <div className="container mx-auto text-center">

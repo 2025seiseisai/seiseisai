@@ -108,6 +108,9 @@
     "packages/database": {
       "name": "@seiseisai/database",
       "version": "0.1.0",
+      "dependencies": {
+        "@seiseisai/date": "workspace:*",
+      },
     },
     "packages/date": {
       "name": "@seiseisai/date",

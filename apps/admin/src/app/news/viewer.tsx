@@ -6,6 +6,7 @@ import { YouTubeEmbed } from "@next/third-parties/google";
 import { createId } from "@paralleldrive/cuid2";
 import { UpdateResult } from "@seiseisai/database/enums";
 import type { NewsModel } from "@seiseisai/database/models";
+import dayjs from "@seiseisai/date";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -308,13 +309,11 @@ function NewsPreview({ content, className = "" }: { content: string; className?:
 }
 
 function formatDate(date: Date | string): string {
-    const d = new Date(date);
-    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+    return dayjs(date).format("YYYY/MM/DD");
 }
 
 function currentDate(): Date {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    return dayjs().startOf("day").toDate();
 }
 
 function NewsEditor({
