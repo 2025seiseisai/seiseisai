@@ -10,6 +10,7 @@ TurborepoでMonorepo化しています。
 - [/apps/ticket-worker](./apps/ticket-worker): 定期的にデータベースのチェックを行い、Web整理券の抽選などを行うコードが入っています。
 - [/apps/tickets](./apps/tickets): Web整理券の応募ページ。
 - [/packages/database](./packages/database): データベースを操作する関数や型など。ここではPrismaを使っていますが、書き換えればCloudflare D1とかにも対応できるはず。
+- [/packages/date](./packages/date): dayjsのデフォルトを日本時間にしてエクスポートしています。このリポジトリ内では、Dateの代わりに全部このパッケージ内のdayjsを使用しています。
 - [/packages/turnstile](./packages/turnstile): Cloudflare TurnstileのReact Componentと、サーバーでの検証をする関数が入っています。
 - [/packages/ui](./packages/ui): shadcn/uiのコンポーネント。
 
@@ -26,16 +27,6 @@ TurborepoでMonorepo化しています。
 ## Development
 
 `.env`ファイルをルートディレクトリに置く必要があります。
-
-```shell
-DATABASE_URL=PostgreSQLのURL
-DIRECT_URL=PostgreSQLのURL
-AUTH_SECRET=bunx --bun auth secretで出力される値
-HASH_SALT=パスワードをハッシュ化するときのソルト
-SUPERADMIN_HASHED_PASSWORD=ハッシュ化したsuperadminのパスワード
-NEXT_PUBLIC_TURNSTILE_SITE_KEY="1x00000000000000000000AA" (Cloudflare Turnstileの公開鍵)
-TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA" (Cloudflare Turnstileの秘密鍵)
-```
 
 VSCodeでF5キー(or Fn+F5)でデバッグセッションを立ち上げるか、ターミナルで`bun run dev`を打ち込むと実行できます。
 
