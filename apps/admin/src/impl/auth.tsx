@@ -101,6 +101,14 @@ const {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         debug(message, metadata) {},
     },
+    cookies:
+        process.env.NODE_ENV === "production"
+            ? undefined
+            : {
+                  sessionToken: { name: `seiseisai-admin.session-token` },
+                  callbackUrl: { name: `seiseisai-admin.callback-url` },
+                  csrfToken: { name: `seiseisai-admin.csrf-token` },
+              },
 });
 
 export { handlers, signIn, signOut };

@@ -125,6 +125,14 @@ const {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         debug(message, metadata) {},
     },
+    cookies:
+        process.env.NODE_ENV === "production"
+            ? undefined
+            : {
+                  sessionToken: { name: `seiseisai-tickets.session-token` },
+                  callbackUrl: { name: `seiseisai-tickets.callback-url` },
+                  csrfToken: { name: `seiseisai-tickets.csrf-token` },
+              },
 });
 
 export { handlers, signIn };
