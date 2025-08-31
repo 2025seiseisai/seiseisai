@@ -1,5 +1,7 @@
+import { auth } from "@/impl/auth";
 import dayjs from "@seiseisai/date";
 import crypto from "crypto";
+import { redirect } from "next/navigation";
 import AuthenticationForm from "./form";
 
 export default async function Page({
@@ -7,6 +9,10 @@ export default async function Page({
 }: {
     searchParams: Promise<{ id?: string; ts?: string; sig?: string }>;
 }) {
+    if ((await auth()) !== null) {
+        redirect("/");
+    }
+
     const now = dayjs();
     const { id, ts, sig } = await searchParams;
     if (!id || !ts || !sig || typeof id !== "string" || typeof ts !== "string" || typeof sig !== "string") {
@@ -17,7 +23,7 @@ export default async function Page({
         throw new Error("Invalid timestamp");
     }
     const tsDate = dayjs(tsNum);
-    if (now.isAfter(tsDate.add(4, "second"))) {
+    if (now.isAfter(tsDate.add(5, "second"))) {
         return (
             <div className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center">
                 <div className="text-center">

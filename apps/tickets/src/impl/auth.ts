@@ -60,7 +60,7 @@ const {
                     }
 
                     // Cloudflare Turnstileの検証
-                    const secretKey = process.env.TURNSTILE_SECRET_KEY_LOGIN;
+                    const secretKey = process.env.TURNSTILE_SECRET_KEY_TICKETS;
                     if (!secretKey) {
                         return null;
                     }
@@ -91,19 +91,17 @@ const {
     },
     callbacks: {
         async jwt({ token, user }) {
-            if (user) {
+            const id = user ? user.userId : token.userId || null;
+            if (id) {
                 try {
-                    const userInfo = await getTicketUserById(user.userId);
-                    if (!userInfo) {
-                        return null;
-                    }
-                    token = {
-                        ...token,
-                        userId: user.userId,
-                        exp: Math.floor(userInfo.expiresAt.getTime() / 1000),
-                    };
+                    const userInfo = await getTicketUserById(id);
+                    if (!userInfo) return null;
+                    const now = dayjs();
+                    const expiresAt = dayjs(userInfo.expiresAt);
+                    if (now.isAfter(expiresAt)) return null;
+                    token.userId = id;
+                    token.exp = Math.floor(userInfo.expiresAt.getTime() / 1000);
                 } catch {
-                    // DBでエラーが起きた場合はログイン不可
                     return null;
                 }
             }

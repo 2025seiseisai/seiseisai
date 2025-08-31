@@ -4,7 +4,9 @@ import { NextResponse } from "next/server";
 export function middleware(req: NextRequest) {
     if (req.nextUrl.pathname === "/api/auth/signout") {
         // 期限切れ以外でのサインアウトを禁止
-        return new NextResponse("Not Found", { status: 404 });
+        const url = req.nextUrl.clone();
+        url.pathname = "/404";
+        return NextResponse.rewrite(url);
     }
     return NextResponse.next();
 }

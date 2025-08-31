@@ -4,11 +4,29 @@ import { Alert, AlertDescription, AlertTitle } from "@seiseisai/ui/components/al
 import { Card, CardContent, CardHeader, CardTitle } from "@seiseisai/ui/components/card";
 import { cn } from "@seiseisai/ui/lib/utils";
 import { AlertCircleIcon } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "./spinner.module.scss";
 
-export default function AuthenticationForm({}: { id: string; ts: string; sig: string }) {
+export default function AuthenticationForm({ id, ts, sig }: { id: string; ts: string; sig: string }) {
     const [failed, setFailed] = useState(false);
+
+    const router = useRouter();
+    async function signInEvent(token: string) {
+        const result = await signIn("credentials", {
+            id: id,
+            timestamp: ts,
+            signature: sig,
+            turnstileToken: token,
+            redirect: false,
+        });
+        if (!result || result.error || !result.ok) {
+            setFailed(true);
+        } else {
+            router.push("/");
+        }
+    }
     return (
         <>
             <div className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center">
@@ -21,9 +39,7 @@ export default function AuthenticationForm({}: { id: string; ts: string; sig: st
                         <div className={cn("max-w-full overflow-x-auto", failed ? "mb-2" : "mb-1")}>
                             <TurnstileWidget
                                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY_TICKETS!}
-                                onVerify={(token) => {
-                                    console.log(token);
-                                }}
+                                onVerify={(token) => signInEvent(token)}
                                 onError={() => setFailed(true)}
                                 theme="light"
                             />

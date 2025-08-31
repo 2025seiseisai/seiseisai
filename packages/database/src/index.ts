@@ -1,4 +1,3 @@
-import dayjs from "@seiseisai/date";
 import { dbClient } from "./db-client";
 import { UpdateResult } from "./enums";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
@@ -409,15 +408,5 @@ export async function createTicketUser(id: string, expiresAt: Date) {
     // 既にそのidが存在する場合は例外が送出される
     return await dbClient.ticketUser.create({
         data: { id, expiresAt },
-    });
-}
-
-export async function deleteExpiredTicketUsers() {
-    return await dbClient.ticketUser.deleteMany({
-        where: {
-            expiresAt: {
-                lt: dayjs().toDate(),
-            },
-        },
     });
 }
