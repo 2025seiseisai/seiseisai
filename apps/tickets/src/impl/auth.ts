@@ -1,3 +1,4 @@
+import { createTicketUser, getTicketUserById } from "@seiseisai/database";
 import dayjs from "@seiseisai/date";
 import verifyTurnstileToken from "@seiseisai/turnstile/server";
 import crypto from "crypto";
@@ -18,7 +19,6 @@ const signInSchema = z.object({
 
 const {
     signIn,
-    signOut,
     auth: authInternal,
     handlers,
 } = NextAuth({
@@ -39,13 +39,14 @@ const {
 
                     const { id, timestamp, signature, turnstileToken } = parsed.data;
 
+                    // 1分以上前または未来のタイムスタンプは無効
                     const now = dayjs().tz("Asia/Tokyo");
-                    // 3分以上前または未来のタイムスタンプは無効
                     const ts = dayjs(timestamp).tz("Asia/Tokyo");
-                    if (ts.isBefore(now.subtract(3, "minute")) || ts.isAfter(now.add(3, "minute"))) {
+                    if (now.isAfter(ts.add(1, "minute")) || now.isBefore(ts)) {
                         return null;
                     }
 
+                    // 署名の検証
                     const hmacKey = process.env.TICKET_HMAC_KEY_LOGIN;
                     if (!hmacKey) {
                         return null;
@@ -58,6 +59,7 @@ const {
                         return null;
                     }
 
+                    // Cloudflare Turnstileの検証
                     const secretKey = process.env.TURNSTILE_SECRET_KEY_LOGIN;
                     if (!secretKey) {
                         return null;
@@ -67,7 +69,12 @@ const {
                         return null;
                     }
 
-                    // TODO: ユーザーをデータベースに追加
+                    let expiresAt = now.hour(18).minute(0).second(0).millisecond(0);
+                    if (expiresAt.isBefore(now)) {
+                        expiresAt = expiresAt.add(1, "day");
+                    }
+                    // ここでエラーが起きた場合は例外が送出され拒否される
+                    await createTicketUser(id, expiresAt.toDate());
 
                     return {
                         userId: id,
@@ -83,20 +90,22 @@ const {
         strategy: "jwt",
     },
     callbacks: {
-        async jwt({ token, user, account }) {
+        async jwt({ token, user }) {
             if (user) {
-                token = {
-                    ...token,
-                    userId: user.userId,
-                };
-            }
-            if (user && account?.provider === "credentials") {
-                const now = dayjs().tz("Asia/Tokyo");
-                let expiresAt = now.hour(18).minute(0).second(0).millisecond(0);
-                if (expiresAt.isBefore(now)) {
-                    expiresAt = expiresAt.add(1, "day");
+                try {
+                    const userInfo = await getTicketUserById(user.userId);
+                    if (!userInfo) {
+                        return null;
+                    }
+                    token = {
+                        ...token,
+                        userId: user.userId,
+                        exp: Math.floor(userInfo.expiresAt.getTime() / 1000),
+                    };
+                } catch {
+                    // DBでエラーが起きた場合はログイン不可
+                    return null;
                 }
-                token.exp = Math.floor(expiresAt.unix());
             }
             return token;
         },
@@ -106,10 +115,6 @@ const {
                     ...session.user,
                     userId: token.userId,
                 };
-            }
-            if (token.exp) {
-                // JWT exp は秒単位 (Unix time)。JST デフォルト dayjs で Date 化
-                session.expires = dayjs.unix(token.exp).toDate();
             }
             return session;
         },
@@ -124,27 +129,16 @@ const {
     },
 });
 
-export { handlers, signIn, signOut };
+export { handlers, signIn };
 
 export const auth = cache(async () => {
-    const session = await authInternal();
-    if (!session) return null;
-    if (!session.user || typeof session.user.userId !== "string") {
-        await signOut({ redirect: false });
+    try {
+        const session = await authInternal();
+        if (!session) return null;
+        if (!session.user || typeof session.user.userId !== "string") return null;
+        return session.user.userId;
+    } catch {
+        // 念のため
         return null;
     }
-    const now = dayjs();
-    const expires = dayjs(session.expires);
-    if (now.isAfter(expires)) {
-        await signOut({ redirect: false });
-        return null;
-    }
-    return session.user.userId;
 });
-
-/*
-export async function SessionProvider({ children }: { children: React.ReactNode }) {
-    const session = await auth();
-    return <AuthProvider session={session}>{children}</AuthProvider>;
-}
-*/

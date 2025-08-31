@@ -393,6 +393,25 @@ export async function getAllDrawResults() {
     return await dbClient.eventDrawResult.findMany();
 }
 
+/* =========================
+ * TicketUser
+ * ========================= */
+
+export async function getTicketUserById(id: string) {
+    return await dbClient.ticketUser.findUnique({
+        where: {
+            id,
+        },
+    });
+}
+
+export async function createTicketUser(id: string, expiresAt: Date) {
+    // 既にそのidが存在する場合は例外が送出される
+    return await dbClient.ticketUser.create({
+        data: { id, expiresAt },
+    });
+}
+
 export async function deleteExpiredTicketUsers() {
     return await dbClient.ticketUser.deleteMany({
         where: {
