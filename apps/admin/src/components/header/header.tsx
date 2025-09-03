@@ -18,17 +18,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@seiseisai/ui/components/dropdown-menu";
-import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-} from "@seiseisai/ui/components/navigation-menu";
+import { NavigationMenu, NavigationMenuList } from "@seiseisai/ui/components/navigation-menu";
 import { LogIn, LogOut, User } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { LogoutButton } from "./logout-button";
 import { MobileMenu } from "./mobile-menu";
+import Navigation from "./navigation";
 
 export default async function Header() {
     const session = await auth();
@@ -48,17 +44,10 @@ export default async function Header() {
                 <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
                 <NavigationMenu className="hidden md:block">
                     <NavigationMenuList className="gap-0.5">
-                        {navItems.map((item) => {
-                            return (
-                                <NavigationMenuItem key={item.href}>
-                                    <NavigationMenuLink asChild>
-                                        <Link href={item.href} className="font-medium">
-                                            {item.label}
-                                        </Link>
-                                    </NavigationMenuLink>
-                                </NavigationMenuItem>
-                            );
-                        })}
+                        {navItems.map((item) => (
+                            // Next.jsのバグを回避するため、use clientなコンポーネントに分離
+                            <Navigation key={item.href} href={item.href} label={item.label} />
+                        ))}
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="mr-4 ml-auto md:hidden">
