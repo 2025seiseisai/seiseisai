@@ -35,35 +35,32 @@ const {
             },
             async authorize(credentials) {
                 try {
-                    console.warn("A");
                     const parsed = await signInSchema.safeParseAsync(credentials);
                     if (!parsed.success) {
                         return null;
                     }
 
-                    console.warn("B");
                     const { name, password, turnstileToken } = parsed.data;
-                    console.warn("C");
 
                     const secretKey = process.env.TURNSTILE_SECRET_KEY_ADMIN!;
                     const verifyRes = await verifyTurnstileToken(turnstileToken, secretKey);
                     if (!verifyRes) {
                         return null;
                     }
-                    console.warn("D");
 
                     const user = await getAdminByName(name);
                     if (!user) {
                         return null;
                     }
 
-                    console.warn("E");
-
+                    console.warn("Checking password for user:", user.id);
                     const expected = await getAdminPassword(user.id);
+                    console.warn(expected);
+                    console.warn(expected?.hashedPassword);
+                    console.warn(getHashedPassword(password));
                     if (!expected || expected.hashedPassword !== getHashedPassword(password)) {
                         return null;
                     }
-                    console.warn("F");
                     return {
                         adminId: user.id,
                     };

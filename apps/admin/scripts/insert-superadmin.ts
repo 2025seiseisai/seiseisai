@@ -37,6 +37,6 @@ await dbClient.admin.update({
 await dbClient.adminPassword.create({
     data: {
         adminId: "superadmin",
-        hashedPassword: process.env.SUPERADMIN_HASHED_PASSWORD || "",
+        hashedPassword: process.env.SUPERADMIN_HASHED_PASSWORD,
     },
 });

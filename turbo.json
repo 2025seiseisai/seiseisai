@@ -34,7 +34,7 @@
             "inputs": ["$TURBO_DEFAULT$", "../../.env*"]
         },
         "insert-superadmin": {
-            "dependsOn": ["prisma:generate", "^insert-superadmin"]
+            "dependsOn": ["check-env", "prisma:generate", "^insert-superadmin"]
         }
     }
 }
