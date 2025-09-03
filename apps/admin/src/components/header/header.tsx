@@ -51,12 +51,7 @@ export default async function Header() {
                         {navItems.map((item) => {
                             return (
                                 <NavigationMenuItem key={item.label}>
-                                    <NavigationMenuLink asChild>
-                                        <Link href={item.href} className="font-medium">
-                                            {item.label}
-                                        </Link>
-                                        あああ
-                                    </NavigationMenuLink>
+                                    <NavigationMenuLink asChild>あああ</NavigationMenuLink>
                                 </NavigationMenuItem>
                             );
                         })}
