@@ -34,10 +34,10 @@ console.log("📦 Installing dependencies...");
 runCommand("bun install", "bun install failed");
 
 console.log("🔄 Running Prisma db push...");
-runCommand("bun --bun run prisma:db-push --force", "Prisma db push failed");
+runCommand("bun --bun run prisma:db-push", "Prisma db push failed");
 
 console.log("🔨 Building project...");
-runCommand("bun --bun run build --force", "Build failed");
+runCommand("bun --bun run build", "Build failed");
 
 console.log("🚀 Deploying with PM2...");
 const pm2List = runCommand("pm2 list", "Failed to list PM2 processes", true);
