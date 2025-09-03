@@ -55,6 +55,7 @@ export default async function Header() {
                                         <Link href={item.href} className="font-medium">
                                             {item.label}
                                         </Link>
+                                        あああ
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
                             );
