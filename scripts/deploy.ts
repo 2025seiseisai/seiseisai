@@ -47,7 +47,7 @@ if (pm2List && pm2List.includes(" seiseisai ")) {
     runCommand("pm2 restart seiseisai", "Failed to restart the project");
 } else {
     console.log("🚀 Starting new process: seiseisai");
-    runCommand('pm2 start bun --name "seiseisai" -- run start', "Failed to start the project");
+    runCommand('pm2 start bun --name "seiseisai" -- --bun run start', "Failed to start the project");
 }
 
 console.log(`✅ Deployment to branch ${branch} completed successfully!`);
