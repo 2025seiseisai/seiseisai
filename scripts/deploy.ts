@@ -42,7 +42,7 @@ runCommand("bun --bun run build", "Build failed");
 console.log("🚀 Deploying with PM2...");
 const pm2List = runCommand("pm2 list", "Failed to list PM2 processes", true);
 
-if (pm2List && pm2List.includes("seiseisai")) {
+if (pm2List && pm2List.includes(" seiseisai ")) {
     console.log("🔁 Restarting existing process: seiseisai");
     runCommand("pm2 restart seiseisai", "Failed to restart the project");
 } else {
