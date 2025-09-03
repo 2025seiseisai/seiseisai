@@ -23,6 +23,7 @@
         "prisma:generate": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma"
     },
     "dependencies": {
-        "@seiseisai/date": "workspace:*"
+        "@seiseisai/date": "workspace:*",
+        "@seiseisai/settings": "workspace:*"
     }
 }

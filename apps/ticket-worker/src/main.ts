@@ -1,11 +1,7 @@
 import { dbClient } from "@seiseisai/database/db-client";
 import { TicketStatus } from "@seiseisai/database/enums";
 import dayjs from "@seiseisai/date";
-import assert from "assert";
 import cron from "node-cron";
-
-assert(process.env.DATABASE_URL, "DATABASE_URL is not set");
-assert(process.env.DIRECT_URL, "DIRECT_URL is not set");
 
 cron.schedule("30 * * * * *", async () => {
     try {

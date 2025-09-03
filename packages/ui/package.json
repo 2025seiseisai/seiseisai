@@ -20,5 +20,8 @@
         "lint": "cd ../../ && prettier --cache --check ./packages/ui",
         "format": "cd ../../ && prettier --cache --write ./packages/ui",
         "check-types": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@seiseisai/settings": "workspace:*"
     }
 }

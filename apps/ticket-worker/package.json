@@ -8,9 +8,11 @@
         "start": "bun --env-file=../../.env dist/main.js",
         "lint": "cd ../../ && eslint ./apps/ticket-worker --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./apps/ticket-worker",
         "format": "cd ../../ && eslint ./apps/ticket-worker --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./apps/ticket-worker",
+        "check-env": "bun --env-file=../../.env ./scripts/check-env.ts",
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
-        "@seiseisai/database": "workspace:*"
+        "@seiseisai/database": "workspace:*",
+        "@seiseisai/settings": "workspace:*"
     }
 }

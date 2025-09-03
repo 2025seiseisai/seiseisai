@@ -1,2 +1,2 @@
-import config from "../../settings/postcss.config.mjs";
+import config from "@seiseisai/settings/postcss.config";
 export default config;

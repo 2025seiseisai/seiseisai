@@ -10,6 +10,7 @@
         "lint": "prettier --cache --check \"./!(apps|packages)/**\" --ignore-unknown && turbo run lint",
         "format": "prettier --cache --write \"./!(apps|packages)/**\" --ignore-unknown && turbo run format",
         "check-types": "turbo run check-types",
+        "check-env": "turbo run check-env",
         "insert-superadmin": "turbo run insert-superadmin",
         "prisma:generate": "turbo run prisma:generate",
         "prisma:studio": "prisma studio --schema=./packages/database/prisma/schema.prisma",
