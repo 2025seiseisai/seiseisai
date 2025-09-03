@@ -9,7 +9,7 @@
         "lint": "cd ../../ && eslint ./apps/tickets --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/tickets/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache && prettier --cache --check ./apps/tickets",
         "format": "cd ../../ && eslint ./apps/tickets --fix --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/tickets/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache --fix && prettier --cache --write ./apps/tickets",
         "check-env": "bun --env-file=../../.env --env-file=.env.local ./scripts/check-env.ts",
-        "check-types": "bun --env-file=../../.env --env-file=.env.local next typegen && tsc --noEmit"
+        "check-types": "next typegen && tsc --noEmit"
     },
     "dependencies": {
         "@seiseisai/database": "workspace:*",
