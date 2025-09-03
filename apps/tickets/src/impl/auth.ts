@@ -117,14 +117,6 @@ const {
             return session;
         },
     },
-    logger: {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        error(error) {},
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        warn(code) {},
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        debug(message, metadata) {},
-    },
     cookies:
         process.env.NODE_ENV === "production"
             ? undefined
