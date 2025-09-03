@@ -49,9 +49,8 @@ export default async function Header() {
                 <NavigationMenu className="hidden md:block">
                     <NavigationMenuList className="gap-0.5">
                         {navItems.map((item) => {
-                            console.warn(item);
                             return (
-                                <NavigationMenuItem key={item.href}>
+                                <NavigationMenuItem key={item.label}>
                                     <NavigationMenuLink asChild>
                                         <Link href={item.href} className="font-medium">
                                             {item.label}
