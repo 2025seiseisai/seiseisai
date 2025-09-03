@@ -48,8 +48,9 @@ export default async function Header() {
                 <h1 className="mr-2.5 ml-4 text-xl font-semibold">管理ページ</h1>
                 <NavigationMenu className="hidden md:block">
                     <NavigationMenuList className="gap-0.5">
-                        {navItems.map((item) => (
-                            <>
+                        {navItems.map((item) => {
+                            console.warn(item);
+                            return (
                                 <NavigationMenuItem key={item.href}>
                                     <NavigationMenuLink asChild>
                                         <Link href={item.href} className="font-medium">
@@ -57,8 +58,8 @@ export default async function Header() {
                                         </Link>
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
-                            </>
-                        ))}
+                            );
+                        })}
                     </NavigationMenuList>
                 </NavigationMenu>
                 <div className="mr-4 ml-auto md:hidden">
