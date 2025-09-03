@@ -1,4 +1,5 @@
 "use client";
+import { createId } from "@paralleldrive/cuid2";
 import dayjs from "@seiseisai/date";
 import { cn } from "@seiseisai/ui/lib/utils";
 import crypto from "crypto";
@@ -15,13 +16,9 @@ export default function AuthenticationQR({ className, hmacKey }: { className?: s
         let counter = 0;
         const generator = () => {
             ++counter;
-            if (counter % 3 === 1) {
-                id =
-                    process.env.NODE_ENV === "production"
-                        ? crypto.randomUUID()
-                        : crypto.randomBytes(16).toString("hex");
+            if (!id || counter % 3 === 1) {
+                id = createId();
             }
-            if (!id) return;
             const now = dayjs();
             const hmac = crypto.createHmac("sha256", hmacKey);
             const signature = hmac.update(id + "_" + now.valueOf()).digest("hex");
