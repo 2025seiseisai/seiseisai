@@ -50,8 +50,12 @@ export default async function Header() {
                     <NavigationMenuList className="gap-0.5">
                         {navItems.map((item) => {
                             return (
-                                <NavigationMenuItem key={item.label}>
-                                    <NavigationMenuLink asChild>あああ</NavigationMenuLink>
+                                <NavigationMenuItem key={item.href}>
+                                    <NavigationMenuLink asChild>
+                                        <Link href={item.href} className="font-medium">
+                                            {item.label}
+                                        </Link>
+                                    </NavigationMenuLink>
                                 </NavigationMenuItem>
                             );
                         })}

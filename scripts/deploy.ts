@@ -34,10 +34,10 @@ console.log("📦 Installing dependencies...");
 runCommand("bun install", "bun install failed");
 
 console.log("🔄 Running Prisma db push...");
-runCommand("bun --bun run prisma:db-push", "Prisma db push failed");
+runCommand("bun run prisma:db-push", "Prisma db push failed");
 
 console.log("🔨 Building project...");
-runCommand("bun --bun run build", "Build failed");
+runCommand("bun run build", "Build failed");
 
 console.log("🚀 Deploying with PM2...");
 const pm2List = runCommand("pm2 list", "Failed to list PM2 processes", true);
@@ -47,7 +47,7 @@ if (pm2List && pm2List.includes(" seiseisai ")) {
     runCommand("pm2 restart seiseisai", "Failed to restart the project");
 } else {
     console.log("🚀 Starting new process: seiseisai");
-    runCommand('pm2 start bun --name "seiseisai" -- --bun run start', "Failed to start the project");
+    runCommand('pm2 start bun --name "seiseisai" -- run start', "Failed to start the project");
 }
 
 console.log(`✅ Deployment to branch ${branch} completed successfully!`);
