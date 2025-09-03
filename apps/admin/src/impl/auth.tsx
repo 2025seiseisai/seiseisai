@@ -53,14 +53,11 @@ const {
                         return null;
                     }
 
-                    console.warn("Checking password for user:", user.id);
                     const expected = await getAdminPassword(user.id);
-                    console.warn(expected);
-                    console.warn(expected?.hashedPassword);
-                    console.warn(getHashedPassword(password));
                     if (!expected || expected.hashedPassword !== getHashedPassword(password)) {
                         return null;
                     }
+
                     return {
                         adminId: user.id,
                     };
