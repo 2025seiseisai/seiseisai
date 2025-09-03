@@ -1,11 +1,9 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+import { dbClient } from "@seiseisai/database/db-client";
+import assert from "assert";
 
-const dbClient = new PrismaClient();
-
-if (process.env.SUPERADMIN_HASHED_PASSWORD === undefined) {
-    console.log("SUPERADMIN_HASHED_PASSWORD is not set.");
-    process.exit(1);
-}
+assert(process.env.DATABASE_URL, "DATABASE_URL is not set");
+assert(process.env.DIRECT_URL, "DIRECT_URL is not set");
+assert(process.env.SUPERADMIN_HASHED_PASSWORD, "SUPERADMIN_HASHED_PASSWORD is not set");
 
 await dbClient.admin.deleteMany({
     where: {

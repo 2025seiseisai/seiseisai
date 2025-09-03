@@ -20,8 +20,7 @@
         "lint": "cd ../../ && eslint ./packages/database --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./packages/database",
         "format": "cd ../../ && eslint ./packages/database --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/database",
         "check-types": "tsc --noEmit",
-        "prisma:generate": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma",
-        "insert-superadmin": "cd ../../ && bun ./packages/database/scripts/insert-superadmin.ts"
+        "prisma:generate": "cd ../../ && prisma generate --schema=./packages/database/prisma/schema.prisma"
     },
     "dependencies": {
         "@seiseisai/date": "workspace:*"
