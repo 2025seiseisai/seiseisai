@@ -134,7 +134,9 @@ export const auth = cache(async () => {
         const session = await authInternal();
         if (!session) return null;
         if (!session.user || typeof session.user.userId !== "string") return null;
-        return session.user.userId;
+        const user = await getTicketUserById(session.user.userId);
+        if (!user) return null;
+        return user.id;
     } catch {
         // 念のため
         return null;

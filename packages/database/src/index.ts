@@ -358,7 +358,8 @@ export async function updateEventTicketInfoSafe(prev_data: EventTicketInfoModel,
                 "link",
                 "applicationStart",
                 "applicationEnd",
-                "exchangeEnd",
+                "eventStart",
+                "eventEnd",
                 "capacity",
                 "paperTicketsPerUser",
                 "type",
@@ -408,5 +409,25 @@ export async function createTicketUser(id: string, expiresAt: Date) {
     // 既にそのidが存在する場合は例外が送出される
     return await dbClient.ticketUser.create({
         data: { id, expiresAt },
+    });
+}
+
+/* =========================
+ * Ticket
+ * ========================= */
+
+export async function getTicketById(id: string) {
+    return await dbClient.ticket.findUnique({
+        where: {
+            id,
+        },
+    });
+}
+
+export async function getAllTickets(userId: string) {
+    return await dbClient.ticket.findMany({
+        where: {
+            userId,
+        },
     });
 }

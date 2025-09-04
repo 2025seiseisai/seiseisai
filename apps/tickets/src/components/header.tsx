@@ -27,6 +27,12 @@ export default function Header() {
                                 トップページ
                             </DropdownMenuItem>
                         </Link>
+                        <Link href="/guide">
+                            <DropdownMenuItem className="py-2">
+                                <LinkIcon />
+                                ご利用にあたって
+                            </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuSeparator />
                         <Link href="https://seiseisai.com/">
                             <DropdownMenuItem className="py-2">
