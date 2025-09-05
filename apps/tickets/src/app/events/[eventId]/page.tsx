@@ -4,6 +4,7 @@ import { TicketStatus } from "@seiseisai/database/enums";
 import dayjs from "@seiseisai/date";
 import { notFound, redirect } from "next/navigation";
 import ApplicationForm from "./form";
+import Verifier from "./verifier";
 
 function Wrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -87,7 +88,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
     }
     return (
         <Wrapper>
-            <></>
+            <Verifier id={ticket.id} />
         </Wrapper>
     );
 }
