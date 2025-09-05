@@ -12,7 +12,7 @@ export default function Verifier({ id }: { id: string }) {
         <>
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">引き換え</h1>
             <p className="mt-2 mb-8 text-center">
-                整理券配布場所にてスタッフに以下のQRコードを見せてください。紙の整理券と引き換えをいたします。
+                必ずイベント開始時刻より前に、整理券配布場所にてスタッフに以下のQRコードを見せてください。紙の整理券と引き換えをいたします。
             </p>
             <div className="flex w-full justify-center">
                 <QRCodeSVG value={verificationCode} size={256} bgColor="#ffffff" fgColor="#000000" level="M" />
