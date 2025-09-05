@@ -309,6 +309,14 @@ export async function getAllEventTicketInfo() {
     });
 }
 
+export async function getEventTicketInfo(id: string) {
+    return await dbClient.eventTicketInfo.findUnique({
+        where: {
+            id,
+        },
+    });
+}
+
 export async function createEventTicketInfo(data: EventTicketInfoModel) {
     return await dbClient.$transaction(
         async (tx) => {
@@ -420,6 +428,15 @@ export async function getTicketById(id: string) {
     return await dbClient.ticket.findUnique({
         where: {
             id,
+        },
+    });
+}
+
+export async function getTicketByEventAndUser(eventId: string, userId: string) {
+    return await dbClient.ticket.findFirst({
+        where: {
+            eventId,
+            userId,
         },
     });
 }

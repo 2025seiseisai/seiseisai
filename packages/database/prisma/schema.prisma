@@ -84,11 +84,10 @@ model EventDrawResult {
 }
 
 model TicketUser {
-  id                    String   @id
-  banned                Boolean  @default(false)
-  expiresAt             DateTime
-  applicationsSubmitted Int      @default(0)
-  tickets               Ticket[]
+  id        String   @id
+  banned    Boolean  @default(false)
+  expiresAt DateTime
+  tickets   Ticket[]
 }
 
 enum TicketStatus {
