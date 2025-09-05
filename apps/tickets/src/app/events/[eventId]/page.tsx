@@ -1,5 +1,5 @@
 import { auth } from "@/impl/auth";
-import { getEventTicketInfo, getTicketByEventAndUser } from "@seiseisai/database";
+import { getEventTicketInfo, getTicketByEventAndUser, getTicketUserById } from "@seiseisai/database";
 import { TicketStatus } from "@seiseisai/database/enums";
 import dayjs from "@seiseisai/date";
 import { notFound, redirect } from "next/navigation";
@@ -18,6 +18,11 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
     if (!id) {
         redirect("/unauthorized");
     }
+    const user = await getTicketUserById(id);
+    if (!user) {
+        redirect("/unauthorized");
+    }
+
     const { eventId } = await params;
     if (!eventId) {
         notFound();
@@ -49,7 +54,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
         }
         return (
             <Wrapper>
-                <ApplicationForm event={event} create />
+                <ApplicationForm event={event} applicationsSubmitted={user.applicationsSubmitted} create />
             </Wrapper>
         );
     }
@@ -69,7 +74,11 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
         }
         return (
             <Wrapper>
-                <ApplicationForm event={event} paperTickets={ticket.paperTickets} />
+                <ApplicationForm
+                    event={event}
+                    paperTickets={ticket.paperTickets}
+                    applicationsSubmitted={user.applicationsSubmitted}
+                />
             </Wrapper>
         );
     }

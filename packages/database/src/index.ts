@@ -457,10 +457,28 @@ export async function createTicket(eventId: string, userId: string, paperTickets
         const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
         if (!event) return null;
         if (!(dayjs(now).isAfter(event.applicationStart) && dayjs(event.applicationEnd).isAfter(now))) return null;
-        const userTicketsCount = await tx.ticket.count({ where: { userId } });
-        if (userTicketsCount >= 8) return null;
-        const existing = await tx.ticket.count({ where: { eventId, userId } });
-        if (existing > 0) return null;
+        const user = await tx.ticketUser.findUnique({ where: { id: userId } });
+        if (!user) return null;
+        if (user.applicationsSubmitted + paperTickets > 10) return null;
+        const tickets = await tx.ticket.findMany({ where: { userId } });
+        const ticketedEvents = await tx.eventTicketInfo.findMany({
+            where: { id: { in: tickets.map((t) => t.eventId) } },
+        });
+        const ticketedEventsDict: Record<string, EventTicketInfoModel> = {};
+        for (const eventOfTicket of ticketedEvents) {
+            ticketedEventsDict[eventOfTicket.id] = eventOfTicket;
+        }
+        if (eventId in ticketedEventsDict) return null;
+        for (const ticket of tickets) {
+            const eventOfTicket = ticketedEventsDict[ticket.eventId];
+            if (
+                eventOfTicket &&
+                dayjs(event.eventEnd).isAfter(dayjs(eventOfTicket.eventStart)) &&
+                dayjs(eventOfTicket.eventEnd).isAfter(dayjs(event.eventStart))
+            ) {
+                return null;
+            }
+        }
         if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
             return null;
         const ticket = await tx.ticket.create({
@@ -471,6 +489,10 @@ export async function createTicket(eventId: string, userId: string, paperTickets
                 paperTickets,
                 status: TicketStatus.抽選待ち,
             },
+        });
+        await tx.ticketUser.update({
+            where: { id: userId },
+            data: { applicationsSubmitted: user.applicationsSubmitted + paperTickets },
         });
         return ticket;
     });
@@ -485,11 +507,18 @@ export async function updateTicket(eventId: string, userId: string, paperTickets
         const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
         if (!ticket) return null;
         if (ticket.status !== TicketStatus.抽選待ち) return null;
+        const user = await tx.ticketUser.findUnique({ where: { id: userId } });
+        if (!user) return null;
+        if (user.applicationsSubmitted - ticket.paperTickets + paperTickets > 10) return null;
         if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
             return null;
         const updated = await tx.ticket.update({
             where: { id: ticket.id },
             data: { paperTickets },
+        });
+        await tx.ticketUser.update({
+            where: { id: userId },
+            data: { applicationsSubmitted: user.applicationsSubmitted - ticket.paperTickets + paperTickets },
         });
         return updated;
     });
@@ -505,6 +534,10 @@ export async function deleteTicket(eventId: string, userId: string) {
         if (!ticket) return null;
         if (ticket.status !== TicketStatus.抽選待ち) return null;
         await tx.ticket.delete({ where: { id: ticket.id } });
+        await tx.ticketUser.update({
+            where: { id: userId },
+            data: { applicationsSubmitted: { decrement: ticket.paperTickets } },
+        });
         return true;
     });
 }

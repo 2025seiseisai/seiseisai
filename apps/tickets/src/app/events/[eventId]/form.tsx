@@ -35,15 +35,18 @@ import { toast } from "sonner";
 export default function ApplicationForm({
     event,
     paperTickets = 1,
+    applicationsSubmitted,
     create = false,
 }: {
     event: EventTicketInfoModel;
+    applicationsSubmitted: number;
     paperTickets?: number;
     create?: boolean;
 }) {
     const router = useRouter();
     const [selectedTickets, setSelectedTickets] = useState<string>(String(paperTickets));
     const [submitting, setSubmitting] = useState(false);
+    const rem = Math.min(event.paperTicketsPerUser, 10 - applicationsSubmitted + (create ? 0 : paperTickets));
     return (
         <>
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">応募</h1>
@@ -85,17 +88,13 @@ export default function ApplicationForm({
                     </div>
                     <div className="flex-1/3">
                         <Label className="mt-4 mb-2 text-base">応募枚数</Label>
-                        <Select
-                            value={selectedTickets}
-                            onValueChange={setSelectedTickets}
-                            disabled={event.paperTicketsPerUser === 1}
-                        >
+                        <Select value={selectedTickets} onValueChange={setSelectedTickets} disabled={rem === 1}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="枚数を選択" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    {Array.from({ length: event.paperTicketsPerUser }, (_, i) => i + 1).map((num) => (
+                                    {Array.from({ length: rem }, (_, i) => i + 1).map((num) => (
                                         <SelectItem key={num} value={String(num)}>
                                             {num}枚
                                         </SelectItem>

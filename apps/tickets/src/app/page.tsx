@@ -1,5 +1,5 @@
 import { auth } from "@/impl/auth";
-import { getAllEventTicketInfo, getAllTickets } from "@seiseisai/database";
+import { getAllEventTicketInfo, getAllTickets, getTicketUserById } from "@seiseisai/database";
 import { TicketStatus } from "@seiseisai/database/enums";
 import { EventTicketInfoModel, TicketModel } from "@seiseisai/database/models";
 import dayjs from "@seiseisai/date";
@@ -105,7 +105,7 @@ function EventCard({ event, status }: { event: EventTicketInfoModel; status: Eve
             {status === EventStatus.応募受付中_回数制限 && (
                 <CardFooter>
                     <Button variant="outline" className="w-full" disabled>
-                        応募は1人8回までです
+                        応募は1人10枚までです
                     </Button>
                 </CardFooter>
             )}
@@ -140,6 +140,11 @@ export default async function Page() {
         redirect("/unauthorized");
     }
     const now = dayjs();
+    const user = await getTicketUserById(id);
+    if (!user) {
+        redirect("/unauthorized");
+    }
+    const limited = user.applicationsSubmitted >= 10;
     const events = (await getAllEventTicketInfo()).filter((event) => {
         return (
             dayjs(event.eventStart).isAfter(now) &&
@@ -155,7 +160,6 @@ export default async function Page() {
     tickets.forEach((ticket) => {
         ticketsDict[ticket.eventId] = ticket;
     });
-    const limited = tickets.length >= 8;
     const wonEvents = events.filter((event) => ticketsDict[event.id]?.status === TicketStatus.当選);
     const lostEvents = events.filter((event) => ticketsDict[event.id]?.status === TicketStatus.落選);
     const waitingEvents = events.filter((event) => ticketsDict[event.id]?.status === TicketStatus.抽選待ち);
