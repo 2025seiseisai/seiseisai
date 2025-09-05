@@ -141,7 +141,10 @@ export default async function Page() {
     }
     const now = dayjs();
     const events = (await getAllEventTicketInfo()).filter((event) => {
-        return dayjs(event.eventStart).isAfter(now) && dayjs(event.eventStart).isSame(now, "day");
+        return (
+            dayjs(event.eventStart).isAfter(now) &&
+            (dayjs(event.applicationStart).isSame(now, "day") || dayjs(event.eventStart).isSame(now, "day"))
+        );
     });
     const eventsDict: { [eventId: string]: EventTicketInfoModel } = {};
     events.forEach((event) => {

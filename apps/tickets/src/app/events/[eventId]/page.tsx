@@ -3,6 +3,7 @@ import { getEventTicketInfo, getTicketByEventAndUser } from "@seiseisai/database
 import { TicketStatus } from "@seiseisai/database/enums";
 import dayjs from "@seiseisai/date";
 import { notFound, redirect } from "next/navigation";
+import ApplicationForm from "./form";
 
 function Wrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -47,12 +48,8 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
             notFound();
         }
         return (
-            // TODO: 新規
             <Wrapper>
-                <div className="my-auto flex size-full flex-1 flex-col justify-center text-center">
-                    <h1 className="text-3xl font-bold sm:text-4xl">未応募</h1>
-                    <p className="mt-4 sm:text-lg">このイベントにはまだ応募していません。</p>
-                </div>
+                <ApplicationForm event={event} create />
             </Wrapper>
         );
     }
@@ -71,12 +68,8 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
             redirect("/");
         }
         return (
-            // TODO: 編集
             <Wrapper>
-                <div className="my-auto flex size-full flex-1 flex-col justify-center text-center">
-                    <h1 className="text-3xl font-bold sm:text-4xl">応募完了</h1>
-                    <p className="mt-4 sm:text-lg">抽選結果は応募期間終了後に通知されます。</p>
-                </div>
+                <ApplicationForm event={event} paperTickets={ticket.paperTickets} />
             </Wrapper>
         );
     }
