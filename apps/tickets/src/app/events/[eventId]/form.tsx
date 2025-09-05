@@ -1,4 +1,5 @@
 "use client";
+import { createTicket, deleteTicket, updateTicket } from "@/impl/database-actions";
 import { EventTicketType } from "@seiseisai/database/enums";
 import type { EventTicketInfoModel } from "@seiseisai/database/models";
 import dayjs from "@seiseisai/date";
@@ -27,7 +28,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@seiseisai/ui/component
 import { ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ApplicationForm({
     event,
@@ -38,6 +41,7 @@ export default function ApplicationForm({
     paperTickets?: number;
     create?: boolean;
 }) {
+    const router = useRouter();
     const [selectedTickets, setSelectedTickets] = useState<string>(String(paperTickets));
     const [submitting, setSubmitting] = useState(false);
     return (
@@ -119,8 +123,16 @@ export default function ApplicationForm({
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>キャンセル</AlertDialogCancel>
                                     <AlertDialogAction
-                                        onClick={() => {
+                                        onClick={async () => {
                                             setSubmitting(true);
+                                            try {
+                                                const result = await deleteTicket(event.id);
+                                                if (!result) throw new Error();
+                                                router.push("/");
+                                            } catch {
+                                                toast.error("応募の取り消しに失敗しました");
+                                                setSubmitting(false);
+                                            }
                                         }}
                                     >
                                         取り消す
@@ -131,8 +143,27 @@ export default function ApplicationForm({
                     )}
                     <Button
                         size="lg"
-                        onClick={() => {
+                        onClick={async () => {
                             setSubmitting(true);
+                            if (create) {
+                                try {
+                                    const result = await createTicket(event.id, Number(selectedTickets));
+                                    if (!result) throw new Error();
+                                    router.push("/");
+                                } catch {
+                                    toast.error("応募に失敗しました");
+                                    setSubmitting(false);
+                                }
+                            } else {
+                                try {
+                                    const result = await updateTicket(event.id, Number(selectedTickets));
+                                    if (!result) throw new Error();
+                                    router.push("/");
+                                } catch {
+                                    toast.error("応募の変更に失敗しました");
+                                    setSubmitting(false);
+                                }
+                            }
                         }}
                         disabled={submitting}
                     >

@@ -1,5 +1,7 @@
+import { createId } from "@paralleldrive/cuid2";
+import dayjs from "@seiseisai/date";
 import { dbClient } from "./db-client";
-import { UpdateResult } from "./enums";
+import { TicketStatus, UpdateResult } from "./enums";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
 
 /* =========================
@@ -446,5 +448,63 @@ export async function getAllTickets(userId: string) {
         where: {
             userId,
         },
+    });
+}
+
+export async function createTicket(eventId: string, userId: string, paperTickets: number) {
+    return await dbClient.$transaction(async (tx) => {
+        const now = dayjs();
+        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+        if (!event) return null;
+        if (!(dayjs(now).isAfter(event.applicationStart) && dayjs(event.applicationEnd).isAfter(now))) return null;
+        const userTicketsCount = await tx.ticket.count({ where: { userId } });
+        if (userTicketsCount >= 8) return null;
+        const existing = await tx.ticket.count({ where: { eventId, userId } });
+        if (existing > 0) return null;
+        if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
+            return null;
+        const ticket = await tx.ticket.create({
+            data: {
+                id: createId(),
+                eventId,
+                userId,
+                paperTickets,
+                status: TicketStatus.抽選待ち,
+            },
+        });
+        return ticket;
+    });
+}
+
+export async function updateTicket(eventId: string, userId: string, paperTickets: number) {
+    return await dbClient.$transaction(async (tx) => {
+        const now = dayjs();
+        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+        if (!event) return null;
+        if (!(dayjs(now).isAfter(event.applicationStart) && dayjs(event.applicationEnd).isAfter(now))) return null;
+        const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
+        if (!ticket) return null;
+        if (ticket.status !== TicketStatus.抽選待ち) return null;
+        if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
+            return null;
+        const updated = await tx.ticket.update({
+            where: { id: ticket.id },
+            data: { paperTickets },
+        });
+        return updated;
+    });
+}
+
+export async function deleteTicket(eventId: string, userId: string) {
+    return await dbClient.$transaction(async (tx) => {
+        const now = dayjs();
+        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+        if (!event) return null;
+        if (!dayjs(event.applicationEnd).isAfter(now)) return null;
+        const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
+        if (!ticket) return null;
+        if (ticket.status !== TicketStatus.抽選待ち) return null;
+        await tx.ticket.delete({ where: { id: ticket.id } });
+        return true;
     });
 }
