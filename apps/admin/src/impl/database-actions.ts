@@ -120,3 +120,8 @@ export async function getAllDrawResults() {
     if (!(await auth())?.authorityTickets) return null;
     return await Operations.getAllDrawResults();
 }
+
+export async function verifyTicket(id: string, sig: string) {
+    if (!(await auth())?.authorityTicketVerification) return null;
+    return await Operations.verifyTicket(id, sig);
+}

@@ -1,4 +1,14 @@
 "use client";
+import { verifyTicket } from "@/impl/database-actions";
+import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@seiseisai/ui/components/alert-dialog";
+import { Button } from "@seiseisai/ui/components/button";
 import jsQR from "jsqr";
 import { useEffect, useRef, useState } from "react";
 
@@ -116,6 +126,20 @@ export default function QRReader() {
         };
     }, []);
 
+    const [paperTickets, setPaperTickets] = useState<number | null>(null);
+
+    useEffect(() => {
+        const parts = result.split(":");
+        if (parts.length !== 3) return;
+        const [prefix, id, sig] = parts;
+        if (prefix !== "seiseisai-verify") return;
+        (async () => {
+            const res = await verifyTicket(id, sig);
+            if (!res) return;
+            setPaperTickets(res.paperTickets);
+        })();
+    }, [result]);
+
     return (
         <div className="flex flex-col gap-4">
             <div className="relative w-full">
@@ -123,7 +147,29 @@ export default function QRReader() {
                 <video ref={videoRef} playsInline muted className="invisible absolute" />
             </div>
             {errmsg && <div className="text-red-600">カメラの初期化に失敗しました: {errmsg}</div>}
-            <div className="text-base">読み取り結果: {result || "(未検出)"}</div>
+            <AlertDialog open={!!paperTickets}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            紙の整理券
+                            <span className="font-bold">{paperTickets !== null ? `${paperTickets}` : "?"}枚</span>
+                            と引き換えてください。
+                        </AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction asChild>
+                            <Button
+                                onClick={() => {
+                                    setResult("");
+                                    setPaperTickets(null);
+                                }}
+                            >
+                                OK
+                            </Button>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

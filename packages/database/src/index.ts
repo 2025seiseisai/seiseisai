@@ -1,5 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import dayjs from "@seiseisai/date";
+import crypto from "crypto";
 import { dbClient } from "./db-client";
 import { TicketStatus, UpdateResult } from "./enums";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
@@ -539,5 +540,22 @@ export async function deleteTicket(eventId: string, userId: string) {
             data: { applicationsSubmitted: { decrement: ticket.paperTickets } },
         });
         return true;
+    });
+}
+
+export async function verifyTicket(id: string, sig: string) {
+    const hmacKey = process.env.TICKET_HMAC_KEY_AUTH;
+    if (!hmacKey) {
+        console.error("TICKET_HMAC_KEY_AUTH is not set");
+        return null;
+    }
+    const expectedSig = crypto.createHmac("sha256", hmacKey).update(id).digest("hex");
+    if (sig !== expectedSig) return null;
+    return await dbClient.$transaction(async (tx) => {
+        const ticket = await tx.ticket.findUnique({ where: { id } });
+        if (!ticket) return null;
+        if (ticket.status !== TicketStatus.当選) return null;
+        await tx.ticket.delete({ where: { id } });
+        return ticket;
     });
 }
