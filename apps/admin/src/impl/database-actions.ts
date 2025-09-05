@@ -15,6 +15,7 @@ export async function getAllAdmins() {
 
 export async function createAdmin(admin: AdminModel, password: string) {
     if (!(await auth())?.authorityAdmins) return null;
+    if (!process.env.HASH_SALT) return null;
     return await Operations.createAdmin(admin, password, getHashedPassword);
 }
 
@@ -25,6 +26,7 @@ export async function deleteAdmin(id: string) {
 
 export async function updateAdminPassword(id: string, new_password: string) {
     if (!(await auth())?.authorityAdmins) return null;
+    if (!process.env.HASH_SALT) return null;
     return await Operations.updateAdminPassword(id, new_password, getHashedPassword);
 }
 

@@ -46,7 +46,10 @@ export default function ApplicationForm({
     const router = useRouter();
     const [selectedTickets, setSelectedTickets] = useState<string>(String(paperTickets));
     const [submitting, setSubmitting] = useState(false);
-    const rem = Math.min(event.paperTicketsPerUser, 10 - applicationsSubmitted + (create ? 0 : paperTickets));
+    const rem = Math.max(
+        0,
+        Math.min(event.paperTicketsPerUser, 10 - applicationsSubmitted + (create ? 0 : paperTickets)),
+    );
     return (
         <>
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">応募</h1>
@@ -88,7 +91,11 @@ export default function ApplicationForm({
                     </div>
                     <div className="flex-1/3">
                         <Label className="mt-4 mb-2 text-base">応募枚数</Label>
-                        <Select value={selectedTickets} onValueChange={setSelectedTickets} disabled={rem === 1}>
+                        <Select
+                            value={selectedTickets}
+                            onValueChange={setSelectedTickets}
+                            disabled={rem < 1 || submitting}
+                        >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="枚数を選択" />
                             </SelectTrigger>
@@ -102,6 +109,9 @@ export default function ApplicationForm({
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
+                        {rem < 1 && (
+                            <p className="mt-2 text-sm text-red-600">応募可能枚数がありません（上限に達しました）。</p>
+                        )}
                     </div>
                 </div>
                 <div className="mt-6 flex w-full justify-end gap-3">
@@ -164,7 +174,7 @@ export default function ApplicationForm({
                                 }
                             }
                         }}
-                        disabled={submitting}
+                        disabled={submitting || rem < 1}
                     >
                         {create ? "応募する" : "変更を保存"}
                     </Button>

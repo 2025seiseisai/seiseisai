@@ -34,13 +34,13 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
     }
     const now = dayjs();
 
-    if (dayjs(now).isAfter(event.eventEnd)) {
+    if (!dayjs(event.eventEnd).isAfter(now)) {
         notFound();
     }
 
     const ticket = await getTicketByEventAndUser(eventId, id);
     if (!ticket) {
-        if (dayjs(now).isAfter(event.applicationEnd)) {
+        if (!dayjs(event.applicationEnd).isAfter(now)) {
             return (
                 <Wrapper>
                     <div className="my-auto flex size-full flex-1 flex-col justify-center text-center">
@@ -50,7 +50,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
                 </Wrapper>
             );
         }
-        if (!dayjs(now).isAfter(event.applicationStart)) {
+        if (dayjs(now).isBefore(event.applicationStart)) {
             notFound();
         }
         return (
@@ -59,7 +59,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
             </Wrapper>
         );
     }
-    if (dayjs(now).isAfter(event.eventStart)) {
+    if (!dayjs(event.eventStart).isAfter(now)) {
         return (
             <Wrapper>
                 <div className="my-auto flex size-full flex-1 flex-col justify-center text-center">
@@ -70,7 +70,7 @@ export default async function Page({ params }: { params: Promise<{ eventId: stri
         );
     }
     if (ticket.status === TicketStatus.抽選待ち) {
-        if (dayjs(now).isAfter(event.applicationEnd)) {
+        if (!dayjs(event.applicationEnd).isAfter(now)) {
             redirect("/");
         }
         return (

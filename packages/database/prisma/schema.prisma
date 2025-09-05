@@ -62,7 +62,7 @@ enum EventTicketType {
 }
 
 model EventTicketInfo {
-  id                  String           @id
+  id                  String           @id @default(cuid())
   name                String           @unique
   link                String
   applicationStart    DateTime
@@ -105,4 +105,6 @@ model Ticket {
   status       TicketStatus
   user         TicketUser      @relation(fields: [userId], references: [id], onDelete: Cascade)
   event        EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
 }

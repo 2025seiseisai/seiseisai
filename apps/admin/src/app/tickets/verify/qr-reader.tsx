@@ -17,6 +17,8 @@ export default function QRReader() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const offscreenRef = useRef<HTMLCanvasElement | null>(null);
     const rafRef = useRef<number | null>(null);
+    const inFlightRef = useRef(false);
+    const lastIdRef = useRef<string | null>(null);
     const [errmsg, setErrmsg] = useState<string | null>(null);
     const [result, setResult] = useState<string>("");
 
@@ -133,10 +135,19 @@ export default function QRReader() {
         if (parts.length !== 3) return;
         const [prefix, id, sig] = parts;
         if (prefix !== "seiseisai-verify") return;
+        if (inFlightRef.current) return;
+        if (lastIdRef.current === id) return;
+        inFlightRef.current = true;
         (async () => {
-            const res = await verifyTicket(id, sig);
-            if (!res) return;
-            setPaperTickets(res.paperTickets);
+            try {
+                const res = await verifyTicket(id, sig);
+                if (!res) return;
+                setPaperTickets(res.paperTickets);
+                // 同一QRコードの多重検証抑止
+                lastIdRef.current = id;
+            } finally {
+                inFlightRef.current = false;
+            }
         })();
     }, [result]);
 

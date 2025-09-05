@@ -42,7 +42,10 @@ const {
 
                     const { name, password, turnstileToken } = parsed.data;
 
-                    const secretKey = process.env.TURNSTILE_SECRET_KEY_ADMIN!;
+                    const secretKey = process.env.TURNSTILE_SECRET_KEY_ADMIN;
+                    if (!secretKey) {
+                        return null;
+                    }
                     const verifyRes = await verifyTurnstileToken(turnstileToken, secretKey);
                     if (!verifyRes) {
                         return null;
@@ -54,6 +57,9 @@ const {
                     }
 
                     const expected = await getAdminPassword(user.id);
+                    if (!process.env.HASH_SALT) {
+                        return null;
+                    }
                     if (!expected || expected.hashedPassword !== getHashedPassword(password)) {
                         return null;
                     }

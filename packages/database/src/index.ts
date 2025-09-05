@@ -3,6 +3,7 @@ import dayjs from "@seiseisai/date";
 import crypto from "crypto";
 import { dbClient } from "./db-client";
 import { TicketStatus, UpdateResult } from "./enums";
+import { Prisma } from "./generated/prisma/client";
 import { AdminModel, EventTicketInfoModel, GoodsModel, NewsModel } from "./models";
 
 /* =========================
@@ -453,94 +454,120 @@ export async function getAllTickets(userId: string) {
 }
 
 export async function createTicket(eventId: string, userId: string, paperTickets: number) {
-    return await dbClient.$transaction(async (tx) => {
-        const now = dayjs();
-        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
-        if (!event) return null;
-        if (!(dayjs(now).isAfter(event.applicationStart) && dayjs(event.applicationEnd).isAfter(now))) return null;
-        const user = await tx.ticketUser.findUnique({ where: { id: userId } });
-        if (!user) return null;
-        if (user.applicationsSubmitted + paperTickets > 10) return null;
-        const tickets = await tx.ticket.findMany({ where: { userId } });
-        const ticketedEvents = await tx.eventTicketInfo.findMany({
-            where: { id: { in: tickets.map((t) => t.eventId) } },
-        });
-        const ticketedEventsDict: Record<string, EventTicketInfoModel> = {};
-        for (const eventOfTicket of ticketedEvents) {
-            ticketedEventsDict[eventOfTicket.id] = eventOfTicket;
-        }
-        if (eventId in ticketedEventsDict) return null;
-        for (const ticket of tickets) {
-            const eventOfTicket = ticketedEventsDict[ticket.eventId];
-            if (
-                eventOfTicket &&
-                dayjs(event.eventEnd).isAfter(dayjs(eventOfTicket.eventStart)) &&
-                dayjs(eventOfTicket.eventEnd).isAfter(dayjs(event.eventStart))
-            ) {
-                return null;
-            }
-        }
-        if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
-            return null;
-        const ticket = await tx.ticket.create({
-            data: {
-                id: createId(),
-                eventId,
-                userId,
-                paperTickets,
-                status: TicketStatus.抽選待ち,
+    try {
+        return await dbClient.$transaction(
+            async (tx) => {
+                const now = dayjs();
+                const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+                if (!event) return null;
+                // 応募期間は [start, end)（開始は含む、終了は排他）
+                if (dayjs(now).isBefore(event.applicationStart) || !dayjs(event.applicationEnd).isAfter(now))
+                    return null;
+
+                const user = await tx.ticketUser.findUnique({ where: { id: userId } });
+                if (!user) return null;
+                if (user.applicationsSubmitted + paperTickets > 10) return null;
+
+                const tickets = await tx.ticket.findMany({ where: { userId } });
+                const ticketedEvents = await tx.eventTicketInfo.findMany({
+                    where: { id: { in: tickets.map((t) => t.eventId) } },
+                });
+                const ticketedEventsDict: Record<string, EventTicketInfoModel> = {};
+                for (const eventOfTicket of ticketedEvents) {
+                    ticketedEventsDict[eventOfTicket.id] = eventOfTicket;
+                }
+                if (eventId in ticketedEventsDict) return null;
+                for (const ticket of tickets) {
+                    const eventOfTicket = ticketedEventsDict[ticket.eventId];
+                    if (
+                        eventOfTicket &&
+                        dayjs(event.eventEnd).isAfter(dayjs(eventOfTicket.eventStart)) &&
+                        dayjs(eventOfTicket.eventEnd).isAfter(dayjs(event.eventStart))
+                    ) {
+                        return null;
+                    }
+                }
+                if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
+                    return null;
+
+                const ticket = await tx.ticket.create({
+                    data: {
+                        id: createId(),
+                        eventId,
+                        userId,
+                        paperTickets,
+                        status: TicketStatus.抽選待ち,
+                    },
+                });
+                await tx.ticketUser.update({
+                    where: { id: userId },
+                    data: { applicationsSubmitted: user.applicationsSubmitted + paperTickets },
+                });
+                return ticket;
             },
-        });
-        await tx.ticketUser.update({
-            where: { id: userId },
-            data: { applicationsSubmitted: user.applicationsSubmitted + paperTickets },
-        });
-        return ticket;
-    });
+            { isolationLevel: "Serializable" },
+        );
+    } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+            // (eventId, userId) のユニーク制約違反 → 二重応募は不許可として null
+            return null;
+        }
+        throw e;
+    }
 }
 
 export async function updateTicket(eventId: string, userId: string, paperTickets: number) {
-    return await dbClient.$transaction(async (tx) => {
-        const now = dayjs();
-        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
-        if (!event) return null;
-        if (!(dayjs(now).isAfter(event.applicationStart) && dayjs(event.applicationEnd).isAfter(now))) return null;
-        const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
-        if (!ticket) return null;
-        if (ticket.status !== TicketStatus.抽選待ち) return null;
-        const user = await tx.ticketUser.findUnique({ where: { id: userId } });
-        if (!user) return null;
-        if (user.applicationsSubmitted - ticket.paperTickets + paperTickets > 10) return null;
-        if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
-            return null;
-        const updated = await tx.ticket.update({
-            where: { id: ticket.id },
-            data: { paperTickets },
-        });
-        await tx.ticketUser.update({
-            where: { id: userId },
-            data: { applicationsSubmitted: user.applicationsSubmitted - ticket.paperTickets + paperTickets },
-        });
-        return updated;
-    });
+    return await dbClient.$transaction(
+        async (tx) => {
+            const now = dayjs();
+            const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+            if (!event) return null;
+            // 応募期間は [start, end)（開始は含む、終了は排他）
+            if (dayjs(now).isBefore(event.applicationStart) || !dayjs(event.applicationEnd).isAfter(now)) return null;
+
+            const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
+            if (!ticket) return null;
+            if (ticket.status !== TicketStatus.抽選待ち) return null;
+
+            const user = await tx.ticketUser.findUnique({ where: { id: userId } });
+            if (!user) return null;
+            if (user.applicationsSubmitted - ticket.paperTickets + paperTickets > 10) return null;
+
+            if (!Number.isInteger(paperTickets) || paperTickets < 1 || paperTickets > event.paperTicketsPerUser)
+                return null;
+            const updated = await tx.ticket.update({
+                where: { id: ticket.id },
+                data: { paperTickets },
+            });
+            await tx.ticketUser.update({
+                where: { id: userId },
+                data: { applicationsSubmitted: user.applicationsSubmitted - ticket.paperTickets + paperTickets },
+            });
+            return updated;
+        },
+        { isolationLevel: "Serializable" },
+    );
 }
 
 export async function deleteTicket(eventId: string, userId: string) {
-    return await dbClient.$transaction(async (tx) => {
-        const now = dayjs();
-        const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
-        if (!event) return null;
-        if (!dayjs(event.applicationEnd).isAfter(now)) return null;
-        const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
-        if (!ticket) return null;
-        if (ticket.status !== TicketStatus.抽選待ち) return null;
-        await tx.ticket.delete({ where: { id: ticket.id } });
-        await tx.ticketUser.update({
-            where: { id: userId },
-            data: { applicationsSubmitted: { decrement: ticket.paperTickets } },
-        });
-        return true;
-    });
+    return await dbClient.$transaction(
+        async (tx) => {
+            const now = dayjs();
+            const event = await tx.eventTicketInfo.findUnique({ where: { id: eventId } });
+            if (!event) return null;
+            if (!dayjs(event.applicationEnd).isAfter(now)) return null;
+            const ticket = await tx.ticket.findFirst({ where: { eventId, userId } });
+            if (!ticket) return null;
+            if (ticket.status !== TicketStatus.抽選待ち) return null;
+            await tx.ticket.delete({ where: { id: ticket.id } });
+            await tx.ticketUser.update({
+                where: { id: userId },
+                data: { applicationsSubmitted: { decrement: ticket.paperTickets } },
+            });
+            return true;
+        },
+        { isolationLevel: "Serializable" },
+    );
 }
 
 export async function verifyTicket(id: string, sig: string) {
@@ -555,6 +582,13 @@ export async function verifyTicket(id: string, sig: string) {
         const ticket = await tx.ticket.findUnique({ where: { id } });
         if (!ticket) return null;
         if (ticket.status !== TicketStatus.当選) return null;
+
+        // イベント開始後の引換えは不可
+        const event = await tx.eventTicketInfo.findUnique({ where: { id: ticket.eventId } });
+        if (!event) return null;
+        const now = dayjs();
+        if (!dayjs(event.eventStart).isAfter(now)) return null;
+
         await tx.ticket.delete({ where: { id } });
         return ticket;
     });
