@@ -47,7 +47,7 @@ function EventCard({ event, status }: { event: EventTicketInfoModel; status: Eve
             <CardHeader className="w-full gap-0.5 pr-0">
                 <CardTitle className="text-xl">{event.name}</CardTitle>
                 <CardDescription>
-                    定員{event.capacity}人・{statusDescription[status]}
+                    定員{event.capacity}枠・{statusDescription[status]}
                 </CardDescription>
                 {event.link && (
                     <CardAction>

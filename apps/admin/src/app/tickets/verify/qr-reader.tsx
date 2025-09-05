@@ -1,5 +1,5 @@
 "use client";
-import { verifyTicket } from "@/impl/database-actions";
+import { getEventTicketInfo, verifyTicket } from "@/impl/database-actions";
 import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
 import {
     AlertDialog,
@@ -128,7 +128,7 @@ export default function QRReader() {
         };
     }, []);
 
-    const [paperTickets, setPaperTickets] = useState<number | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const parts = result.split(":");
@@ -142,7 +142,9 @@ export default function QRReader() {
             try {
                 const res = await verifyTicket(id, sig);
                 if (!res) return;
-                setPaperTickets(res.paperTickets);
+                const event = await getEventTicketInfo(res.eventId);
+                if (!event) return;
+                setMessage(`${event.name} の紙の整理券 ${res.paperTickets} 枚と引き換えてください`);
                 // 同一QRコードの多重検証抑止
                 lastIdRef.current = id;
             } finally {
@@ -158,21 +160,17 @@ export default function QRReader() {
                 <video ref={videoRef} playsInline muted className="invisible absolute" />
             </div>
             {errmsg && <div className="text-red-600">カメラの初期化に失敗しました: {errmsg}</div>}
-            <AlertDialog open={!!paperTickets}>
+            <AlertDialog open={!!message}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            紙の整理券
-                            <span className="font-bold">{paperTickets !== null ? `${paperTickets}` : "?"}枚</span>
-                            と引き換えてください。
-                        </AlertDialogTitle>
+                        <AlertDialogTitle>{message}</AlertDialogTitle>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogAction asChild>
                             <Button
                                 onClick={() => {
                                     setResult("");
-                                    setPaperTickets(null);
+                                    setMessage(null);
                                 }}
                             >
                                 OK

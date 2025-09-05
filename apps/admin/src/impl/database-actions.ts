@@ -98,6 +98,12 @@ export async function getAllEventTicketInfos() {
     return await Operations.getAllEventTicketInfo();
 }
 
+export async function getEventTicketInfo(id: string) {
+    const session = await auth();
+    if (!session || (!session.authorityTickets && !session.authorityTicketVerification)) return null;
+    return await Operations.getEventTicketInfo(id);
+}
+
 export async function createEventTicketInfo(data: EventTicketInfoModel) {
     if (!(await auth())?.authorityTickets) return null;
     return await Operations.createEventTicketInfo(data);

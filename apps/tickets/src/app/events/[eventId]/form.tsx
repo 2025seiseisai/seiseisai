@@ -61,7 +61,7 @@ export default function ApplicationForm({
                             開催日時: {dayjs(event.eventStart).format("HH:mm")} ~{" "}
                             {dayjs(event.eventEnd).format("HH:mm")}
                         </p>
-                        <p className="text-sm text-secondary-foreground">定員: {event.capacity}人</p>
+                        <p className="text-sm text-secondary-foreground">定員: {event.capacity}枠</p>
                     </div>
                     {event.link && (
                         <Tooltip>
