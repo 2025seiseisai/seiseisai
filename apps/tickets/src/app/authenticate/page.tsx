@@ -23,7 +23,7 @@ export default async function Page({
         throw new Error("Invalid timestamp");
     }
     const tsDate = dayjs(tsNum);
-    if (now.isAfter(tsDate.add(5, "second"))) {
+    if (now.isAfter(tsDate.add(40, "second"))) {
         return (
             <div className="mx-auto flex w-[calc(100%-40px)] flex-1 items-center justify-center">
                 <div className="text-center">
