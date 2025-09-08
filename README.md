@@ -24,9 +24,39 @@ TurborepoでMonorepo化しています。
 - Node.js: Next.jsを動かすためのJavascriptランタイムとして[Node.js](https://nodejs.org/ja/)が必要です
     - `bun --bun run dev`みたいにすればBunだけでも動かせますが、一部の機能にNode.jsと互換性がなかったりメモリ消費量が激しかったりします
 
-## Development
+# 環境変数の設定方法
 
-`.env`ファイルをルートディレクトリに置く必要があります。
+## /.env
+
+```shell
+DATABASE_URL="..." # prismaで使うデータベースへのURL
+DIRECT_URL="..." # prismaで使うデータベースへのURL
+```
+
+## /apps/admin/.env.local
+
+```shell
+AUTH_URL="https://admin.seiseisai.com" # Auth.jsが使用するURL (開発環境ならhttp://localhost:3001)
+AUTH_SECRET_ADMIN="..." # Auth.jsが使用するランダムな文字列 (bunx auth secret --rawで生成可能)
+HASH_SALT="..." # データベースにパスワードをハッシュ化して保存する際のソルト
+SUPERADMIN_HASHED_PASSWORD="..." # superadminのパスワードをHASH_SALTと連結して、sha256でハッシュ化したもの
+NEXT_PUBLIC_TURNSTILE_SITE_KEY_ADMIN="..." # Cloudflare Turnstileの公開鍵 (開発環境なら1x00000000000000000000AA)
+TURNSTILE_SECRET_KEY_ADMIN="..." # Cloudflare Turnstileの秘密鍵 (開発環境なら1x0000000000000000000000000000000AA)
+TICKET_HMAC_KEY_AUTH="..." # Web整理券の認証に使うランダムな文字列
+```
+
+## /apps/tickets/.env.local
+
+```shell
+AUTH_URL="https://tickets.seiseisai.com" # Auth.jsが使用するURL (開発環境ならhttp://localhost:3002)
+AUTH_SECRET_TICKETS="" # Auth.jsが使用するランダムな文字列 (bunx auth secret --rawで生成可能)
+NEXT_PUBLIC_TURNSTILE_SITE_KEY_TICKETS="..." # Cloudflare Turnstileの公開鍵 (開発環境なら1x00000000000000000000AA)
+TURNSTILE_SECRET_KEY_TICKETS="..." # Cloudflare Turnstileの秘密鍵 (開発環境なら1x0000000000000000000000000000000AA)
+TICKET_HMAC_KEY_AUTH="..." # Web整理券の認証に使うランダムな文字列 (adminで使われている環境変数と同じ値)
+TICKET_HMAC_KEY_LOGIN="..." # Web整理券の認証に使うランダムな文字列
+```
+
+## Development
 
 VSCodeでF5キー(or Fn+F5)でデバッグセッションを立ち上げるか、ターミナルで`bun run dev`を打ち込むと実行できます。
 
@@ -40,3 +70,11 @@ bun run start
 ```
 
 でビルドと実行ができます。
+
+# Deploy
+
+```shell
+bun run deploy <gitのブランチ名>
+```
+
+でパッケージのインストールからビルド・実行などを自動で行います。
