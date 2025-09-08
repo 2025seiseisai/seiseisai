@@ -40,6 +40,8 @@ model News {
   date       DateTime
   importance Boolean  @default(false)
   content    String   @db.Text
+
+  @@index([date])
 }
 
 enum GoodsStock {
@@ -74,6 +76,10 @@ model EventTicketInfo {
   type                EventTicketType
   tickets             Ticket[]
   drawResult          EventDrawResult?
+
+  @@index([applicationStart])
+  @@index([applicationEnd])
+  @@index([eventStart])
 }
 
 model EventDrawResult {
@@ -89,6 +95,8 @@ model TicketUser {
   expiresAt             DateTime
   applicationsSubmitted Int      @default(0)
   tickets               Ticket[]
+
+  @@index([expiresAt])
 }
 
 enum TicketStatus {
@@ -107,4 +115,6 @@ model Ticket {
   event        EventTicketInfo @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
+  @@index([userId])
+  @@index([eventId])
 }
