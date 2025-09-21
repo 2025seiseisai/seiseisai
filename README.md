@@ -21,7 +21,7 @@ TurborepoでMonorepo化しています。
 - OS: WindowsとUbuntuで動くのを確認しています
 - RAM: 大量にメモリを食います
 - VSCode: 編集に必要
-- VSCode Extensions: [devcontainer.json](./.devcontainer/devcontainer.json)に書かれているVSCode拡張機能が必要です
+- VSCode Extensions: [extensions.json](./.vscode/extensions.json)に書かれているVSCode拡張機能が必要です
 - Bun: Javascriptランタイムとして[Bun](https://bun.com/)が必要です
 - Node.js: Next.jsを動かすためのJavascriptランタイムとして[Node.js](https://nodejs.org/ja/)が必要です
     - `bun --bun run dev`みたいにすればBunだけでも動かせますが、一部の機能にNode.jsと互換性がなかったりメモリ消費量が激しかったりします
