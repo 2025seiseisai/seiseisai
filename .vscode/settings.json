@@ -54,12 +54,6 @@
         "PSExecutionPolicyPreference": "RemoteSigned"
     },
     "terminal.integrated.defaultProfile.linux": "bash",
-    "code-runner.executorMap": {
-        "javascript": "bun",
-        "typescript": "bun"
-    },
-    "code-runner.runInTerminal": true,
-    "code-runner.cwd": "${workspaceFolder}",
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
     },
