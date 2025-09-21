@@ -53,6 +53,7 @@
     "terminal.integrated.env.windows": {
         "PSExecutionPolicyPreference": "RemoteSigned"
     },
+    "terminal.integrated.defaultProfile.linux": "bash",
     "code-runner.executorMap": {
         "javascript": "bun",
         "typescript": "bun"
