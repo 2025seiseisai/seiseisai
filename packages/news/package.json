@@ -1,0 +1,15 @@
+{
+    "name": "@seiseisai/news",
+    "version": "0.1.0",
+    "private": true,
+    "main": "src/index.tsx",
+    "scripts": {
+        "lint": "cd ../../ && eslint ./packages/news --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./packages/news",
+        "format": "cd ../../ && eslint ./packages/news --cache --cache-location ./node_modules/.cache/eslint/.eslintcache --fix && prettier --cache --write ./packages/news",
+        "check-types": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@seiseisai/settings": "workspace:*",
+        "@seiseisai/ui": "workspace:*"
+    }
+}

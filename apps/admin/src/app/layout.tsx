@@ -35,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     return (
         <html lang="ja" className={notoSansJP.className}>
             <body suppressHydrationWarning>
-                <HolyLoader color="var(--secondary-foreground)" speed={300} height="1px" />
+                <HolyLoader color="var(--secondary-foreground)" speed={300} height="1.5px" />
                 <Header />
                 <main>{children}</main>
                 <Footer />

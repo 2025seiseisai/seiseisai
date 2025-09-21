@@ -2,7 +2,7 @@
     "$schema": "https://turborepo.com/schema.json",
     "tasks": {
         "build": {
-            "dependsOn": ["lint", "check-env", "insert-superadmin", "^build"],
+            "dependsOn": ["lint", "check-env", "insert-superadmin", "generate-blog-data", "^build"],
             "outputs": ["./.next/**", "!./.next/cache/**", "./dist/**", "./build/**"],
             "inputs": ["$TURBO_DEFAULT$", "../../.env*"]
         },
@@ -12,7 +12,7 @@
             "cache": false
         },
         "check-types": {
-            "dependsOn": ["prisma:generate", "^check-types"]
+            "dependsOn": ["prisma:generate", "generate-blog-data", "^check-types"]
         },
         "lint": {
             "dependsOn": ["^lint"]
@@ -21,7 +21,7 @@
             "dependsOn": ["^format"]
         },
         "dev": {
-            "dependsOn": ["check-env", "insert-superadmin", "^dev"],
+            "dependsOn": ["check-env", "insert-superadmin", "generate-blog-data", "^dev"],
             "persistent": true,
             "cache": false
         },
@@ -35,6 +35,10 @@
         },
         "insert-superadmin": {
             "dependsOn": ["check-env", "prisma:generate", "^insert-superadmin"]
+        },
+        "generate-blog-data": {
+            "dependsOn": ["^generate-blog-data"],
+            "outputs": ["./src/data.ts"]
         }
     }
 }

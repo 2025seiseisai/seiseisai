@@ -1,12 +1,10 @@
 "use client";
-/* eslint @typescript-eslint/no-explicit-any: 0 */
-/* eslint better-tailwindcss/no-unregistered-classes: 0 */
 import { createNews, deleteNews, getAllNews, updateNewsSafe, updateNewsUnsafe } from "@/impl/database-actions";
-import { YouTubeEmbed } from "@next/third-parties/google";
 import { createId } from "@paralleldrive/cuid2";
 import { UpdateResult } from "@seiseisai/database/enums";
 import type { NewsModel } from "@seiseisai/database/models";
 import dayjs from "@seiseisai/date";
+import NewsPreview from "@seiseisai/news";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -34,16 +32,11 @@ import { Separator } from "@seiseisai/ui/components/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@seiseisai/ui/components/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@seiseisai/ui/components/tabs";
 import { Textarea } from "@seiseisai/ui/components/textarea";
-import { cn } from "@seiseisai/ui/lib/utils";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Markdown, { Components } from "react-markdown";
-import { Tweet } from "react-tweet";
-import remarkBreaks from "remark-breaks";
-import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { z } from "zod";
 import "./news.scss";
@@ -91,221 +84,6 @@ function useInitNewsAtom() {
             });
         }
     };
-}
-
-function transformLinks(node: React.ReactNode): React.ReactNode {
-    if (typeof node === "string" || typeof node === "number") {
-        return node;
-    }
-    if (Array.isArray(node)) {
-        return node.map((child, i) => <React.Fragment key={i}>{transformLinks(child)}</React.Fragment>);
-    }
-
-    if (React.isValidElement(node) && node.type === "a" && (node.props as any).href) {
-        const { href, children } = node.props as {
-            href: string;
-            children: React.ReactNode;
-        };
-        if (href[0] === "#" || href.startsWith("mailto:")) {
-            return (
-                <a href={href} className="news_element">
-                    {transformLinks(children)}
-                </a>
-            );
-        }
-        if (
-            (href.startsWith("https://") || href.startsWith("http://")) &&
-            href.split("/").at(-1)?.includes(".") &&
-            !href.endsWith(".html") &&
-            !href.endsWith(".htm") &&
-            !href.endsWith(".php")
-        ) {
-            return (
-                <Link href={href as any} download className="news_element">
-                    {transformLinks(children)}
-                </Link>
-            );
-        }
-        if (
-            (href.startsWith("https://") || href.startsWith("http://")) &&
-            !href.startsWith("https://seiseisai.com") &&
-            !href.startsWith("http://seiseisai.com")
-        ) {
-            return (
-                <Link href={href as any} target="_blank" rel="noopener noreferrer nofollow" className={"news_element"}>
-                    {transformLinks(children)}
-                </Link>
-            );
-        }
-        if (href.startsWith("/")) {
-            return (
-                <Link href={("https://seiseisai.com" + href) as any} className="news_element">
-                    {transformLinks(children)}
-                </Link>
-            );
-        }
-        return (
-            <Link href={href as any} className="news_element">
-                {transformLinks(children)}
-            </Link>
-        );
-    }
-
-    return node;
-}
-
-function NewsPreview({ content, className = "" }: { content: string; className?: string }) {
-    const components: Components = {
-        h1: ({ children }) => {
-            return <h1 className="news_element">{transformLinks(children)}</h1>;
-        },
-        h2: ({ children }) => {
-            return <h2 className="news_element">{transformLinks(children)}</h2>;
-        },
-        h3: ({ children }) => {
-            return <h3 className="news_element">{transformLinks(children)}</h3>;
-        },
-        h4: ({ children }) => {
-            return <h4 className="news_element">{transformLinks(children)}</h4>;
-        },
-        h5: ({ children }) => {
-            return <h5 className="news_element">{transformLinks(children)}</h5>;
-        },
-        h6: ({ children }) => {
-            return <h6 className="news_element">{transformLinks(children)}</h6>;
-        },
-        p: ({ children }) => {
-            if (Array.isArray(children)) {
-                return <div className="news_element">{transformLinks(children)}</div>;
-            }
-            if (React.isValidElement(children)) {
-                const type = (children as React.ReactElement).type;
-                const props = children.props as any;
-                if ((type as any).name === "img") {
-                    return children;
-                }
-                if (type === "a" && props.href) {
-                    const { href, children } = props as {
-                        href: string;
-                        children: React.ReactNode;
-                    };
-                    if (
-                        children === href &&
-                        (href.startsWith("https://youtube.com/watch?v=") ||
-                            href.startsWith("https://www.youtube.com/watch?v="))
-                    ) {
-                        return (
-                            <section className="news_youtube_embed">
-                                <YouTubeEmbed videoid={href.split("?v=").at(-1) || ""} />
-                            </section>
-                        );
-                    }
-                    if (children === href && href.startsWith("https://youtu.be/")) {
-                        return (
-                            <section className="news_youtube_embed">
-                                <YouTubeEmbed videoid={href.split("/").at(-1) || ""} />
-                            </section>
-                        );
-                    }
-                    if (
-                        children === href &&
-                        href.match(/^https?:\/\/(x\.com|twitter\.com)\/[a-zA-Z0-9_]+\/status\/\d+/)
-                    ) {
-                        const tweetId = href.match(/status\/(\d+)/)?.[1];
-                        if (tweetId) {
-                            return (
-                                <section className="news_tweet_embed" data-theme={"light"} suppressHydrationWarning>
-                                    <Tweet id={tweetId} />
-                                </section>
-                            );
-                        }
-                    }
-                    if (href[0] === "#" || href.startsWith("mailto:")) {
-                        return (
-                            <div className="news_element">
-                                <a href={href} className="news_element">
-                                    {transformLinks(children)}
-                                </a>
-                            </div>
-                        );
-                    }
-                    if (
-                        (href.startsWith("https://") || href.startsWith("http://")) &&
-                        href.split("/").at(-1)?.includes(".") &&
-                        !href.endsWith(".html") &&
-                        !href.endsWith(".htm") &&
-                        !href.endsWith(".php")
-                    ) {
-                        return (
-                            <div className="news_element">
-                                <Link href={href as any} download className={""}>
-                                    {transformLinks(children)}
-                                </Link>
-                            </div>
-                        );
-                    }
-                    if (
-                        (href.startsWith("https://") || href.startsWith("http://")) &&
-                        !href.startsWith("https://seiseisai.com") &&
-                        !href.startsWith("http://seiseisai.com")
-                    ) {
-                        return (
-                            <div className="news_element">
-                                <Link
-                                    href={href as any}
-                                    target="_blank"
-                                    rel="noopener noreferrer nofollow"
-                                    className="news_element"
-                                >
-                                    {transformLinks(children)}
-                                </Link>
-                            </div>
-                        );
-                    }
-                    if (href.startsWith("/")) {
-                        return (
-                            <div className="news_element">
-                                <Link href={("https://seiseisai.com" + href) as any} className="news_element">
-                                    {transformLinks(children)}
-                                </Link>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div className="news_element">
-                            <Link href={href as any} className="news_element">
-                                {transformLinks(children)}
-                            </Link>
-                        </div>
-                    );
-                }
-            }
-            return <div className="news_element">{transformLinks(children)}</div>;
-        },
-        ul: ({ children }) => {
-            return <ul className="news_element">{children}</ul>;
-        },
-        li: ({ children }) => {
-            return <li className="news_element">{children}</li>;
-        },
-        ol: ({ children }) => {
-            return <ol className="news_element">{children}</ol>;
-        },
-        strong: ({ children }) => {
-            return (
-                <span className="news_element" style={{ fontWeight: 600 }}>
-                    {children}
-                </span>
-            );
-        },
-    };
-    return (
-        <article className={cn("overflow-y-scroll rounded-md border p-4 text-start", className)}>
-            <Markdown components={components} remarkPlugins={[remarkGfm, remarkBreaks]}>
-                {content}
-            </Markdown>
-        </article>
-    );
 }
 
 function formatDate(date: Date | string): string {

@@ -17,6 +17,7 @@
         "@seiseisai/ui": "workspace:*",
         "@seiseisai/turnstile": "workspace:*",
         "@seiseisai/date": "workspace:*",
-        "@seiseisai/settings": "workspace:*"
+        "@seiseisai/settings": "workspace:*",
+        "@seiseisai/news": "workspace:*"
     }
 }

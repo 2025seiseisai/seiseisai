@@ -1,56 +1,56 @@
-article {
+.news-article {
     font-size: 18px;
     line-height: 1.9;
     word-break: break-all;
 }
 
-.news_element {
+.news-element {
     width: 100%;
 }
 
-a.news_element {
+a.news-element {
     color: #006fd6;
     text-decoration: underline;
 }
 
-div.news_element {
+div.news-element {
     margin-top: 10px;
     margin-bottom: 10px;
     font-weight: 400;
 }
 
-h1.news_element {
+h1.news-element {
     overflow: initial;
     font-size: 28px;
     font-weight: 500;
 }
 
-h2.news_element {
+h2.news-element {
     font-size: 24px;
     font-weight: 500;
 }
 
-h3.news_element {
+h3.news-element {
     font-size: 22px;
     font-weight: 500;
 }
 
-h4.news_element {
+h4.news-element {
     font-size: 20px;
     font-weight: 500;
 }
 
-h5.news_element {
+h5.news-element {
     font-size: 19px;
     font-weight: 500;
 }
 
-h6.news_element {
+h6.news-element {
     font-size: 18px;
     font-weight: 500;
 }
 
-.news_youtube_embed {
+.news-youtube-embed {
     width: 100%;
 
     & > div {
@@ -67,7 +67,7 @@ h6.news_element {
     }
 }
 
-.news_tweet_embed {
+.news-tweet-embed {
     width: 100%;
     margin-top: 20px;
 

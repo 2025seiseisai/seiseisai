@@ -9,7 +9,13 @@ const config: NextConfig = {
     images: {
         qualities: [75, 50, 100],
     },
-    transpilePackages: ["@seiseisai/database", "@seiseisai/ui", "@seiseisai/turnstile", "@seiseisai/date"],
+    transpilePackages: [
+        "@seiseisai/database",
+        "@seiseisai/ui",
+        "@seiseisai/turnstile",
+        "@seiseisai/date",
+        "@seiseisai/news",
+    ],
     turbopack: {
         rules: {
             "*.svg": {

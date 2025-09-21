@@ -85,6 +85,7 @@
       "dependencies": {
         "@seiseisai/database": "workspace:*",
         "@seiseisai/date": "workspace:*",
+        "@seiseisai/news": "workspace:*",
         "@seiseisai/settings": "workspace:*",
         "@seiseisai/turnstile": "workspace:*",
         "@seiseisai/ui": "workspace:*",
@@ -109,6 +110,13 @@
         "@seiseisai/ui": "workspace:*",
       },
     },
+    "packages/blog": {
+      "name": "@seiseisai/blog",
+      "version": "0.1.0",
+      "dependencies": {
+        "@seiseisai/settings": "workspace:*",
+      },
+    },
     "packages/database": {
       "name": "@seiseisai/database",
       "version": "0.1.0",
@@ -120,6 +128,14 @@
     "packages/date": {
       "name": "@seiseisai/date",
       "version": "0.1.0",
+    },
+    "packages/news": {
+      "name": "@seiseisai/news",
+      "version": "0.1.0",
+      "dependencies": {
+        "@seiseisai/settings": "workspace:*",
+        "@seiseisai/ui": "workspace:*",
+      },
     },
     "packages/settings": {
       "name": "@seiseisai/settings",
@@ -739,9 +755,13 @@
 
     "@seiseisai/admin": ["@seiseisai/admin@workspace:apps/admin"],
 
+    "@seiseisai/blog": ["@seiseisai/blog@workspace:packages/blog"],
+
     "@seiseisai/database": ["@seiseisai/database@workspace:packages/database"],
 
     "@seiseisai/date": ["@seiseisai/date@workspace:packages/date"],
+
+    "@seiseisai/news": ["@seiseisai/news@workspace:packages/news"],
 
     "@seiseisai/settings": ["@seiseisai/settings@workspace:packages/settings"],
 
