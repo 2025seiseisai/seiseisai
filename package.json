@@ -98,7 +98,6 @@
         "tw-animate-css": "^1.3.8",
         "typescript": "^5"
     },
-    "packageManager": "bun@1.2.22",
     "engines": {
         "bun": "latest",
         "npm": "Don't use npm, use bun instead",

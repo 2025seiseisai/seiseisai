@@ -9,7 +9,9 @@ TurborepoでMonorepo化しています。
 - [/apps/admin](./apps/admin): 管理ページ。データベースを操作したりできます。
 - [/apps/ticket-worker](./apps/ticket-worker): 定期的にデータベースのチェックを行い、Web整理券の抽選などを行うコードが入っています。
 - [/apps/tickets](./apps/tickets): Web整理券の応募ページ。
-- [/packages/database](./packages/database): データベースを操作する関数や型など。ここではPrismaを使っていますが、書き換えればCloudflare D1とかにも対応できるはず。
+- [/packages/blog](./packages/blog): Blogのデータ。マークダウンファイルは実行時に自動的に一つのファイルにまとめられます。
+- [/packages/news](./packages/news): Newsのマークダウンを表示するReactコンポーネント。
+- [/packages/database](./packages/database): データベースを操作する関数や型など。/packages/database/prisma/schema.prismaにPrismaのスキーマが載っています。
 - [/packages/date](./packages/date): dayjsのデフォルトを日本時間にしてエクスポートしています。このリポジトリ内では、Dateの代わりに全部このパッケージ内のdayjsを使用しています。
 - [/packages/turnstile](./packages/turnstile): Cloudflare TurnstileのReact Componentと、サーバーでの検証をする関数が入っています。
 - [/packages/ui](./packages/ui): shadcn/uiのコンポーネント。

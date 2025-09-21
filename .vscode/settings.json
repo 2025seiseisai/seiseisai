@@ -10,6 +10,7 @@
     "files.eol": "\n",
     "files.associations": {
         "*.mdx": "markdown",
+        ".clinerules": "markdown",
         "*.tailwind.css": "tailwindcss",
         "*.tailwind.scss": "tailwindcss",
         ".prettierrc": "jsonc",
@@ -17,7 +18,8 @@
         ".gitignore": "ignore",
         ".prettierignore": "ignore",
         ".eslintignore": "ignore",
-        "bun.lock": "jsonl"
+        "bun.lock": "jsonl",
+        ".env*": "env"
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "always",
@@ -59,5 +61,9 @@
     "code-runner.cwd": "${workspaceFolder}",
     "[prisma]": {
         "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "github.copilot.enable": {
+        "*": true,
+        "env": false
     }
 }
