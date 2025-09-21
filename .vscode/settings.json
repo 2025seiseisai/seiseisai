@@ -13,7 +13,7 @@
         "*.tailwind.css": "tailwindcss",
         "*.tailwind.scss": "tailwindcss",
         ".prettierrc": "jsonc",
-        ".stylelintrc": "jsonc",
+        ".stylelintrc": "yaml",
         ".gitignore": "ignore",
         ".prettierignore": "ignore",
         ".eslintignore": "ignore",
@@ -23,7 +23,7 @@
         "source.fixAll.eslint": "always",
         "source.organizeImports": "always"
     },
-    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.tsdk": "./node_modules/typescript/lib",
     "css.validate": false,
     "less.validate": false,
     "scss.validate": false,
@@ -42,7 +42,9 @@
             "source.fixAll.stylelint": "always"
         }
     },
-    "stylelint.configFile": "./.stylelintrc",
+    "prettier.prettierPath": "./node_modules/prettier",
+    "eslint.nodePath": "./node_modules",
+    "stylelint.stylelintPath": "./node_modules/stylelint",
     "stylelint.validate": ["css", "less", "scss"],
     "tailwindCSS.lint.cssConflict": "ignore",
     "terminal.integrated.defaultProfile.windows": "PowerShell",

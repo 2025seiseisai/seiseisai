@@ -1,6 +1,12 @@
-{
-    "extends": ["stylelint-config-standard-scss", "stylelint-config-recess-order"],
-    "rules": {
-        "no-descending-specificity": null
-    }
-}
+extends:
+    - stylelint-config-standard-scss
+    - stylelint-config-recess-order
+# plugins:
+#     - stylelint-no-unsupported-browser-features
+rules:
+    # plugin/no-unsupported-browser-features:
+    #     - true
+    #     - browsers:
+    #         - '> 0.1% in JP'
+    #         - 'not dead'
+    #         - 'last 2 versions'
