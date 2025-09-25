@@ -10,6 +10,7 @@ const config: NextConfig = {
         qualities: [75, 50, 100],
     },
     transpilePackages: [
+        "@seiseisai/blog",
         "@seiseisai/database",
         "@seiseisai/ui",
         "@seiseisai/turnstile",
