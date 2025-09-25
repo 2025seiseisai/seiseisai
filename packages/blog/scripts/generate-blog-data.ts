@@ -51,13 +51,10 @@ for (const round of await fs.promises.readdir(path.join(cwd, "blog-assets"))) {
             console.log(`WARNING: ${path.join(folderPath, index)} does not have a thumbnail image`);
         }
         // Support both index.md and index.mdx
-        let mdFilePath = path.join(folderPath, index, "index.md");
+        const mdFilePath = path.join(folderPath, index, "index.md");
         if (!fs.existsSync(mdFilePath)) {
-            mdFilePath = path.join(folderPath, index, "index.mdx");
-            if (!fs.existsSync(mdFilePath)) {
-                console.log(`WARNING: ${path.join(folderPath, index)} does not have index.md or index.mdx`);
-                continue;
-            }
+            console.log(`WARNING: ${path.join(folderPath, index)} does not have index.md`);
+            continue;
         }
         const filestr = await fs.promises.readFile(mdFilePath, "utf-8");
         const result = graymatter(filestr);
