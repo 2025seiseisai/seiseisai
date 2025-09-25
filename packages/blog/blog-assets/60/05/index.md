@@ -28,7 +28,7 @@ link: https://www.notion.so/1d745769800480a4a749e072c9445360?pvs=4
 
 # 最後に、今回の菁々祭のテーマである「発火」を書いてもらいました！
 
-![image.png](image.png)
+![image.webp](image.webp)
 
 勢いがあって、とても迫力がありますね！
 

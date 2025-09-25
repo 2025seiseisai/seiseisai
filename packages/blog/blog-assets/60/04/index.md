@@ -30,7 +30,7 @@ TwitterやInstagramなどに投稿する際、最も多くの人がプレビュ�
 
 (彼のYouTube再生リストには2000を超えるフリーBGM動画が保存されているとかいないとか。引き出しの量が恐ろしいです…)
 
-![Blenderの編集画面](image.png)
+![Blenderの編集画面](image.webp)
 
 Blenderの編集画面
 
@@ -46,7 +46,7 @@ Blenderの編集画面
 
 計画性を持って頑張って早めに完成させるのがやっぱり一番理想的だなと思いました。動画編集に携わった人間として納期ギリギリになってしまう気持ちは身にしみてわかるのですが...
 
-![After Effects の編集画面。非常に複雑。](image%201.png)
+![After Effects の編集画面。非常に複雑。](image%201.webp)
 
 After Effects の編集画面。非常に複雑。
 
