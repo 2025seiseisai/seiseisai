@@ -20,8 +20,13 @@
         "format": {
             "dependsOn": ["^format"]
         },
-        "dev": {
-            "dependsOn": ["check-env", "insert-superadmin", "generate-blog-data", "^dev"],
+        "dev:admin": {
+            "dependsOn": ["check-env", "insert-superadmin", "^dev:admin"],
+            "persistent": true,
+            "cache": false
+        },
+        "dev:tickets": {
+            "dependsOn": ["check-env", "^dev:tickets"],
             "persistent": true,
             "cache": false
         },

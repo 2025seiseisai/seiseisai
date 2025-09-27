@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "dev": "cd ../../ && bun --no-clear-screen --hot ./apps/ticket-worker/src/main.ts",
+        "dev:tickets": "cd ../../ && bun --no-clear-screen --hot ./apps/ticket-worker/src/main.ts",
         "build": "bun build src/main.ts --outdir dist --target node --minify",
         "start": "bun --env-file=../../.env dist/main.js",
         "lint": "cd ../../ && eslint ./apps/ticket-worker --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && prettier --cache --check ./apps/ticket-worker",

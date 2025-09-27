@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "opener http://localhost:3001/ && bun --env-file=../../.env --env-file=.env.local next dev --turbopack --port 3001",
+        "dev:admin": "opener http://localhost:3001/ && bun --env-file=../../.env --env-file=.env.local next dev --turbopack --port 3001",
         "build": "bun --env-file=../../.env --env-file=.env.local next build --turbopack",
         "start": "bun --env-file=../../.env --env-file=.env.local next start --port 3001",
         "lint": "cd ../../ && eslint ./apps/admin --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/admin/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache && prettier --cache --check ./apps/admin",
