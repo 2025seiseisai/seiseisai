@@ -3,11 +3,12 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
     experimental: {
         externalDir: true,
+        turbopackFileSystemCacheForDev: true,
     },
     reactCompiler: true,
     typedRoutes: true,
     images: {
-        qualities: [75, 50, 100],
+        qualities: [50, 75, 100],
     },
     transpilePackages: [
         "@seiseisai/blog",
