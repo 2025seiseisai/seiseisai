@@ -44,6 +44,7 @@
             "source.fixAll.stylelint": "always"
         }
     },
+    "biome.enabled": false,
     "prettier.prettierPath": "./node_modules/prettier",
     "eslint.nodePath": "./node_modules",
     "stylelint.stylelintPath": "./node_modules/stylelint",

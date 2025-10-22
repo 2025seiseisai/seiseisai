@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
     if (req.nextUrl.pathname === "/api/auth/signout") {
         // 期限切れ以外でのサインアウトを禁止
         const url = req.nextUrl.clone();

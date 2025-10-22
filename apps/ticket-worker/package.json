@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "@seiseisai/database": "workspace:*",
+        "@seiseisai/date": "workspace:*",
         "@seiseisai/settings": "workspace:*"
     }
 }
