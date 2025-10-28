@@ -24,7 +24,6 @@ TurborepoでMonorepo化しています。
 - VSCode Extensions: [extensions.json](./.vscode/extensions.json)に書かれているVSCode拡張機能が必要です
 - Bun: Javascriptランタイムとして[Bun](https://bun.com/)が必要です
 - Node.js: Next.jsを動かすためのJavascriptランタイムとして[Node.js](https://nodejs.org/ja/)が必要です
-    - `bun --bun run dev`みたいにすればBunだけでも動かせますが、一部の機能にNode.jsと互換性がなかったりメモリ消費量が激しかったりします
 
 ## 環境変数の設定方法
 

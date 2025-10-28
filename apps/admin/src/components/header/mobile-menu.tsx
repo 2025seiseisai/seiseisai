@@ -44,7 +44,7 @@ export function MobileMenu({
     }, []);
     const pathname = usePathname();
     useEffect(() => {
-        setOpen(false);
+        return () => setOpen(false);
     }, [pathname]);
     return (
         <div className="md:hidden">

@@ -21,7 +21,6 @@ const signInSchema = z.object({
 export const dynamic = "force-dynamic";
 
 export default function LogInForm() {
-    "use no memo";
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY_ADMIN;
     if (!siteKey) {
         throw new Error("NEXT_PUBLIC_TURNSTILE_SITE_KEY_ADMIN is not set");
@@ -39,7 +38,7 @@ export default function LogInForm() {
     const failed = searchParams.get("error") !== null;
     async function onSubmit(data: z.infer<typeof signInSchema>) {
         if (!turnstileToken) {
-            window.location.href = "/login?error";
+            window.location.assign("/login?error");
             return;
         }
         setSubmitting(true);
@@ -50,7 +49,11 @@ export default function LogInForm() {
             redirect: false,
         });
         const error = result.error;
-        window.location.href = error ? `/login?error` : "/";
+        if (error) {
+            window.location.assign("/login?error");
+            return;
+        }
+        window.location.assign("/");
     }
     return (
         <Form {...form}>

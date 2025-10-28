@@ -36,7 +36,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import "./news.scss";
@@ -110,13 +110,6 @@ function NewsEditor({
     const [dateValue, setDateValue] = useState(placeholder.date);
     const [contentValue, setContentValue] = useState(placeholder.content);
     const [importanceValue, setImportanceValue] = useState(placeholder.importance);
-    useEffect(() => {
-        setIdValue(placeholder.id);
-        setTitleValue(placeholder.title);
-        setDateValue(placeholder.date);
-        setContentValue(placeholder.content);
-        setImportanceValue(placeholder.importance);
-    }, [placeholder, create]);
     const [datePickerOpen, setDatePickerOpen] = useState(false);
     const [overwriteWarning, setOverwriteWarning] = useState(false);
     const initializer = useInitNewsAtom();
@@ -338,8 +331,8 @@ function NewsEditor({
 
 function NewsContent({ news }: { news: NewsModel }) {
     const { id, date, title, content } = news;
-    const [openEditDialog, setOpenEditDialog] = React.useState(false);
-    const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const initializer = useInitNewsAtom();
     return (
         <TableRow key={id}>
@@ -469,6 +462,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
             <NewsEditor
                 open={editorOpen}
                 setOpen={setEditorOpen}
+                key={`news-create-${newsid}`}
                 placeholder={{
                     id: newsid,
                     title: "",
