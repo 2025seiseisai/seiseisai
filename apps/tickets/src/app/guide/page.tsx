@@ -1,6 +1,6 @@
 export default async function Page() {
     return (
-        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[52rem]">
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-208">
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ご利用にあたって</h1>
             <p className="mt-2">ご利用にあたっては、以下の注意事項をよくお読みいただき、同意の上でご利用ください。</p>
             <h2 className="mt-8 w-full text-center text-3xl font-semibold">注意事項</h2>

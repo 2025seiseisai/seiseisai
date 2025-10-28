@@ -123,7 +123,7 @@ function NewsEditor({
     return (
         <>
             <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-[38rem]">
+                <AlertDialogContent className="max-h-[92svh] w-full overflow-y-auto sm:max-w-152">
                     <AlertDialogHeader>
                         <AlertDialogTitle>ニュースの編集</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -378,7 +378,7 @@ function NewsContent({ news }: { news: NewsModel }) {
                         </DropdownMenuItem>
                         <NewsEditor open={openEditDialog} setOpen={setOpenEditDialog} placeholder={news} />
                         <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-                            <AlertDialogContent className="sm:max-w-[38rem]">
+                            <AlertDialogContent className="sm:max-w-152">
                                 <AlertDialogHeader>
                                     <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
                                     <AlertDialogDescription className="mb-2">
@@ -426,7 +426,7 @@ export default function NewsViewer({ initialnews }: { initialnews: NewsModel[] }
     const [newsDate, setNewsDate] = useState(currentDate());
     return (
         <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
+            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-208">
                 <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">ニュース</h1>
                 <div className="mb-1 flex items-center gap-1.5">
                     <Button

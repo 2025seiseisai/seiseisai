@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function TicketsPageBase({ children }: { children?: React.ReactNode }) {
     const session = useSession();
     return (
-        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-208">
             <h1 className="mt-2 mb-6 w-full text-center text-4xl font-bold">整理券</h1>
             <div className="mb-6 flex w-full gap-2 not-sm:flex-col sm:gap-4">
                 {session.authorityTickets && (

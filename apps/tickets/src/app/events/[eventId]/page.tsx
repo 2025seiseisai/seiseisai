@@ -8,7 +8,7 @@ import Verifier from "./verifier";
 
 function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-        <div className="mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-1 flex-col overflow-hidden sm:w-[52rem]">
+        <div className="mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-1 flex-col overflow-hidden sm:w-208">
             {children}
         </div>
     );

@@ -5,7 +5,7 @@ export default async function Page() {
     const session = await auth();
     if (session === null) {
         return (
-            <div className="mx-auto flex w-[calc(100%-2rem)] flex-1 items-center justify-center sm:w-[52rem]">
+            <div className="mx-auto flex w-[calc(100%-2rem)] flex-1 items-center justify-center sm:w-208">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold sm:text-4xl">認証されていません</h1>
                     <p className="mt-4 text-center sm:text-lg">

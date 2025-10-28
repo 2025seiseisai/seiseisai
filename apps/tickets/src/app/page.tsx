@@ -176,7 +176,7 @@ export default async function Page() {
     eventsAcceptingApplications.sort((a, b) => dayjs(a.eventStart).diff(dayjs(b.eventStart)));
     eventsBeforeApplicationStarts.sort((a, b) => dayjs(a.eventStart).diff(dayjs(b.eventStart)));
     return (
-        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[52rem]">
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-208">
             <p className="mt-4">
                 Web整理券の使用方法や注意事項などは
                 <Link href="/guide" className="underline">

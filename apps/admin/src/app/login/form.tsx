@@ -39,7 +39,6 @@ export default function LogInForm() {
     const failed = searchParams.get("error") !== null;
     async function onSubmit(data: z.infer<typeof signInSchema>) {
         if (!turnstileToken) {
-            // eslint-disable-next-line react-compiler/react-compiler
             window.location.href = "/login?error";
             return;
         }

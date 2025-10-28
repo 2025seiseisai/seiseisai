@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 export default async function Page() {
     if (!(await auth())?.authorityTickets) notFound();
     return (
-        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-[52rem]">
+        <div className="mx-auto w-full max-w-[calc(100vw-2rem)] overflow-hidden sm:w-208">
             <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">整理券</h1>
             <h2 className="scroll-mt-16 text-2xl font-semibold">イベントの設定</h2>
             <h3 className="mt-4 text-xl font-semibold">イベント名</h3>

@@ -64,7 +64,7 @@ export default async function Header() {
                                     </p>
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
+                            <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>
                                     <p className="text-[16px]">{session.name}</p>
                                     <p className="mt-1 text-xs font-normal text-gray-500">ID: {session.id}</p>

@@ -54,7 +54,7 @@ export function MobileMenu({
                         {open ? <X className="size-5" /> : <Menu className="size-5" />}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-(--radix-popper-available-width) [transform:translateY(6px)] rounded-none shadow-none duration-100 md:hidden">
+                <PopoverContent className="w-(--radix-popper-available-width) transform-[translateY(6px)] rounded-none shadow-none duration-100 md:hidden">
                     <nav className="mb-2 flex flex-col gap-1">
                         {navItems.map((item) => (
                             <Button key={item.href} variant="ghost" size="lg" className="px-4">

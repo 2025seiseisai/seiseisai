@@ -16,25 +16,25 @@ export default function TurnstileWidget({
     className?: string;
 }) {
     const ref = useRef<HTMLDivElement>(null);
-    const [rendered, setRendered] = useState(false);
+    const renderedRef = useRef(false);
     const [scriptLoaded, setScriptLoaded] = useState(false);
 
     useEffect(() => {
-        if (!scriptLoaded || rendered || !ref.current) return;
+        if (!scriptLoaded || renderedRef.current || !ref.current) return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (!(window as any).turnstile) {
+        const turnstile = (window as any).turnstile;
+        if (!turnstile) {
             console.error("Turnstile script not loaded");
             return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).turnstile.render(ref.current, {
+        turnstile.render(ref.current, {
             sitekey: siteKey,
             callback: onVerify,
             "error-callback": onError,
             theme: theme,
         });
-        setRendered(true);
-    }, [scriptLoaded, rendered, siteKey, onVerify, onError, theme]);
+        renderedRef.current = true;
+    }, [scriptLoaded, siteKey, onVerify, onError, theme]);
 
     return (
         <>

@@ -412,7 +412,7 @@ export default function GoodsViewer({ initgoods }: { initgoods: GoodsModel[] }) 
     const session = useSession();
     return (
         <>
-            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-[52rem]">
+            <div className="mx-auto w-full max-w-[calc(100vw-2rem)] sm:w-208">
                 <h1 className="mt-2 mb-4 w-full text-center text-4xl font-bold">グッズ</h1>
                 <div className="mb-2 flex items-center gap-1.5">
                     {session.authorityGoods && (
