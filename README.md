@@ -23,7 +23,6 @@ TurborepoでMonorepo化しています。
 - VSCode: 編集に必要
 - VSCode Extensions: [extensions.json](./.vscode/extensions.json)に書かれているVSCode拡張機能が必要です
 - Bun: Javascriptランタイムとして[Bun](https://bun.com/)が必要です
-- Node.js: Next.jsを動かすためのJavascriptランタイムとして[Node.js](https://nodejs.org/ja/)が必要です
 
 ## 環境変数の設定方法
 
@@ -59,7 +58,7 @@ TICKET_HMAC_KEY_LOGIN="..." # Web整理券の認証に使うランダムな文�
 
 ## Development
 
-VSCodeでF5キー(or Fn+F5)でデバッグセッションを立ち上げるか、ターミナルで`bun run dev`を打ち込むと実行できます。
+ターミナルで`bun run dev:admin`で管理者ページ、`bun run dev:tickets`でWeb整理券のページを実行できます。
 
 ## Build & Start
 
