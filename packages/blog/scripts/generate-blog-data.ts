@@ -1,5 +1,5 @@
+import frontMatter from "front-matter";
 import * as fs from "fs";
-import graymatter from "gray-matter";
 import * as path from "path";
 
 const cwd = path.join(__dirname, "..");
@@ -57,9 +57,14 @@ for (const round of await fs.promises.readdir(path.join(cwd, "blog-assets"))) {
             continue;
         }
         const filestr = await fs.promises.readFile(mdFilePath, "utf-8");
-        const result = graymatter(filestr);
-        const data = result.data;
-        let content = result.content;
+        const result = frontMatter<{
+            title: string;
+            date: string;
+            author: string;
+            topic: string;
+        }>(filestr, { allowUnsafe: true });
+        const data = result.attributes;
+        let content = result.body;
         content = content.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
         content = content.replaceAll(removeAlt, (match, md, alt1, url, alt2) => {
             if (alt2.replace(/\s+/g, "") === alt1.replace(/\s+/g, "")) {
