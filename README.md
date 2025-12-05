@@ -33,7 +33,7 @@ DATABASE_URL="..." # prismaで使うデータベースへのURL
 DIRECT_URL="..." # prismaで使うデータベースへのURL
 ```
 
-### /apps/admin/.env.local
+### /apps/admin/.env
 
 ```shell
 AUTH_URL="https://admin.seiseisai.com" # Auth.jsが使用するURL (開発環境ならhttp://localhost:3001)
@@ -45,7 +45,7 @@ TURNSTILE_SECRET_KEY_ADMIN="..." # Cloudflare Turnstileの秘密鍵 (開発環�
 TICKET_HMAC_KEY_AUTH="..." # Web整理券の認証に使うランダムな文字列
 ```
 
-### /apps/tickets/.env.local
+### /apps/tickets/.env
 
 ```shell
 AUTH_URL="https://tickets.seiseisai.com" # Auth.jsが使用するURL (開発環境ならhttp://localhost:3002)

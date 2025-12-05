@@ -3,12 +3,12 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev:tickets": "opener http://localhost:3002/ && bun --env-file=../../.env --env-file=.env.local next dev --port 3002",
-        "build": "bun --env-file=../../.env --env-file=.env.local next build --turbopack",
-        "start": "bun --env-file=../../.env --env-file=.env.local next start --port 3002",
+        "dev:tickets": "opener http://localhost:3002/ && bun --env-file=../../.env --env-file=.env next dev --port 3002",
+        "build": "bun --env-file=../../.env --env-file=.env next build --turbopack",
+        "start": "bun --env-file=../../.env --env-file=.env next start --port 3002",
         "lint": "cd ../../ && eslint ./apps/tickets --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/tickets/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache && prettier --cache --check ./apps/tickets",
         "format": "cd ../../ && eslint ./apps/tickets --fix --cache --cache-location ./node_modules/.cache/eslint/.eslintcache && stylelint \"./apps/tickets/src/**/*.(scss|less|css)\" --cache --cache-location ./node_modules/.cache/stylelint/.stylelintcache --fix && prettier --cache --write ./apps/tickets",
-        "check-env": "bun --env-file=../../.env --env-file=.env.local ./scripts/check-env.ts",
+        "check-env": "bun --env-file=../../.env --env-file=.env ./scripts/check-env.ts",
         "check-types": "next typegen && tsc --noEmit"
     },
     "dependencies": {
