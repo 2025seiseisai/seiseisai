@@ -3,7 +3,6 @@ import path from "path";
 
 const config: NextConfig = {
     experimental: {
-        externalDir: true,
         turbopackFileSystemCacheForDev: true,
     },
     reactCompiler: true,

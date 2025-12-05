@@ -105,12 +105,6 @@
         "mdast-util-to-hast": "^13.2.1"
     },
     "packageManager": "bun@1.3.3",
-    "engines": {
-        "bun": "latest",
-        "npm": "Don't use npm, use bun instead",
-        "yarn": "Don't use yarn, use bun instead",
-        "pnpm": "Don't use pnpm, use bun instead"
-    },
     "workspaces": [
         "apps/*",
         "packages/*"

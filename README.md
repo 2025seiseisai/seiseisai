@@ -19,10 +19,10 @@ TurborepoでMonorepo化しています。
 ## 動作環境
 
 - OS: WindowsとUbuntuで動くのを確認しています
-- RAM: 大量にメモリを食います
 - VSCode: 編集に必要
 - VSCode Extensions: [extensions.json](./.vscode/extensions.json)に書かれているVSCode拡張機能が必要です
 - Bun: Javascriptランタイムとして[Bun](https://bun.com/)が必要です
+- Node.js: Next.jsを動かすためのランタイムとして必要です
 
 ## 環境変数の設定方法
 
@@ -49,7 +49,7 @@ TICKET_HMAC_KEY_AUTH="..." # Web整理券の認証に使うランダムな文字
 
 ```shell
 AUTH_URL="https://tickets.seiseisai.com" # Auth.jsが使用するURL (開発環境ならhttp://localhost:3002)
-AUTH_SECRET_TICKETS="" # Auth.jsが使用するランダムな文字列 (bunx auth secret --rawで生成可能)
+AUTH_SECRET_TICKETS="..." # Auth.jsが使用するランダムな文字列 (bunx auth secret --rawで生成可能)
 NEXT_PUBLIC_TURNSTILE_SITE_KEY_TICKETS="..." # Cloudflare Turnstileの公開鍵 (開発環境なら1x00000000000000000000AA)
 TURNSTILE_SECRET_KEY_TICKETS="..." # Cloudflare Turnstileの秘密鍵 (開発環境なら1x0000000000000000000000000000000AA)
 TICKET_HMAC_KEY_AUTH="..." # Web整理券の認証に使うランダムな文字列 (adminで使われている環境変数と同じ値)
