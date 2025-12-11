@@ -30,7 +30,6 @@ TurborepoでMonorepo化しています。
 
 ```shell
 DATABASE_URL="..." # prismaで使うデータベースへのURL
-DIRECT_URL="..." # prismaで使うデータベースへのURL
 ```
 
 ### /apps/admin/.env

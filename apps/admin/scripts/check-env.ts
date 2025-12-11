@@ -1,7 +1,6 @@
 import assert from "assert";
 
 assert(process.env.DATABASE_URL, "DATABASE_URL is not set");
-assert(process.env.DIRECT_URL, "DIRECT_URL is not set");
 assert(process.env.AUTH_URL, "AUTH_URL is not set");
 assert(process.env.AUTH_SECRET_ADMIN, "AUTH_SECRET_ADMIN is not set");
 assert(process.env.HASH_SALT, "HASH_SALT is not set");
