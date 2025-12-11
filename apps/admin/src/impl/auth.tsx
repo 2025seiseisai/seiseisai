@@ -4,7 +4,7 @@ import crypto from "crypto";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { cache } from "react";
-import { z } from "zod";
+import * as z from "zod";
 import { AuthProvider } from "./auth-client";
 
 const signInSchema = z.object({

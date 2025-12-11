@@ -8,6 +8,7 @@ import {
     updateEventTicketInfoSafe,
     updateEventTicketInfoUnsafe,
 } from "@/impl/database-actions";
+import { ticketInfoSchema } from "@/impl/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { EventTicketType, UpdateResult } from "@seiseisai/database/enums";
@@ -44,60 +45,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-
-const ticketInfoSchema = z
-    .object({
-        id: z
-            .string()
-            .min(1, "IDは必須です。")
-            .min(16, "IDは16文字以上でなければなりません。")
-            .max(64, "IDは64文字以下でなければなりません。"),
-        name: z.string().min(1, "イベント名は必須です。").max(256, "イベント名が長すぎます。"),
-        link: z
-            .string()
-            .max(2048, "リンクが長すぎます。")
-            .startsWith("https://", "リンクは https:// から始まる必要があります。")
-            .or(z.literal("")),
-        applicationStart: z.date(),
-        applicationEnd: z.date(),
-        eventStart: z.date(),
-        eventEnd: z.date(),
-        capacity: z.number().int().min(1, "定員は1以上です。").max(10000, "定員が大きすぎます。"),
-        paperTicketsPerUser: z
-            .number()
-            .int()
-            .min(1, "最大応募枚数は1以上です。")
-            .max(10, "最大応募枚数が大きすぎます。"),
-        type: z.enum(EventTicketType),
-    })
-    .superRefine((data, ctx) => {
-        const checkDate = (d: Date, path: string, name: string) => {
-            if (d.getSeconds() !== 0 || d.getMilliseconds() !== 0) {
-                ctx.addIssue({
-                    path: [path],
-                    code: "custom",
-                    message: `${name}日時の秒以下は0にしてください。`,
-                });
-            }
-        };
-        const checkDateOrder = (d1: Date, d2: Date, path: string, name1: string, name2: string) => {
-            if (d1 >= d2) {
-                ctx.addIssue({
-                    path: [path],
-                    code: "custom",
-                    message: `${name2}日時は${name1}日時より後でなければなりません。`,
-                });
-            }
-        };
-        checkDate(data.applicationStart, "applicationStart", "応募開始");
-        checkDate(data.applicationEnd, "applicationEnd", "応募終了");
-        checkDate(data.eventStart, "eventStart", "イベント開始");
-        checkDate(data.eventEnd, "eventEnd", "イベント終了");
-        checkDateOrder(data.applicationStart, data.applicationEnd, "applicationEnd", "応募開始", "応募終了");
-        checkDateOrder(data.applicationEnd, data.eventStart, "eventStart", "応募終了", "イベント開始");
-        checkDateOrder(data.eventStart, data.eventEnd, "eventEnd", "イベント開始", "イベント終了");
-    });
+import * as z from "zod";
 
 type TicketInfoForm = z.infer<typeof ticketInfoSchema>;
 
@@ -565,6 +513,7 @@ function TicketCard({ ticket, drawResult }: { ticket: EventTicketInfoModel; draw
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full"
+                                prefetch={false}
                             >
                                 {ticket.link}
                             </Link>

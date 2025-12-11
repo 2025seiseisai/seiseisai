@@ -1,6 +1,7 @@
 "use client";
 import { useSession } from "@/impl/auth-client";
 import { createGoods, deleteGoods, getAllGoods, updateGoodsSafe, updateGoodsUnsafe } from "@/impl/database-actions";
+import { goodsSchema } from "@/impl/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { GoodsStock, UpdateResult } from "@seiseisai/database/enums";
@@ -43,17 +44,7 @@ import { AlertCircleIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-
-const goodsSchema = z.object({
-    id: z
-        .string()
-        .min(1, "IDは必須です。")
-        .min(16, "IDは16文字以上でなければなりません。")
-        .max(256, "IDが長すぎます。"),
-    name: z.string().min(1, "名前は必須です。").max(256, "名前が長すぎます。"),
-    stock: z.enum(GoodsStock),
-});
+import * as z from "zod";
 
 const goodsAmount = {
     [GoodsStock.売り切れ]: 0,

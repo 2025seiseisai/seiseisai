@@ -11,7 +11,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod";
 
 const signInSchema = z.object({
     name: z.string().min(1, "この項目は必須です。").max(256, "ユーザー名が長すぎます。"),

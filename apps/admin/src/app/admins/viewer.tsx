@@ -7,6 +7,7 @@ import {
     updateAdminSafe,
     updateAdminUnsafe,
 } from "@/impl/database-actions";
+import { adminFormSchema } from "@/impl/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
 import { UpdateResult } from "@seiseisai/database/enums";
@@ -40,7 +41,7 @@ import { KeyRound, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 } from 
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
+import * as z from "zod";
 
 const authorityDescriptions: Record<string, string> = {
     authorityNews: "ニュースの閲覧・編集",
@@ -51,25 +52,6 @@ const authorityDescriptions: Record<string, string> = {
     authorityTicketVerification: "整理券の検証",
     authorityAdmins: "管理者の閲覧・編集",
 };
-
-const adminSchema = z.object({
-    id: z
-        .string()
-        .min(1, "IDは必須です。")
-        .min(16, "IDは16文字以上でなければなりません。")
-        .max(256, "IDが長すぎます。")
-        .or(z.literal("superadmin")),
-    newPassword: z.string().min(8, "パスワードは8文字以上でなければなりません。").max(256, "パスワードが長すぎます。"),
-    confirmPassword: z.string(),
-    name: z.string().min(1, "管理者名は必須です。").max(256, "管理者名が長すぎます。"),
-    authorityNews: z.boolean(),
-    authorityGoods: z.boolean(),
-    authorityGoodsStock: z.boolean(),
-    authorityTickets: z.boolean(),
-    authorityUserAuthentication: z.boolean(),
-    authorityTicketVerification: z.boolean(),
-    authorityAdmins: z.boolean(),
-});
 
 const adminsAtom = atom<AdminModel[]>([]);
 
@@ -106,7 +88,7 @@ function AdminEditor({
     const [overwriteWarning, setOverwriteWarning] = useState(false);
     const initializer = useInitAdminsAtom();
     const form = useForm({
-        resolver: zodResolver(adminSchema),
+        resolver: zodResolver(adminFormSchema),
         defaultValues: {
             ...placeholder,
             newPassword: create ? "" : "AAAAAAAA",
@@ -127,7 +109,7 @@ function AdminEditor({
             });
         }
     }, [open, placeholder, form, create]);
-    async function onSubmitSafe(allData: z.infer<typeof adminSchema>) {
+    async function onSubmitSafe(allData: z.infer<typeof adminFormSchema>) {
         const { newPassword, confirmPassword, ...data } = allData;
         if (create) {
             if (typeof newPassword !== "string" || newPassword !== confirmPassword) {
@@ -177,7 +159,7 @@ function AdminEditor({
             initializer(false);
         }
     }
-    async function onSubmitUnsafe(allData: z.infer<typeof adminSchema>) {
+    async function onSubmitUnsafe(allData: z.infer<typeof adminFormSchema>) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { newPassword, confirmPassword, ...data } = allData;
         const result = await updateAdminUnsafe(data);
@@ -266,7 +248,7 @@ function AdminEditor({
                                         <FormField
                                             key={key}
                                             control={form.control}
-                                            name={key as keyof z.infer<typeof adminSchema>}
+                                            name={key as keyof z.infer<typeof adminFormSchema>}
                                             render={({ field }) => (
                                                 <FormItem className="mt-1 flex w-full items-center gap-2 text-[13px] sm:w-auto sm:flex-1/3">
                                                     <FormControl>

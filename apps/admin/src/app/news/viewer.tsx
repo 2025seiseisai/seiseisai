@@ -1,5 +1,6 @@
 "use client";
 import { createNews, deleteNews, getAllNews, updateNewsSafe, updateNewsUnsafe } from "@/impl/database-actions";
+import { newsSchema } from "@/impl/schemas";
 import { createId } from "@paralleldrive/cuid2";
 import { UpdateResult } from "@seiseisai/database/enums";
 import type { NewsModel } from "@seiseisai/database/models";
@@ -38,32 +39,7 @@ import { ChevronDownIcon, ListPlus, ListRestart, MoreHorizontal, Pencil, Trash2 
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 import "./news.scss";
-
-const newsSchema = z.object({
-    id: z
-        .string()
-        .min(1, "IDは必須です。")
-        .min(16, "IDは16文字以上でなければなりません。")
-        .max(64, "IDは64文字以下でなければなりません。"),
-    title: z.string().min(1, "タイトルは必須です。").max(256, "タイトルが長すぎます。"),
-    content: z.string().min(1, "内容は必須です。").max(65536, "内容が長すぎます。"),
-    importance: z.boolean(),
-    date: z.date().refine(
-        (date) => {
-            return (
-                date.getHours() === 0 &&
-                date.getMinutes() === 0 &&
-                date.getSeconds() === 0 &&
-                date.getMilliseconds() === 0
-            );
-        },
-        {
-            message: "時刻は指定できません。日付のみを指定してください。",
-        },
-    ),
-});
 
 const newsAtom = atom<NewsModel[]>([]);
 
